@@ -5,12 +5,7 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -23,4 +18,190 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+@keyframes glass-glow {
+
+  0%,
+  100% {
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      0 0 20px rgba(255, 255, 255, 0.2);
+  }
+
+  50% {
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+      0 0 30px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Claymorph gradient backgrounds */
+.clay-gradient {
+  background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
+}
+
+.clay-gradient-dark {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+}
+
+/* Glassmorphism backgrounds */
+.glass-bg {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Glass panel styles with inner shadows */
+.glass-panel {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.20) 0%,
+      rgba(255, 255, 255, 0.12) 100%);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-panel:hover {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.18) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Navigation glass style */
+.glass-nav {
+  background: linear-gradient(135deg,
+      rgba(34, 197, 94, 0.95) 0%,
+      /* Изумрудный зеленый */
+      rgba(59, 130, 246, 0.9) 100%);
+  /* Ярко-синий */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Page backgrounds */
+.page-clay {
+  background: linear-gradient(135deg, #e8edf2 0%, #f0f4f8 25%, #dfe7ed 50%, #f0f4f8 75%, #e8edf2 100%);
+  min-height: 100vh;
+}
+
+.page-glass {
+  background: linear-gradient(135deg,
+      #1e40af 0%,
+      /* Глубокий синий (blue-800) */
+      #059669 25%,
+      /* Изумрудный (emerald-600) */
+      #7c3aed 50%,
+      /* Ярко-фиолетовый (violet-600) */
+      #0891b2 75%,
+      /* Бирюзовый (cyan-600) */
+      #4338ca 100%
+      /* Индиго (indigo-600) */
+    );
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Utility classes */
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Scroll customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #cbd5e1, #94a3b8);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #94a3b8, #64748b);
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .page-clay,
+  .page-glass {
+    background: white !important;
+  }
+
+  .clay-gradient,
+  .clay-gradient-dark,
+  .glass-bg {
+    background: white !important;
+    box-shadow: none !important;
+  }
 }
