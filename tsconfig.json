@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "ES2022",
     "lib": [
       "dom",
       "dom.iterable",
@@ -24,7 +24,10 @@
     ],
     "paths": {
       "@/*": [
-        "./*"
+        "./app/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
       ]
     }
   },
@@ -36,7 +39,8 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     ".next\\dev/types/**/*.ts",
-    ".next\\dev/types/**/*.ts"
+    ".next\\dev/types/**/*.ts",
+    ".next\\dev/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

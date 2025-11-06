@@ -5,12 +5,7 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -23,4 +18,355 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+@keyframes glass-glow {
+
+  0%,
+  100% {
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      0 0 20px rgba(255, 255, 255, 0.2);
+  }
+
+  50% {
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+      0 0 30px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Claymorph gradient backgrounds */
+.clay-gradient {
+  background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
+}
+
+.clay-gradient-dark {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+}
+
+/* Glassmorphism backgrounds */
+.glass-bg {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Glass panel styles with inner shadows */
+.glass-panel {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.20) 0%,
+      rgba(255, 255, 255, 0.12) 100%);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-panel:hover {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.18) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Navigation glass style */
+.glass-nav {
+  background: linear-gradient(135deg,
+      rgba(34, 197, 94, 0.95) 0%,
+      /* Изумрудный зеленый */
+      rgba(59, 130, 246, 0.9) 100%);
+  /* Ярко-синий */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Utility classes */
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Scroll customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #cbd5e1, #94a3b8);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #94a3b8, #64748b);
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .theme-clay,
+  .theme-glass {
+    background: white !important;
+  }
+
+  .clay-gradient,
+  .clay-gradient-dark,
+  .glass-bg {
+    background: white !important;
+    box-shadow: none !important;
+  }
+}
+
+/* THEME ROOTS */
+.theme-glass {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+.theme-clay {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+body.theme-glass {
+  background: linear-gradient(135deg,
+      #1e40af 0%,
+      #059669 25%,
+      #7c3aed 50%,
+      #0891b2 75%,
+      #4338ca 100%
+    );
+  background-attachment: fixed;
+  color: var(--foreground);
+  min-height: 100vh;
+}
+body.theme-clay {
+  background: linear-gradient(135deg, #e8edf2 0%, #f0f4f8 25%, #dfe7ed 50%, #f0f4f8 75%, #e8edf2 100%);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+/* BASE BUTTON STYLES */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5625rem 1.0625rem 0.6875rem 0.9375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 0.75rem;
+  transition: colors 0.2s ease-in-out;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* BUTTON SIZES */
+.btn.btn-sm {
+  padding: 0.5625rem 1.0625rem 0.6875rem 0.9375rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.btn.btn-md {
+  padding: 0.6875rem 1.5625rem 0.8125rem 1.4375rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.btn.btn-lg {
+  padding: 0.9375rem 2.0625rem 1.0625rem 1.9375rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+/* BASE CARD STYLES */
+.card {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease-in-out;
+}
+
+/* GLASS THEME - Additional nested selectors */
+
+.theme-glass .btn {
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  box-shadow: inset -2px -2px 1px rgba(0,0,0,0.3);
+}
+.theme-glass .btn:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.2) 100%);
+}
+.theme-glass .btn.is-active,
+.theme-glass .btn.btn-primary {
+  background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
+  color: #ffffff;
+  box-shadow: inset -2px -2px 1px rgba(0,0,0,0.3);
+}
+.theme-glass .btn.is-active:hover,
+.theme-glass .btn.btn-primary:hover {
+  background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+}
+.theme-glass .btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.theme-glass .card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.12) 100%);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+}
+.theme-glass .card:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.18) 100%);
+}
+
+/* CLAY THEME - Additional nested selectors */
+
+.theme-clay .btn {
+  background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
+  color: #1e293b;
+  box-shadow: 3px 3px 6px #c5c5c5, -1.5px -1.5px 6px #ffffff, inset -2px -2px 1px #8a8a8acc;
+  transition: all 0.2s ease-in-out;
+}
+.theme-clay .btn:hover {
+  background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
+  color: #059669;
+}
+.theme-clay .btn.btn-secondary {
+  background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
+  color: #1e293b;
+  box-shadow: 3px 3px 6px #c5c5c5, -1.5px -1.5px 6px #ffffff, inset -2px -2px 1px #8a8a8acc;
+}
+.theme-clay .btn.btn-secondary:hover {
+  background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
+  color: #059669;
+}
+.theme-clay .btn.is-active,
+.theme-clay .btn.btn-primary {
+  background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
+  color: #ffffff;
+  box-shadow: 3px 3px 6px #9ca3af, -1.5px -1.5px 6px rgba(255,255,255,0.1), inset -2px -2px 1px rgba(0,0,0,0.3);
+}
+.theme-clay .btn.is-active:hover,
+.theme-clay .btn.btn-primary:hover {
+  background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+}
+.theme-clay .btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Red delete buttons - override hover color only, keep clay style */
+.theme-clay .btn.text-red-600 {
+  color: #dc2626;
+}
+.theme-clay .btn.text-red-600:hover {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #b91c1c;
+}
+
+/* Yellow warning buttons - override default hover */
+.theme-clay .btn.bg-yellow-600 {
+  background: #ca8a04;
+  color: #ffffff;
+  box-shadow: 3px 3px 6px #9ca3af, -1.5px -1.5px 6px rgba(255,255,255,0.1), inset -2px -2px 1px rgba(0,0,0,0.3);
+}
+.theme-clay .btn.bg-yellow-600:hover {
+  background: #eab308;
+  color: #ffffff;
+}
+
+/* Red danger buttons - override default hover */
+.theme-clay .btn.bg-red-600 {
+  background: #dc2626;
+  color: #ffffff;
+  box-shadow: 3px 3px 6px #9ca3af, -1.5px -1.5px 6px rgba(255,255,255,0.1), inset -2px -2px 1px rgba(0,0,0,0.3);
+}
+.theme-clay .btn.bg-red-600:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.theme-clay .card {
+  background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
+  box-shadow: 4.5px 4.5px 9px #c5c5c5, -2.25px -2.25px 9px #ffffff, inset -2px -2px 1.5px #8a8a8acc;
+}
+.theme-clay .card:hover {
+  background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
+  box-shadow: 6px 6px 12px #c5c5c5, -3px -3px 12px #ffffff, inset -2px -2px 1.5px #8a8a8acc;
 }
