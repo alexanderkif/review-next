@@ -1,0 +1,18 @@
+# Browsers that we support
+
+# Modern browsers that support ES2020+ features
+defaults and supports es6-module
+not IE 11
+not dead
+
+# Target browsers with native support for:
+# - Array.prototype.at
+# - Array.prototype.flat/flatMap
+# - Object.fromEntries
+# - Object.hasOwn
+# - String.prototype.trimStart/trimEnd
+
+# Chrome >= 92
+# Firefox >= 90
+# Safari >= 15.4
+# Edge >= 92
