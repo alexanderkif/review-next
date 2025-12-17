@@ -107,7 +107,7 @@ function VerifyEmailContent() {
             <div className="space-y-3">
               <Button 
                 className="w-full"
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/auth/login')}
               >
                 Login to Account
               </Button>
@@ -132,7 +132,7 @@ function VerifyEmailContent() {
             <div className="space-y-3">
               <Button 
                 className="w-full"
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/auth/login')}
               >
                 Login to Account
               </Button>
@@ -151,7 +151,7 @@ function VerifyEmailContent() {
             <div className="space-y-3">
               <Button 
                 className="w-full"
-                onClick={() => router.push('/register')}
+                onClick={() => router.push('/auth/register')}
               >
                 Retry Registration
               </Button>

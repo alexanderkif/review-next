@@ -2,6 +2,77 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useEngagementChart } from './EngagementChartContext';
+import { Heart, MessageCircle } from 'lucide-react';
+
+interface TooltipPayload {
+  dataKey: string;
+  value: number;
+  color: string;
+  name: string;
+  payload: {
+    date: string;
+    likes: number;
+    comments: number;
+    likesProjects?: string[];
+    commentsProjects?: string[];
+  };
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+}
+
+const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-white/10 backdrop-blur-md border border-white/30 rounded-xl p-3 text-white max-w-xs shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]">
+        <p className="font-semibold mb-2 text-white drop-shadow-lg">{data.date}</p>
+        <div className="space-y-2">
+          {/* Likes */}
+          <div>
+            <div className="flex items-center gap-1.5">
+              <Heart size={14} className={data.likes > 0 ? "fill-red-400 text-red-400" : "text-white/40"} />
+              <p className={`text-sm font-medium drop-shadow-md ${data.likes > 0 ? "text-red-400" : "text-white/40"}`}>
+                {data.likes > 0 ? `${data.likes} Like${data.likes !== 1 ? 's' : ''}` : 'No likes'}
+              </p>
+            </div>
+            {data.likesProjects && data.likesProjects.length > 0 && (
+              <div className="mt-1 ml-5 space-y-0.5">
+                {data.likesProjects.map((project: string, index: number) => (
+                  <p key={index} className="text-xs text-white/70 drop-shadow-sm">
+                    • {project}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* Comments */}
+          <div>
+            <div className="flex items-center gap-1.5">
+              <MessageCircle size={14} className={data.comments > 0 ? "fill-lime-500 text-lime-500" : "text-white/40"} />
+              <p className={`text-sm font-medium drop-shadow-md ${data.comments > 0 ? "text-lime-500" : "text-white/40"}`}>
+                {data.comments > 0 ? `${data.comments} Comment${data.comments !== 1 ? 's' : ''}` : 'No comments'}
+              </p>
+            </div>
+            {data.commentsProjects && data.commentsProjects.length > 0 && (
+              <div className="mt-1 ml-5 space-y-0.5">
+                {data.commentsProjects.map((project: string, index: number) => (
+                  <p key={index} className="text-xs text-white/70 drop-shadow-sm">
+                    • {project}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function EngagementChartClient() {
   const { data } = useEngagementChart();
@@ -26,15 +97,7 @@ export default function EngagementChartClient() {
                 width={30}
                 allowDecimals={false}
               />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(0,0,0,0.8)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontSize: '12px'
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Line
                 type="monotone"
                 dataKey="likes"

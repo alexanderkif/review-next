@@ -274,37 +274,36 @@ export async function createProjectComment(
 
 
 // Получение данных активности (лайки и комментарии) по дням
-interface ActivityRow {
-  date: string;
-  count: number;
-}
-
 export async function getActivityData(period: 'month' | 'year' = 'month', locale: string = 'en-US') {
   noStore();
   try {
-    let likesData: ActivityRow[] = [];
-    let commentsData: ActivityRow[] = [];
+    let likesData: Array<{ date: Date; count: number; project_title: string }> = [];
+    let commentsData: Array<{ date: Date; count: number; project_title: string }> = [];
     
-    // Безопасно получаем данные лайков
+    // Безопасно получаем данные лайков с названиями проектов
     try {
       if (period === 'month') {
         likesData = await sql`
           SELECT 
-            DATE(created_at AT TIME ZONE 'UTC+3') as date,
-            COUNT(*) as count
-          FROM project_likes
-          WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
-          GROUP BY DATE(created_at AT TIME ZONE 'UTC+3')
+            DATE(pl.created_at AT TIME ZONE 'UTC+3') as date,
+            COUNT(*) as count,
+            p.title as project_title
+          FROM project_likes pl
+          INNER JOIN projects p ON pl.project_id = p.id
+          WHERE pl.created_at >= CURRENT_DATE - INTERVAL '30 days'
+          GROUP BY DATE(pl.created_at AT TIME ZONE 'UTC+3'), p.title
           ORDER BY date
         `;
       } else {
         likesData = await sql`
           SELECT 
-            DATE_TRUNC('month', created_at AT TIME ZONE 'UTC+3') as date,
-            COUNT(*) as count
-          FROM project_likes
-          WHERE created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '11 months')
-          GROUP BY DATE_TRUNC('month', created_at AT TIME ZONE 'UTC+3')
+            DATE_TRUNC('month', pl.created_at AT TIME ZONE 'UTC+3') as date,
+            COUNT(*) as count,
+            p.title as project_title
+          FROM project_likes pl
+          INNER JOIN projects p ON pl.project_id = p.id
+          WHERE pl.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '11 months')
+          GROUP BY DATE_TRUNC('month', pl.created_at AT TIME ZONE 'UTC+3'), p.title
           ORDER BY date
         `;
       }
@@ -312,26 +311,30 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
       console.log('project_likes table not available');
     }
     
-    // Безопасно получаем данные комментариев
+    // Безопасно получаем данные комментариев с названиями проектов
     try {
       if (period === 'month') {
         commentsData = await sql`
           SELECT 
-            DATE(created_at AT TIME ZONE 'UTC+3') as date,
-            COUNT(*) as count
-          FROM project_comments
-          WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
-          GROUP BY DATE(created_at AT TIME ZONE 'UTC+3')
+            DATE(pc.created_at AT TIME ZONE 'UTC+3') as date,
+            COUNT(*) as count,
+            p.title as project_title
+          FROM project_comments pc
+          INNER JOIN projects p ON pc.project_id = p.id
+          WHERE pc.created_at >= CURRENT_DATE - INTERVAL '30 days'
+          GROUP BY DATE(pc.created_at AT TIME ZONE 'UTC+3'), p.title
           ORDER BY date
         `;
       } else {
         commentsData = await sql`
           SELECT 
-            DATE_TRUNC('month', created_at AT TIME ZONE 'UTC+3') as date,
-            COUNT(*) as count
-          FROM project_comments
-          WHERE created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '11 months')
-          GROUP BY DATE_TRUNC('month', created_at AT TIME ZONE 'UTC+3')
+            DATE_TRUNC('month', pc.created_at AT TIME ZONE 'UTC+3') as date,
+            COUNT(*) as count,
+            p.title as project_title
+          FROM project_comments pc
+          INNER JOIN projects p ON pc.project_id = p.id
+          WHERE pc.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '11 months')
+          GROUP BY DATE_TRUNC('month', pc.created_at AT TIME ZONE 'UTC+3'), p.title
           ORDER BY date
         `;
       }
@@ -340,32 +343,40 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
     }
     
     // Объединяем данные по датам
-    const dateMap = new Map();
+    const dateMap = new Map<string, { date: string; likes: number; comments: number; likesProjects: string[]; commentsProjects: string[] }>();
     
     // Обрабатываем лайки
-    likesData.forEach((row: ActivityRow) => {
+    likesData.forEach((row) => {
       const date = new Date(row.date);
       const dateStr = period === 'month' 
         ? date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' })
         : date.toLocaleDateString(locale, { month: 'short', year: '2-digit' });
       
       if (!dateMap.has(dateStr)) {
-        dateMap.set(dateStr, { date: dateStr, likes: 0, comments: 0 });
+        dateMap.set(dateStr, { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
       }
-      dateMap.get(dateStr).likes = Number(row.count);
+      const entry = dateMap.get(dateStr)!;
+      entry.likes += Number(row.count);
+      if (!entry.likesProjects.includes(row.project_title)) {
+        entry.likesProjects.push(row.project_title);
+      }
     });
     
     // Обрабатываем комментарии
-    commentsData.forEach((row: ActivityRow) => {
+    commentsData.forEach((row) => {
       const date = new Date(row.date);
       const dateStr = period === 'month' 
         ? date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' })
         : date.toLocaleDateString(locale, { month: 'short', year: '2-digit' });
       
       if (!dateMap.has(dateStr)) {
-        dateMap.set(dateStr, { date: dateStr, likes: 0, comments: 0 });
+        dateMap.set(dateStr, { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
       }
-      dateMap.get(dateStr).comments = Number(row.count);
+      const entry = dateMap.get(dateStr)!;
+      entry.comments += Number(row.count);
+      if (!entry.commentsProjects.includes(row.project_title)) {
+        entry.commentsProjects.push(row.project_title);
+      }
     });
     
     // Генерируем полный диапазон дат
@@ -377,14 +388,14 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
         const date = new Date(now);
         date.setDate(date.getDate() - i);
         const dateStr = date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' });
-        result.push(dateMap.get(dateStr) || { date: dateStr, likes: 0, comments: 0 });
+        result.push(dateMap.get(dateStr) || { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
       }
     } else {
       for (let i = 11; i >= 0; i--) {
         const date = new Date(now);
         date.setMonth(date.getMonth() - i);
         const dateStr = date.toLocaleDateString(locale, { month: 'short', year: '2-digit' });
-        result.push(dateMap.get(dateStr) || { date: dateStr, likes: 0, comments: 0 });
+        result.push(dateMap.get(dateStr) || { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
       }
     }
     

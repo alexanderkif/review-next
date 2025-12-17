@@ -9,8 +9,7 @@ export default function ClientThemeSync() {
   useEffect(() => {
     // Determine theme based on pathname
     const isGlassTheme = pathname.startsWith('/projects') || 
-                        pathname.startsWith('/login') || 
-                        pathname.startsWith('/register') ||
+                        pathname.startsWith('/auth') ||
                         pathname.startsWith('/not-found');
     
     const theme = isGlassTheme ? 'theme-glass' : 'theme-clay';

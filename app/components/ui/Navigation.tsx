@@ -210,14 +210,14 @@ const Navigation = () => {
               ) : (
                 <>
                   <Link 
-                    href={`/login?callbackUrl=${encodeURIComponent(currentPath || '/')}`}
+                    href={`/auth/login?callbackUrl=${encodeURIComponent(currentPath || '/')}`}
                     className={buttonStyles('secondary')}
                   >
                     Log In
                   </Link>
                   
                   <Link 
-                    href="/register"
+                    href="/auth/register"
                     className={buttonStyles('primary')}
                   >
                     Register

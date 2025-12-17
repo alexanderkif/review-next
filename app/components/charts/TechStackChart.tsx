@@ -6,11 +6,12 @@ interface TechData {
   name: string;
   value: number;
   color: string;
-  [key: string]: string | number;
+  projectNames: string[];
+  [key: string]: string | number | string[];
 }
 
 interface TechStackChartProps {
-  projects?: Array<{ technologies?: string[] }>;
+  projects?: Array<{ title: string; technologies?: string[] }>;
 }
 
 const TECH_COLORS: Record<string, string> = {
@@ -90,23 +91,28 @@ const getTechColor = (techName: string): string => {
 };
 
 // Server-side data processing
-function getTechData(projects?: Array<{ technologies?: string[] }>): TechData[] {
-  const techCount: Record<string, number> = {};
+function getTechData(projects?: Array<{ title: string; technologies?: string[] }>): TechData[] {
+  const techData: Record<string, { count: number; projects: string[] }> = {};
   
   if (projects && projects.length > 0) {
     projects.forEach(project => {
       if (project.technologies) {
         project.technologies.forEach(tech => {
-          techCount[tech] = (techCount[tech] || 0) + 1;
+          if (!techData[tech]) {
+            techData[tech] = { count: 0, projects: [] };
+          }
+          techData[tech].count += 1;
+          techData[tech].projects.push(project.title);
         });
       }
     });
   }
 
-  return Object.entries(techCount)
-    .map(([name, count]) => ({
+  return Object.entries(techData)
+    .map(([name, data]) => ({
       name,
-      value: count,
+      value: data.count,
+      projectNames: data.projects,
       color: getTechColor(name)
     }))
     .sort((a, b) => b.value - a.value)

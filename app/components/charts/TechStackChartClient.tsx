@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 interface TooltipData {
   name: string;
   value: number;
+  projectNames: string[];
 }
 
 interface CustomTooltipProps {
@@ -18,11 +19,15 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-black/80 border border-white/20 rounded-lg p-3 text-white">
-        <p className="font-medium">{data.name}</p>
-        <p className="text-sm text-white/80">
-          {data.value} project{data.value !== 1 ? 's' : ''}
-        </p>
+      <div className="bg-white/10 backdrop-blur-md border border-white/30 rounded-xl p-3 text-white max-w-xs shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]">
+        <p className="font-semibold mb-2 text-white drop-shadow-lg">{data.name}</p>
+        <div className="space-y-1">
+          {data.projectNames && data.projectNames.map((projectName: string, index: number) => (
+            <p key={index} className="text-sm text-white/90 drop-shadow-md">
+              • {projectName}
+            </p>
+          ))}
+        </div>
       </div>
     );
   }
@@ -33,7 +38,8 @@ interface TechData {
   name: string;
   value: number;
   color: string;
-  [key: string]: string | number;
+  projectNames: string[];
+  [key: string]: string | number | string[];
 }
 
 interface TechStackChartClientProps {

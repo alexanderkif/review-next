@@ -170,7 +170,7 @@ export async function sendWelcomeEmail(
                 </div>
               </div>
               
-              <a href="${process.env.NEXTAUTH_URL}/login" class="button">Login to Account</a>
+              <a href="${process.env.NEXTAUTH_URL}/auth/login" class="button">Login to Account</a>
               
               <p>Thank you for joining us!</p>
             </div>

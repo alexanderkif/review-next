@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Heart } from 'lucide-react';
 import { logger } from '../lib/logger';
 import { toggleProjectLike } from '../lib/actions';
+import Tooltip from './ui/Tooltip';
 
 interface ProjectCardLikeButtonProps {
   projectId: number;
@@ -30,7 +31,7 @@ export default function ProjectCardLikeButton({
     
     // Проверяем авторизацию
     if (!session?.user) {
-      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      router.push(`/auth/login?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
     
@@ -61,16 +62,17 @@ export default function ProjectCardLikeButton({
   };
 
   return (
-    <button 
-      onClick={handleLike}
-      disabled={isLiking}
-      className={`flex items-center gap-1 transition-colors disabled:opacity-50 cursor-pointer ${
-        isLiked ? 'text-red-400' : 'text-white/70 hover:text-red-400'
-      }`}
-      title={isLiked ? 'Remove like' : 'Add like'}
-    >
-      <Heart size={16} className={isLiked ? 'fill-red-400' : ''} />
-      <span className="text-sm">{likesCount}</span>
-    </button>
+    <Tooltip content={isLiked ? 'Remove like' : 'Add like'} position="top">
+      <button 
+        onClick={handleLike}
+        disabled={isLiking}
+        className={`flex items-center gap-1 transition-colors disabled:opacity-50 cursor-pointer ${
+          isLiked ? 'text-red-400' : 'text-white/70 hover:text-red-400'
+        }`}
+      >
+        <Heart size={16} className={isLiked ? 'fill-red-400' : ''} />
+        <span className="text-sm">{likesCount}</span>
+      </button>
+    </Tooltip>
   );
 }

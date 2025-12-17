@@ -3,6 +3,7 @@
 import { useCallback, useState, useRef, DragEvent, ChangeEvent } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { processImageFile } from '../../lib/image-utils';
+import Tooltip from './Tooltip';
 
 interface MultipleImageUploadProps {
   entityType: 'avatar' | 'project' | 'user';
@@ -195,10 +196,9 @@ const MultipleImageUpload = ({
                     <button
                       onClick={() => handleRemove(imageId)}
                       aria-label={`Remove image ${index + 1}`}
-                      title={`Remove image ${index + 1}`}
-                      className="absolute -top-2 -right-5 w-6 h-6 rounded-full bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] text-red-600 hover:text-red-600 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc] transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none hover:[background:linear-gradient(135deg,#edf2f7_0%,#e5ecf1_100%)]"
+                      className="group absolute -top-2 -right-5 w-6 h-6 rounded-full bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc] transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none hover:[background:linear-gradient(135deg,#edf2f7_0%,#e5ecf1_100%)]"
                     >
-                      <Trash2 size={12} className="-translate-x-[0.5px] -translate-y-[0.5px]" />
+                      <Trash2 size={12} className="icon-danger -translate-x-[0.5px] -translate-y-[0.5px]" />
                     </button>
                   )}
                   
@@ -239,7 +239,7 @@ const MultipleImageUpload = ({
             ) : (
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-100 to-blue-100 flex items-center justify-center">
-                  <Plus size={16} className="text-emerald-600" />
+                  <Plus size={16} className="icon-success text-emerald-600" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-700">

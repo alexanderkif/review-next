@@ -8,6 +8,7 @@ import { MessageCircle, User, Send, AlertCircle, Edit2, Trash2, Check, X } from 
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Input';
+import Tooltip from './ui/Tooltip';
 import { addProjectComment, updateComment, deleteComment } from '../lib/actions';
 import { logger } from '../lib/logger';
 import { useConfirm } from './ui/ConfirmProvider';
@@ -165,12 +166,12 @@ export default function ProjectComments({
                 </span>
               </div>
               <div className="flex gap-2">
-                <Link href={`/login?callbackUrl=${encodeURIComponent(pathname)}`}>
+                <Link href={`/auth/login?callbackUrl=${encodeURIComponent(pathname)}`}>
                   <Button size="sm" className="text-blue-200 hover:text-white min-h-[44px] min-w-[44px]">
                     Log In
                   </Button>
                 </Link>
-                <Link href={`/register?callbackUrl=${encodeURIComponent(pathname)}`}>
+                <Link href={`/auth/register?callbackUrl=${encodeURIComponent(pathname)}`}>
                   <Button size="sm" className="min-h-[44px] min-w-[44px]">
                     Register
                   </Button>
@@ -256,30 +257,32 @@ export default function ProjectComments({
                   
                   {/* Edit/Delete buttons */}
                   {canEditComment(comment) && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       {editingComment !== comment.id && (
                         <>
-                          <Button
-                            size="sm"
-                            onClick={() => handleEditComment(comment)}
-                            className="text-white/60 hover:text-white p-1 h-auto"
-                            aria-label="Edit comment"
-                          >
-                            <Edit2 size={14} />
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => handleDeleteComment(comment.id)}
-                            disabled={isDeleting === comment.id}
-                            className="text-red-400/60 hover:text-red-400 p-1 h-auto"
-                            aria-label="Delete comment"
-                          >
-                            {isDeleting === comment.id ? (
-                              <div className="w-3.5 h-3.5 border border-red-400/30 border-t-red-400 rounded-full animate-spin" />
-                            ) : (
-                              <Trash2 size={14} />
-                            )}
-                          </Button>
+                          <Tooltip content="Edit comment" position="top">
+                            <button
+                              onClick={() => handleEditComment(comment)}
+                              className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-gradient-to-br from-white/25 to-white/15 backdrop-blur-md border border-white/40 text-slate-200 hover:text-amber-400 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-amber-500/80 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)]"
+                              aria-label="Edit comment"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                          </Tooltip>
+                          <Tooltip content="Delete comment" position="top">
+                            <button
+                              onClick={() => handleDeleteComment(comment.id)}
+                              disabled={isDeleting === comment.id}
+                              className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-gradient-to-br from-white/25 to-white/15 backdrop-blur-md border border-white/40 text-slate-200 hover:text-red-400 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-500/80 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] disabled:opacity-50 disabled:cursor-not-allowed"
+                              aria-label="Delete comment"
+                            >
+                              {isDeleting === comment.id ? (
+                                <div className="w-5 h-5 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                              ) : (
+                                <Trash2 size={16} />
+                              )}
+                            </button>
+                          </Tooltip>
                         </>
                       )}
                     </div>

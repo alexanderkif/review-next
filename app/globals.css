@@ -1,22 +1,6 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -55,65 +39,6 @@ body {
   50% {
     box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
   }
-}
-
-@keyframes glass-glow {
-
-  0%,
-  100% {
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
-      0 0 20px rgba(255, 255, 255, 0.2);
-  }
-
-  50% {
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.15),
-      0 0 30px rgba(255, 255, 255, 0.3);
-  }
-}
-
-/* Claymorph gradient backgrounds */
-.clay-gradient {
-  background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
-}
-
-.clay-gradient-dark {
-  background: linear-gradient(135deg, #334155 0%, #475569 100%);
-}
-
-/* Glassmorphism backgrounds */
-.glass-bg {
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.05) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* Glass panel styles with inner shadows */
-.glass-panel {
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.20) 0%,
-      rgba(255, 255, 255, 0.12) 100%);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
-}
-
-.glass-panel:hover {
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.28) 0%,
-      rgba(255, 255, 255, 0.18) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 /* Navigation glass style */
@@ -173,13 +98,6 @@ body {
   .theme-clay,
   .theme-glass {
     background: white !important;
-  }
-
-  .clay-gradient,
-  .clay-gradient-dark,
-  .glass-bg {
-    background: white !important;
-    box-shadow: none !important;
   }
 }
 
@@ -369,4 +287,74 @@ body.theme-clay {
 .theme-clay .card:hover {
   background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
   box-shadow: 6px 6px 12px #c5c5c5, -3px -3px 12px #ffffff, inset -2px -2px 1.5px #8a8a8acc;
+}
+
+/* UTILITY CLASSES for direct icon styling */
+/* Use these classes directly on icon components for custom colors */
+
+/* Success/Add - Green */
+.icon-success {
+  color: rgb(52 211 153); /* emerald-400 */
+  transition: color 0.2s ease-in-out;
+}
+.icon-success:hover,
+.group:hover .icon-success {
+  color: rgb(22 163 74); /* green-600 */
+}
+
+/* Warning/Edit - Yellow/Amber */
+.icon-warning {
+  color: rgb(251 191 36); /* amber-400 - bright initial color */
+  transition: color 0.2s ease-in-out;
+}
+.icon-warning:hover,
+.group:hover .icon-warning {
+  color: rgb(217 119 6); /* amber-600 - darker on hover */
+}
+/* Override for clay theme - darker base color */
+.theme-clay .icon-warning {
+  color: rgb(245 158 11); /* amber-500 */
+}
+.theme-clay .icon-warning:hover,
+.theme-clay .group:hover .icon-warning {
+  color: rgb(217 119 6); /* amber-600 */
+}
+
+/* Danger/Delete - Red */
+.icon-danger {
+  color: rgb(248 113 113); /* red-400 */
+  transition: color 0.2s ease-in-out;
+}
+.icon-danger:hover,
+.group:hover .icon-danger {
+  color: rgb(220 38 38); /* red-600 */
+}
+
+/* Info - Blue */
+.icon-info {
+  color: rgb(96 165 250); /* blue-400 */
+  transition: color 0.2s ease-in-out;
+}
+.icon-info:hover,
+.group:hover .icon-info {
+  color: rgb(37 99 235); /* blue-600 */
+}
+
+/* Neutral - Gray */
+.icon-neutral {
+  transition: color 0.2s ease-in-out;
+}
+.theme-glass .icon-neutral {
+  color: rgba(255, 255, 255, 0.6);
+}
+.theme-glass .icon-neutral:hover,
+.theme-glass .group:hover .icon-neutral {
+  color: rgba(255, 255, 255, 0.9);
+}
+.theme-clay .icon-neutral {
+  color: rgb(100 116 139); /* slate-500 */
+}
+.theme-clay .icon-neutral:hover,
+.theme-clay .group:hover .icon-neutral {
+  color: rgb(51 65 85); /* slate-700 */
 }

@@ -13,8 +13,10 @@ export interface ApiSuccess<T = unknown> {
 // Activity API
 export interface ActivityDataPoint {
   date: string;
-  count: number;
-  label?: string;
+  likes: number;
+  comments: number;
+  likesProjects?: string[];
+  commentsProjects?: string[];
 }
 
 export type ActivityResponse = ActivityDataPoint[];

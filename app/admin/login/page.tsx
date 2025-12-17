@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -119,7 +119,7 @@ function AdminLoginForm() {
             className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg px-2 py-1 transition-all"
           >
             <ArrowLeft size={16} />
-            На главную
+            Back to Home
           </Link>
         </div>
 

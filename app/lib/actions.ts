@@ -125,7 +125,7 @@ export async function registerUser(prevState: unknown, formData: FormData) {
     };
   }
 
-  redirect('/login?registered=true');
+  redirect('/auth/login?registered=true');
 }
 
 // Лайки проектов

@@ -1,14 +1,14 @@
 ﻿'use client';
 
-import React, { useState, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import { User, Mail, ArrowLeft, Eye, EyeOff, CheckCircle, RefreshCw } from 'lucide-react';
-import { logger } from '../lib/logger';
-import OAuthButtons from '../components/ui/OAuthButtons';
+import { logger } from '../../lib/logger';
+import OAuthButtons from '../../components/ui/OAuthButtons';
 
 function RegisterForm() {
   const router = useRouter();
@@ -105,7 +105,7 @@ function RegisterForm() {
           setUserEmail(formData.email);
         } else {
           // Registration without verification (for backward compatibility)
-          router.push(`/login?message=Registration successful! You can now log into the system.&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+          router.push(`/auth/login?message=Registration successful! You can now log into the system.&callbackUrl=${encodeURIComponent(callbackUrl)}`);
         }
       } else {
         // Registration error
@@ -207,7 +207,7 @@ function RegisterForm() {
 
                 <Button
                   className="w-full"
-                  onClick={() => router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)}
+                  onClick={() => router.push(`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)}
                 >
                   Go to Login
                 </Button>
@@ -351,7 +351,7 @@ function RegisterForm() {
             <div className="text-center text-white/70 text-sm mt-6">
               Already have an account?{' '}
               <Link
-                href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+                href={`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
                 className="text-white hover:text-blue-200 transition-colors font-medium"
               >
                 Log In

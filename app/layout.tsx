@@ -89,8 +89,7 @@ export default async function RootLayout({
   
   // Determine theme based on pathname
   const isGlassTheme = pathname.startsWith('/projects') || 
-                      pathname.startsWith('/login') || 
-                      pathname.startsWith('/register') ||
+                      pathname.startsWith('/auth') ||
                       pathname.startsWith('/not-found');
   
   const theme = isGlassTheme ? 'theme-glass' : 'theme-clay';
@@ -151,7 +150,9 @@ export default async function RootLayout({
           <ToastProvider>
             <ConfirmProvider>
               <ConditionalNavigation />
-              {children}
+              <main>
+                {children}
+              </main>
             </ConfirmProvider>
           </ToastProvider>
         </SessionProvider>

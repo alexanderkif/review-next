@@ -8,10 +8,13 @@ interface EngagementData {
   date: string;
   likes: number;
   comments: number;
+  likesProjects?: string[];
+  commentsProjects?: string[];
 }
 
 interface Project {
   id: number;
+  title: string;
   created_at: string;
   likes_count?: number;
   comments_count?: number;
@@ -47,11 +50,15 @@ function generateInitialData(projects: Project[]): EngagementData[] {
 
     const likes = dayProjects.reduce((sum, p) => sum + (p.likes_count || 0), 0);
     const comments = dayProjects.reduce((sum, p) => sum + (p.comments_count || 0), 0);
+    const likesProjects = dayProjects.filter(p => (p.likes_count || 0) > 0).map(p => p.title);
+    const commentsProjects = dayProjects.filter(p => (p.comments_count || 0) > 0).map(p => p.title);
 
     data.push({
       date: date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' }),
       likes,
       comments,
+      likesProjects,
+      commentsProjects,
     });
   }
 

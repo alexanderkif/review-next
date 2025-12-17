@@ -28,7 +28,7 @@ async function getUser(email: string): Promise<DBUser | undefined> {
 export const authConfig = {
     debug: process.env.NODE_ENV === 'development',
     pages: {
-        signIn: "/login",
+        signIn: "/auth/login",
     },
     session: {
         strategy: "jwt" as const,

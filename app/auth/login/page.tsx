@@ -1,15 +1,15 @@
 ﻿'use client';
 
-import React, { useState, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { logger } from '../lib/logger';
-import OAuthButtons from '../components/ui/OAuthButtons';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { logger } from '../../lib/logger';
+import OAuthButtons from '../../components/ui/OAuthButtons';
 
 function LoginForm() {
   const router = useRouter();
@@ -201,7 +201,7 @@ function LoginForm() {
                 <p className="text-white/70 text-sm">
                   No account?{' '}
                   <Link
-                    href="/register"
+                    href="/auth/register"
                     className="text-white font-medium hover:text-blue-300 transition-colors underline"
                   >
                     Register
