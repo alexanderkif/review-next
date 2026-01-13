@@ -5,14 +5,11 @@ import { auth } from '../../../../auth';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const commentId = parseInt(id);
-    
+
     if (isNaN(commentId)) {
       return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
     }
@@ -23,7 +20,7 @@ export async function PUT(
     }
 
     const { content } = await request.json();
-    
+
     if (!content || !content.trim()) {
       return NextResponse.json({ error: 'Comment content is required' }, { status: 400 });
     }
@@ -53,28 +50,24 @@ export async function PUT(
       RETURNING id, comment as content, created_at, updated_at
     `;
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Comment updated successfully',
-      comment: updatedComment[0]
+      comment: updatedComment[0],
     });
-
   } catch (error) {
     console.error('Error updating comment:', error);
-    return NextResponse.json(
-      { error: 'Failed to update comment' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update comment' }, { status: 500 });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const commentId = parseInt(id);
-    
+
     if (isNaN(commentId)) {
       return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
     }
@@ -104,15 +97,11 @@ export async function DELETE(
     // Delete the comment
     await sql`DELETE FROM project_comments WHERE id = ${commentId}`;
 
-    return NextResponse.json({ 
-      message: 'Comment deleted successfully'
+    return NextResponse.json({
+      message: 'Comment deleted successfully',
     });
-
   } catch (error) {
     console.error('Error deleting comment:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete comment' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete comment' }, { status: 500 });
   }
 }

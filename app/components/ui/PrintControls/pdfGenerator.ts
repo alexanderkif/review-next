@@ -2,13 +2,20 @@ import { PDFDocument, PDFFont, PDFRef } from 'pdf-lib';
 import { CVData } from './types';
 import { PDF_CONFIG } from './constants';
 import { renderHeader, renderContactInfo } from './renderHeader';
-import { renderHighlights, renderWorkExperience, renderEducation, renderLanguages, renderTechnicalSkills, renderFeaturedProjects } from './renderSections';
+import {
+  renderHighlights,
+  renderWorkExperience,
+  renderEducation,
+  renderLanguages,
+  renderTechnicalSkills,
+  renderFeaturedProjects,
+} from './renderSections';
 
 export const generateCompletePDF = async (
   pdfDoc: PDFDocument,
   cvData: CVData,
   helveticaFont: PDFFont,
-  helveticaBold: PDFFont
+  helveticaBold: PDFFont,
 ): Promise<void> => {
   const { PAGE_WIDTH, PAGE_HEIGHT, MARGIN } = PDF_CONFIG;
 
@@ -21,13 +28,7 @@ export const generateCompletePDF = async (
   y = renderHeader(page, cvData, helveticaBold, helveticaFont, y);
 
   // Render contact info
-  const contactResult = renderContactInfo(
-    page,
-    cvData,
-    helveticaFont,
-    y,
-    pageAnnotations
-  );
+  const contactResult = renderContactInfo(page, cvData, helveticaFont, y, pageAnnotations);
   y = contactResult.newY;
   pageAnnotations = contactResult.annotations;
 
@@ -39,7 +40,7 @@ export const generateCompletePDF = async (
     helveticaBold,
     helveticaFont,
     y,
-    pageAnnotations
+    pageAnnotations,
   );
   page = highlightsResult.newPage;
   y = highlightsResult.newY;
@@ -53,7 +54,7 @@ export const generateCompletePDF = async (
     helveticaBold,
     helveticaFont,
     y,
-    pageAnnotations
+    pageAnnotations,
   );
   page = experienceResult.newPage;
   y = experienceResult.newY;
@@ -67,7 +68,7 @@ export const generateCompletePDF = async (
     helveticaBold,
     helveticaFont,
     y,
-    pageAnnotations
+    pageAnnotations,
   );
   page = skillsResult.newPage;
   y = skillsResult.newY;
@@ -81,7 +82,7 @@ export const generateCompletePDF = async (
     helveticaBold,
     helveticaFont,
     y,
-    pageAnnotations
+    pageAnnotations,
   );
   page = educationResult.newPage;
   y = educationResult.newY;
@@ -95,7 +96,7 @@ export const generateCompletePDF = async (
     helveticaBold,
     helveticaFont,
     y,
-    pageAnnotations
+    pageAnnotations,
   );
   page = languagesResult.newPage;
   y = languagesResult.newY;
@@ -109,7 +110,7 @@ export const generateCompletePDF = async (
     helveticaBold,
     helveticaFont,
     y,
-    pageAnnotations
+    pageAnnotations,
   );
   page = projectsResult.newPage;
   y = projectsResult.newY;
@@ -117,9 +118,6 @@ export const generateCompletePDF = async (
 
   // Set final page annotations
   if (pageAnnotations.length > 0) {
-    page.node.set(
-      page.doc.context.obj('Annots'),
-      page.doc.context.obj(pageAnnotations)
-    );
+    page.node.set(page.doc.context.obj('Annots'), page.doc.context.obj(pageAnnotations));
   }
 };

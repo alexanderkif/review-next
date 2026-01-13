@@ -1,5 +1,6 @@
+import 'server-only';
 import postgres from 'postgres';
-import { unstable_noStore as noStore } from 'next/cache';
+import { connection } from 'next/server';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -53,14 +54,14 @@ export interface ProjectComment {
 
 // Функции для работы с проектами
 export async function getProjects(userId?: string): Promise<Project[]> {
-  noStore();
+  await connection();
   try {
     // Getting projects from database
     let data;
-    
+
     if (userId) {
       data = await sql`
-        SELECT 
+        SELECT
           p.*,
           COUNT(DISTINCT pl.id) as likes_count,
           COUNT(DISTINCT pc.id) as comments_count,
@@ -74,7 +75,7 @@ export async function getProjects(userId?: string): Promise<Project[]> {
       `;
     } else {
       data = await sql`
-        SELECT 
+        SELECT
           p.*,
           COUNT(DISTINCT pl.id) as likes_count,
           COUNT(DISTINCT pc.id) as comments_count
@@ -85,15 +86,17 @@ export async function getProjects(userId?: string): Promise<Project[]> {
         ORDER BY p.featured DESC, p.year DESC, p.created_at DESC
       `;
     }
-    
+
     // Projects loaded successfully
-    
-    return data.map(row => {
+
+    return data.map((row) => {
       // Parse image URLs array and convert UUIDs to full URLs
       let imageUrls: string[] = [];
       if (row.image_urls) {
         try {
-          const parsed = Array.isArray(row.image_urls) ? row.image_urls : JSON.parse(row.image_urls);
+          const parsed = Array.isArray(row.image_urls)
+            ? row.image_urls
+            : JSON.parse(row.image_urls);
           imageUrls = parsed.map((uuid: string) => `/api/images/${uuid}`);
         } catch {
           console.warn(`Failed to parse image_urls for project ${row.id}`);
@@ -105,7 +108,7 @@ export async function getProjects(userId?: string): Promise<Project[]> {
         image_urls: imageUrls,
         likes_count: Number(row.likes_count) || 0,
         comments_count: Number(row.comments_count) || 0,
-        user_has_liked: row.user_has_liked || false
+        user_has_liked: row.user_has_liked || false,
       };
     }) as Project[];
   } catch (error) {
@@ -115,13 +118,13 @@ export async function getProjects(userId?: string): Promise<Project[]> {
 }
 
 export async function getProjectById(id: number, userId?: string): Promise<Project | null> {
-  noStore();
+  await connection();
   try {
     let data;
-    
+
     if (userId) {
       data = await sql`
-        SELECT 
+        SELECT
           p.*,
           COUNT(DISTINCT pl.id) as likes_count,
           COUNT(DISTINCT pc.id) as comments_count,
@@ -135,7 +138,7 @@ export async function getProjectById(id: number, userId?: string): Promise<Proje
       `;
     } else {
       data = await sql`
-        SELECT 
+        SELECT
           p.*,
           COUNT(DISTINCT pl.id) as likes_count,
           COUNT(DISTINCT pc.id) as comments_count,
@@ -147,17 +150,17 @@ export async function getProjectById(id: number, userId?: string): Promise<Proje
         GROUP BY p.id
       `;
     }
-    
+
     if (data.length === 0) {
       return null;
     }
-    
+
     const row = data[0];
     return {
       ...row,
       likes_count: Number(row.likes_count) || 0,
       comments_count: Number(row.comments_count) || 0,
-      user_has_liked: row.user_has_liked || false
+      user_has_liked: row.user_has_liked || false,
     } as Project;
   } catch (error) {
     console.error('Database Error:', error);
@@ -166,10 +169,10 @@ export async function getProjectById(id: number, userId?: string): Promise<Proje
 }
 
 export async function getProjectComments(projectId: number): Promise<ProjectComment[]> {
-  noStore();
+  await connection();
   try {
     const data = await sql`
-      SELECT 
+      SELECT
         pc.id,
         pc.project_id,
         pc.user_id,
@@ -183,7 +186,7 @@ export async function getProjectComments(projectId: number): Promise<ProjectComm
       WHERE pc.project_id = ${projectId}
       ORDER BY pc.created_at DESC
     `;
-    
+
     return data as unknown as ProjectComment[];
   } catch (error) {
     console.error('Database Error:', error);
@@ -193,18 +196,18 @@ export async function getProjectComments(projectId: number): Promise<ProjectComm
 
 // Функции для работы с пользователями
 export async function getUserByEmail(email: string): Promise<User | null> {
-  noStore();
+  await connection();
   try {
     const data = await sql`
       SELECT id, email, name, avatar_url, created_at
-      FROM users 
+      FROM users
       WHERE email = ${email}
     `;
-    
+
     if (data.length === 0) {
       return null;
     }
-    
+
     return data[0] as User;
   } catch (error) {
     console.error('Database Error:', error);
@@ -213,18 +216,18 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 }
 
 export async function getUserById(id: number): Promise<User | null> {
-  noStore();
+  await connection();
   try {
     const data = await sql`
       SELECT id, email, name, avatar_url, created_at
-      FROM users 
+      FROM users
       WHERE id = ${id}
     `;
-    
+
     if (data.length === 0) {
       return null;
     }
-    
+
     return data[0] as User;
   } catch (error) {
     console.error('Database Error:', error);
@@ -233,25 +236,25 @@ export async function getUserById(id: number): Promise<User | null> {
 }
 
 export async function createProjectComment(
-  projectId: number, 
-  userId: string, 
-  comment: string
+  projectId: number,
+  userId: string,
+  comment: string,
 ): Promise<ProjectComment> {
-  noStore();
+  await connection();
   try {
     const data = await sql`
       INSERT INTO project_comments (project_id, user_id, comment)
       VALUES (${projectId}, ${userId}, ${comment})
       RETURNING *
     `;
-    
+
     if (data.length === 0) {
       throw new Error('Failed to create comment.');
     }
-    
+
     // Получаем информацию о пользователе для возврата
     const commentWithUser = await sql`
-      SELECT 
+      SELECT
         pc.id,
         pc.project_id,
         pc.user_id,
@@ -263,7 +266,7 @@ export async function createProjectComment(
       JOIN users u ON pc.user_id = u.id
       WHERE pc.id = ${data[0].id}
     `;
-    
+
     return commentWithUser[0] as ProjectComment;
   } catch (error) {
     console.error('Database Error:', error);
@@ -271,20 +274,25 @@ export async function createProjectComment(
   }
 }
 
-
-
 // Получение данных активности (лайки и комментарии) по дням
-export async function getActivityData(period: 'month' | 'year' = 'month', locale: string = 'en-US') {
-  noStore();
+export async function getActivityData(
+  period: 'month' | 'year' = 'month',
+  locale: string = 'en-US',
+) {
+  await connection();
   try {
     let likesData: Array<{ date: Date; count: number; project_title: string }> = [];
-    let commentsData: Array<{ date: Date; count: number; project_title: string }> = [];
-    
+    let commentsData: Array<{
+      date: Date;
+      count: number;
+      project_title: string;
+    }> = [];
+
     // Безопасно получаем данные лайков с названиями проектов
     try {
       if (period === 'month') {
         likesData = await sql`
-          SELECT 
+          SELECT
             DATE(pl.created_at AT TIME ZONE 'UTC+3') as date,
             COUNT(*) as count,
             p.title as project_title
@@ -296,7 +304,7 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
         `;
       } else {
         likesData = await sql`
-          SELECT 
+          SELECT
             DATE_TRUNC('month', pl.created_at AT TIME ZONE 'UTC+3') as date,
             COUNT(*) as count,
             p.title as project_title
@@ -310,12 +318,12 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
     } catch {
       console.log('project_likes table not available');
     }
-    
+
     // Безопасно получаем данные комментариев с названиями проектов
     try {
       if (period === 'month') {
         commentsData = await sql`
-          SELECT 
+          SELECT
             DATE(pc.created_at AT TIME ZONE 'UTC+3') as date,
             COUNT(*) as count,
             p.title as project_title
@@ -327,7 +335,7 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
         `;
       } else {
         commentsData = await sql`
-          SELECT 
+          SELECT
             DATE_TRUNC('month', pc.created_at AT TIME ZONE 'UTC+3') as date,
             COUNT(*) as count,
             p.title as project_title
@@ -341,19 +349,41 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
     } catch {
       console.log('project_comments table not available');
     }
-    
+
     // Объединяем данные по датам
-    const dateMap = new Map<string, { date: string; likes: number; comments: number; likesProjects: string[]; commentsProjects: string[] }>();
-    
+    const dateMap = new Map<
+      string,
+      {
+        date: string;
+        likes: number;
+        comments: number;
+        likesProjects: string[];
+        commentsProjects: string[];
+      }
+    >();
+
     // Обрабатываем лайки
     likesData.forEach((row) => {
       const date = new Date(row.date);
-      const dateStr = period === 'month' 
-        ? date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' })
-        : date.toLocaleDateString(locale, { month: 'short', year: '2-digit' });
-      
+      const dateStr =
+        period === 'month'
+          ? date.toLocaleDateString(locale, {
+              day: '2-digit',
+              month: '2-digit',
+            })
+          : date.toLocaleDateString(locale, {
+              month: 'short',
+              year: '2-digit',
+            });
+
       if (!dateMap.has(dateStr)) {
-        dateMap.set(dateStr, { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
+        dateMap.set(dateStr, {
+          date: dateStr,
+          likes: 0,
+          comments: 0,
+          likesProjects: [],
+          commentsProjects: [],
+        });
       }
       const entry = dateMap.get(dateStr)!;
       entry.likes += Number(row.count);
@@ -361,16 +391,29 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
         entry.likesProjects.push(row.project_title);
       }
     });
-    
+
     // Обрабатываем комментарии
     commentsData.forEach((row) => {
       const date = new Date(row.date);
-      const dateStr = period === 'month' 
-        ? date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' })
-        : date.toLocaleDateString(locale, { month: 'short', year: '2-digit' });
-      
+      const dateStr =
+        period === 'month'
+          ? date.toLocaleDateString(locale, {
+              day: '2-digit',
+              month: '2-digit',
+            })
+          : date.toLocaleDateString(locale, {
+              month: 'short',
+              year: '2-digit',
+            });
+
       if (!dateMap.has(dateStr)) {
-        dateMap.set(dateStr, { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
+        dateMap.set(dateStr, {
+          date: dateStr,
+          likes: 0,
+          comments: 0,
+          likesProjects: [],
+          commentsProjects: [],
+        });
       }
       const entry = dateMap.get(dateStr)!;
       entry.comments += Number(row.count);
@@ -378,29 +421,50 @@ export async function getActivityData(period: 'month' | 'year' = 'month', locale
         entry.commentsProjects.push(row.project_title);
       }
     });
-    
+
     // Генерируем полный диапазон дат
     const result = [];
     const now = new Date();
-    
+
     if (period === 'month') {
       for (let i = 29; i >= 0; i--) {
         const date = new Date(now);
         date.setDate(date.getDate() - i);
-        const dateStr = date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' });
-        result.push(dateMap.get(dateStr) || { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
+        const dateStr = date.toLocaleDateString(locale, {
+          day: '2-digit',
+          month: '2-digit',
+        });
+        result.push(
+          dateMap.get(dateStr) || {
+            date: dateStr,
+            likes: 0,
+            comments: 0,
+            likesProjects: [],
+            commentsProjects: [],
+          },
+        );
       }
     } else {
       for (let i = 11; i >= 0; i--) {
         const date = new Date(now);
         date.setMonth(date.getMonth() - i);
-        const dateStr = date.toLocaleDateString(locale, { month: 'short', year: '2-digit' });
-        result.push(dateMap.get(dateStr) || { date: dateStr, likes: 0, comments: 0, likesProjects: [], commentsProjects: [] });
+        const dateStr = date.toLocaleDateString(locale, {
+          month: 'short',
+          year: '2-digit',
+        });
+        result.push(
+          dateMap.get(dateStr) || {
+            date: dateStr,
+            likes: 0,
+            comments: 0,
+            likesProjects: [],
+            commentsProjects: [],
+          },
+        );
       }
     }
-    
+
     return result;
-    
   } catch (error) {
     console.error('Failed to fetch activity data:', error);
     return [];

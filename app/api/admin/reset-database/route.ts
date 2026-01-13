@@ -10,7 +10,7 @@ export async function POST(): Promise<NextResponse<ResetDatabaseResponse | ApiEr
   try {
     // Check admin authorization
     const { isAdmin, user } = await verifyAdminAuth();
-    
+
     if (!isAdmin || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -18,13 +18,13 @@ export async function POST(): Promise<NextResponse<ResetDatabaseResponse | ApiEr
     // Clear all tables except users (with error handling for non-existent tables)
     const tablesToClear = [
       'project_comments',
-      'project_likes', 
+      'project_likes',
       'projects',
       'cv_education',
       'cv_experience',
       'cv_languages',
       'cv_data',
-      'images'
+      'images',
     ];
 
     const clearedTables = [];
@@ -55,19 +55,15 @@ export async function POST(): Promise<NextResponse<ResetDatabaseResponse | ApiEr
     revalidatePath('/');
     revalidateTag('cv', 'max');
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Database reset and seeded successfully',
       cleared_tables: clearedTables,
       skipped_tables: skippedTables,
       seeded_data: seedResult,
-      info: 'Database cleared and populated with sample data'
+      info: 'Database cleared and populated with sample data',
     });
-
   } catch (error) {
     console.error('Database reset error:', error);
-    return NextResponse.json(
-      { error: 'Failed to reset database' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to reset database' }, { status: 500 });
   }
 }

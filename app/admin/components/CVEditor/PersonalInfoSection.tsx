@@ -25,7 +25,7 @@ export default function PersonalInfoSection({
   onAddSkill,
   onRemoveSkill,
   onUpdateSkill,
-  onSave
+  onSave,
 }: PersonalInfoSectionProps) {
   const parseAvatarUrls = (avatarUrl: string): string[] => {
     if (!avatarUrl || avatarUrl === '[]' || avatarUrl === '') return [];
@@ -45,11 +45,9 @@ export default function PersonalInfoSection({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Full Name
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Full Name</label>
             <Input
               value={cvData.cv.name || ''}
               onChange={(e) => onUpdateField('name', e.target.value)}
@@ -57,9 +55,7 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Position
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Position</label>
             <Input
               value={cvData.cv.title || ''}
               onChange={(e) => onUpdateField('title', e.target.value)}
@@ -67,9 +63,7 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Email
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
             <Input
               type="email"
               value={cvData.cv.email || ''}
@@ -78,9 +72,7 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Phone
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Phone</label>
             <Input
               value={cvData.cv.phone || ''}
               onChange={(e) => onUpdateField('phone', e.target.value)}
@@ -88,9 +80,7 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Location
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Location</label>
             <Input
               value={cvData.cv.location || ''}
               onChange={(e) => onUpdateField('location', e.target.value)}
@@ -98,9 +88,7 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Website
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Website</label>
             <Input
               value={cvData.cv.website || ''}
               onChange={(e) => onUpdateField('website', e.target.value)}
@@ -108,9 +96,7 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              GitHub URL
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">GitHub URL</label>
             <Input
               value={cvData.cv.github_url || ''}
               onChange={(e) => onUpdateField('github_url', e.target.value)}
@@ -118,9 +104,7 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              LinkedIn URL
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">LinkedIn URL</label>
             <Input
               value={cvData.cv.linkedin_url || ''}
               onChange={(e) => onUpdateField('linkedin_url', e.target.value)}
@@ -130,9 +114,9 @@ export default function PersonalInfoSection({
 
         {/* Avatar Upload */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-slate-700">
             Profile Avatars
-            <span className="text-xs text-slate-500 block mt-1">
+            <span className="mt-1 block text-xs text-slate-500">
               Upload multiple photos for avatar rotation (changes every 5 seconds)
             </span>
           </label>
@@ -144,7 +128,7 @@ export default function PersonalInfoSection({
               onUpdateField('avatar_url', JSON.stringify(imageIds));
               onUpdateCvData({
                 ...cvData,
-                cv: { ...cvData.cv, avatar_url: JSON.stringify(imageIds) }
+                cv: { ...cvData.cv, avatar_url: JSON.stringify(imageIds) },
               });
             }}
             maxImages={5}
@@ -157,9 +141,7 @@ export default function PersonalInfoSection({
 
         {/* Highlights */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            HIGHLIGHTS
-          </label>
+          <label className="mb-2 block text-sm font-medium text-slate-700">HIGHLIGHTS</label>
           <Textarea
             rows={8}
             value={cvData.cv.about || ''}
@@ -200,13 +182,9 @@ export default function PersonalInfoSection({
         </div>
 
         <div className="flex justify-end pt-4">
-          <Button
-            onClick={onSave}
-            disabled={saving}
-            className="flex items-center gap-2"
-          >
+          <Button onClick={onSave} disabled={saving} className="flex items-center gap-2">
             {saving ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             ) : (
               <Save size={16} />
             )}

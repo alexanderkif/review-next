@@ -1,5 +1,3 @@
-import { PDFFont, PDFPage, PDFRef } from 'pdf-lib';
-
 export interface PrintControlsProps {
   className?: string;
 }

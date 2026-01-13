@@ -1,4 +1,5 @@
-﻿import postgres from 'postgres';
+﻿import 'server-only';
+import postgres from 'postgres';
 import { unstable_cache } from 'next/cache';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
@@ -16,7 +17,7 @@ async function fetchCVData(): Promise<CVData | null> {
     // Check if cv_data table exists
     const tableExists = await sql`
       SELECT EXISTS (
-        SELECT FROM information_schema.tables 
+        SELECT FROM information_schema.tables
         WHERE table_name = 'cv_data'
       )
     `;
@@ -28,16 +29,15 @@ async function fetchCVData(): Promise<CVData | null> {
 
     // Get main CV data
     const cvResult = await sql`
-      SELECT * FROM cv_data 
-      WHERE is_active = true 
-      ORDER BY created_at DESC 
+      SELECT * FROM cv_data
+      WHERE is_active = true
+      ORDER BY created_at DESC
       LIMIT 1
     `;
-    
+
     console.log('CV data query result:', cvResult.length, 'rows');
 
     if (cvResult.length === 0) {
-      console.log('No CV data found in database, returning null');
       return null;
     }
 
@@ -45,21 +45,21 @@ async function fetchCVData(): Promise<CVData | null> {
 
     // Get work experience
     const experienceResult = await sql`
-      SELECT * FROM cv_experience 
+      SELECT * FROM cv_experience
       WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC, created_at DESC
     `;
 
     // Get education
     const educationResult = await sql`
-      SELECT * FROM cv_education 
+      SELECT * FROM cv_education
       WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC, created_at DESC
     `;
 
     // Get languages
     const languagesResult = await sql`
-      SELECT * FROM cv_languages 
+      SELECT * FROM cv_languages
       WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC
     `;
@@ -78,7 +78,11 @@ async function fetchCVData(): Promise<CVData | null> {
         avatarUrls = Array.isArray(cv.avatar_url) ? cv.avatar_url : JSON.parse(cv.avatar_url);
       } catch {
         // If it's a single UUID string, convert to array
-        if (typeof cv.avatar_url === 'string' && cv.avatar_url.trim() !== '' && !cv.avatar_url.startsWith('data:')) {
+        if (
+          typeof cv.avatar_url === 'string' &&
+          cv.avatar_url.trim() !== '' &&
+          !cv.avatar_url.startsWith('data:')
+        ) {
           avatarUrls = [cv.avatar_url];
         }
       }
@@ -94,12 +98,12 @@ async function fetchCVData(): Promise<CVData | null> {
         phone: cv.phone || '',
         location: cv.location || '',
         website: cv.website || '',
-        avatar: avatarUrls.length > 0 ? avatarUrls.map(url => `/api/images/${url}`) : [],
+        avatar: avatarUrls.length > 0 ? avatarUrls.map((url) => `/api/images/${url}`) : [],
         github: cv.github_url || '',
         linkedin: cv.linkedin_url || '',
       },
       about: cv.about,
-      experience: experienceResult.map(exp => ({
+      experience: experienceResult.map((exp) => ({
         id: exp.id.toString(),
         title: exp.title,
         company: exp.company,
@@ -107,7 +111,7 @@ async function fetchCVData(): Promise<CVData | null> {
         description: exp.description,
         current: exp.is_current,
       })),
-      education: educationResult.map(edu => ({
+      education: educationResult.map((edu) => ({
         id: edu.id.toString(),
         degree: edu.degree,
         institution: edu.institution,
@@ -119,11 +123,11 @@ async function fetchCVData(): Promise<CVData | null> {
         tools: cv.skills_tools || [],
         backend: cv.skills_backend || [],
       },
-      languages: languagesResult.map(lang => ({
+      languages: languagesResult.map((lang) => ({
         language: lang.language,
         level: lang.level,
       })),
-      projects: projectsResult.map(proj => ({
+      projects: projectsResult.map((proj) => ({
         id: proj.id,
         title: proj.title,
         description: proj.description,
@@ -142,24 +146,18 @@ async function fetchCVData(): Promise<CVData | null> {
     return cvData;
   } catch (error: unknown) {
     console.error('Error fetching CV data:', error);
-    
+
     // For any database errors, return null to show proper "no data" state
     console.warn('Database error, returning null');
     return null;
   }
 }
 
-
-
 // Cached version of the function
-export const getCVData = unstable_cache(
-  fetchCVData,
-  ['cv-data'],
-  { 
-    revalidate: 3600, // 1 hour
-    tags: ['cv']
-  }
-);
+export const getCVData = unstable_cache(fetchCVData, ['cv-data'], {
+  revalidate: 3600, // 1 hour
+  tags: ['cv'],
+});
 
 // Function to invalidate CV cache (for admin panel)
 export async function revalidateCVData() {

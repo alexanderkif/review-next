@@ -86,7 +86,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
@@ -100,22 +100,22 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
 
   const renderImageContent = () => {
     const imageUrl = images[currentIndex];
-    
+
     // Validate URL
     if (!imageUrl || typeof imageUrl !== 'string') {
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
           <div className="text-gray-500">No image available</div>
         </div>
       );
     }
-    
+
     try {
       // Check if it's a valid URL by trying to create URL object for external URLs
       if (imageUrl.startsWith('http')) {
         new URL(imageUrl);
       }
-      
+
       return (
         <Image
           src={imageUrl}
@@ -124,14 +124,14 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
           className="object-contain transition-opacity duration-300"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           priority={currentIndex === 0}
-          fetchPriority={currentIndex === 0 ? "high" : "auto"}
+          fetchPriority={currentIndex === 0 ? 'high' : 'auto'}
           onError={() => console.warn('Image failed to load:', imageUrl)}
         />
       );
     } catch (error) {
       console.warn('Invalid image URL:', imageUrl, error);
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
           <div className="text-gray-500">Invalid image</div>
         </div>
       );
@@ -141,22 +141,22 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
   return (
     <>
       {/* Основная карусель */}
-      <div className="relative group">
+      <div className="group relative">
         {/* Main image */}
-        <div 
+        <div
           ref={imageContainerRef}
-          className="aspect-video relative overflow-hidden rounded-lg bg-gradient-to-br from-white/5 to-white/20 cursor-pointer"
+          className="relative aspect-video cursor-pointer overflow-hidden rounded-lg bg-gradient-to-br from-white/5 to-white/20"
           onClick={toggleFullscreen}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
           {renderImageContent()}
-          
+
           {/* Иконка полноэкранного режима - дополнительный способ для desktop */}
           <Tooltip content="Fullscreen" position="left">
             <button
-              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white hover:text-white p-2 rounded-full transition-all cursor-pointer z-20"
+              className="absolute top-4 right-4 z-20 cursor-pointer rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70 hover:text-white"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFullscreen();
@@ -166,13 +166,13 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
               <Maximize2 size={20} />
             </button>
           </Tooltip>
-        
+
           {/* Навигационные стрелки */}
           {images.length > 1 && (
             <>
               <Tooltip content="Previous image" position="right">
                 <button
-                  className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 cursor-pointer"
+                  className="absolute top-1/2 left-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70"
                   onClick={(e) => {
                     e.stopPropagation();
                     prevImage();
@@ -182,10 +182,10 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
                   <ChevronLeft size={20} />
                 </button>
               </Tooltip>
-              
+
               <Tooltip content="Next image" position="left">
                 <button
-                  className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 cursor-pointer"
+                  className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70"
                   onClick={(e) => {
                     e.stopPropagation();
                     nextImage();
@@ -200,7 +200,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
 
           {/* Индикатор количества изображений */}
           {images.length > 1 && (
-            <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-white text-sm pointer-events-none">
+            <div className="pointer-events-none absolute top-4 right-4 rounded-full bg-black/50 px-3 py-1 text-sm text-white backdrop-blur-sm">
               {currentIndex + 1} / {images.length}
             </div>
           )}
@@ -208,7 +208,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
 
         {/* Миниатюры */}
         {images.length > 1 && (
-          <div className="flex gap-2 mt-4 overflow-x-auto pb-2 px-1 py-1">
+          <div className="mt-4 flex gap-2 overflow-x-auto px-1 py-1 pb-2">
             {images.map((image, index) => {
               // Validate each thumbnail URL
               const isValidUrl = (() => {
@@ -222,14 +222,14 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
                   return false;
                 }
               })();
-              
+
               return (
                 <button
                   key={index}
                   onClick={() => goToImage(index)}
-                  className={`flex-shrink-0 relative w-20 h-12 rounded-lg overflow-hidden transition-all cursor-pointer ${
+                  className={`relative h-12 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg transition-all ${
                     index === currentIndex
-                      ? 'ring-2 ring-white/50 opacity-100'
+                      ? 'opacity-100 ring-2 ring-white/50'
                       : 'opacity-70 hover:opacity-100'
                   }`}
                   aria-label={`View image ${index + 1}`}
@@ -244,7 +244,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
                       onError={() => console.warn('Thumbnail failed to load:', image)}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
                       <span className="text-xs text-gray-500">?</span>
                     </div>
                   )}
@@ -256,72 +256,71 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
       </div>
 
       {/* Полноэкранный режим через Portal */}
-      {isFullscreen && createPortal(
-        <div 
-          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm flex items-center justify-center"
-        >
-          {/* Кнопка закрытия */}
-          <Tooltip content="Close" position="left">
-            <button
-              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white hover:text-white p-3 rounded-full transition-all cursor-pointer z-[10000]"
-              onClick={toggleFullscreen}
-              aria-label="Close fullscreen"
+      {isFullscreen &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-sm">
+            {/* Кнопка закрытия */}
+            <Tooltip content="Close" position="left">
+              <button
+                className="absolute top-4 right-4 z-[10000] cursor-pointer rounded-full bg-black/50 p-3 text-white transition-all hover:bg-black/70 hover:text-white"
+                onClick={toggleFullscreen}
+                aria-label="Close fullscreen"
+              >
+                <X size={24} />
+              </button>
+            </Tooltip>
+
+            {/* Изображение в полноэкранном режиме */}
+            <div
+              className="relative h-full w-full"
+              onClick={(e) => e.stopPropagation()}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             >
-              <X size={24} />
-            </button>
-          </Tooltip>
+              {renderImageContent()}
 
-          {/* Изображение в полноэкранном режиме */}
-          <div 
-            className="relative w-full h-full"
-            onClick={(e) => e.stopPropagation()}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {renderImageContent()}
-            
-            {/* Навигационные стрелки в полноэкранном режиме */}
-            {images.length > 1 && (
-              <>
-                <Tooltip content="Previous image" position="right">
-                  <button
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors z-[10000] cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      prevImage();
-                    }}
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft size={28} />
-                  </button>
-                </Tooltip>
-                
-                <Tooltip content="Next image" position="left">
-                  <button
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors z-[10000] cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      nextImage();
-                    }}
-                    aria-label="Next image"
-                  >
-                    <ChevronRight size={28} />
-                  </button>
-                </Tooltip>
-              </>
-            )}
+              {/* Навигационные стрелки в полноэкранном режиме */}
+              {images.length > 1 && (
+                <>
+                  <Tooltip content="Previous image" position="right">
+                    <button
+                      className="absolute top-1/2 left-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        prevImage();
+                      }}
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft size={28} />
+                    </button>
+                  </Tooltip>
 
-            {/* Счетчик изображений в полноэкранном режиме */}
-            {images.length > 1 && (
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 backdrop-blur-sm rounded-full text-white text-lg pointer-events-none z-[10000]">
-                {currentIndex + 1} / {images.length}
-              </div>
-            )}
-          </div>
-        </div>,
-        document.body
-      )}
+                  <Tooltip content="Next image" position="left">
+                    <button
+                      className="absolute top-1/2 right-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        nextImage();
+                      }}
+                      aria-label="Next image"
+                    >
+                      <ChevronRight size={28} />
+                    </button>
+                  </Tooltip>
+                </>
+              )}
+
+              {/* Счетчик изображений в полноэкранном режиме */}
+              {images.length > 1 && (
+                <div className="pointer-events-none absolute bottom-8 left-1/2 z-[10000] -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 text-lg text-white backdrop-blur-sm">
+                  {currentIndex + 1} / {images.length}
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

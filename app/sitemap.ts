@@ -3,7 +3,7 @@ import { serverLogger } from './lib/logger';
 
 export default async function sitemap() {
   const baseUrl = 'https://aleksandr-nikiforov-cv.vercel.app';
-  
+
   // Get projects for dynamic URLs
   let projects: Project[] = [];
   try {

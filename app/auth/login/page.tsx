@@ -17,49 +17,49 @@ function LoginForm() {
   const message = searchParams.get('message');
   const error = searchParams.get('error');
   const callbackUrl = searchParams.get('callbackUrl') || '/';
-  
+
   // Debug logging
   // LoginForm initialized with callbackUrl
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     // Очищаем ошибку при изменении поля
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Enter a valid email';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must contain at least 6 characters';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -95,144 +95,150 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md animate-fade-in">
-          <Card className="text-white backdrop-blur-xl">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-emerald-600 to-blue-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg animate-float">
-                А
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="animate-fade-in w-full max-w-md">
+        <Card className="text-white backdrop-blur-xl">
+          <CardHeader className="text-center">
+            <div className="animate-float mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-blue-600 text-2xl font-bold text-white shadow-lg">
+              А
+            </div>
+            <CardTitle className="text-2xl text-white">Welcome</CardTitle>
+            <p className="text-sm text-white/70">Log into your account to leave comments</p>
+          </CardHeader>
+
+          <CardContent>
+            {/* Сообщения */}
+            {message && (
+              <div className="animate-fade-in mb-4 rounded-lg border border-green-500/30 bg-green-500/20 p-3 text-sm text-green-100">
+                {message}
               </div>
-              <CardTitle className="text-2xl text-white">
-                Welcome
-              </CardTitle>
-              <p className="text-white/70 text-sm">
-                Log into your account to leave comments
-              </p>
-            </CardHeader>
+            )}
 
-            <CardContent>
-              {/* Сообщения */}
-              {message && (
-                <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-3 text-green-100 text-sm mb-4 animate-fade-in">
-                  {message}
-                </div>
-              )}
-              
-              {error && (
-                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-100 text-sm mb-4 animate-fade-in">
-                  {error === 'CredentialsSignin' ? 'Invalid email or password' : 'An error occurred during login'}
-                </div>
-              )}
+            {error && (
+              <div className="animate-fade-in mb-4 rounded-lg border border-red-500/30 bg-red-500/20 p-3 text-sm text-red-100">
+                {error === 'CredentialsSignin'
+                  ? 'Invalid email or password'
+                  : 'An error occurred during login'}
+              </div>
+            )}
 
-              {errors.general && (
-                <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-100 text-sm mb-4 animate-fade-in">
-                  {errors.general}
-                </div>
-              )}
+            {errors.general && (
+              <div className="animate-fade-in mb-4 rounded-lg border border-red-500/30 bg-red-500/20 p-3 text-sm text-red-100">
+                {errors.general}
+              </div>
+            )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="relative">
-                  <Input
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    error={errors.email}
-                    className={`pl-12 ${errors.email ? 'border-red-500/50' : ''}`}
-                  />
-                  <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                <Input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  error={errors.email}
+                  className={`pl-12 ${errors.email ? 'border-red-500/50' : ''}`}
+                />
+                <Mail
+                  size={18}
+                  className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-600"
+                />
+              </div>
 
-                <div className="relative">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    error={errors.password}
-                    className={`pl-12 pr-12 ${errors.password ? 'border-red-500/50' : ''}`}
-                  />
-                  <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800 transition-colors cursor-pointer"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-
-                <Button 
-                  size="md" 
-                  type="submit" 
-                  className="w-full mt-6 font-semibold"
-                  disabled={loading}
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  error={errors.password}
+                  className={`pr-12 pl-12 ${errors.password ? 'border-red-500/50' : ''}`}
+                />
+                <Lock
+                  size={18}
+                  className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-600"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer text-slate-600 transition-colors hover:text-slate-800"
                 >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Signing in...
-                    </div>
-                  ) : (
-                    'Log In'
-                  )}
-                </Button>
-              </form>
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
 
-              {/* OAuth Buttons */}
+              <Button
+                size="md"
+                type="submit"
+                className="mt-6 w-full font-semibold"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Signing in...
+                  </div>
+                ) : (
+                  'Log In'
+                )}
+              </Button>
+            </form>
+
+            {/* OAuth Buttons */}
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/20"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-white/10 px-2 text-white/70">Or continue with</span>
+                </div>
+              </div>
               <div className="mt-6">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/20"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white/10 text-white/70">Or continue with</span>
-                  </div>
-                </div>
-                <div className="mt-6">
-                  <OAuthButtons callbackUrl={callbackUrl} />
-                </div>
+                <OAuthButtons callbackUrl={callbackUrl} />
               </div>
+            </div>
 
-              {/* Переход к регистрации */}
-              <div className="mt-6 text-center">
-                <p className="text-white/70 text-sm">
-                  No account?{' '}
-                  <Link
-                    href="/auth/register"
-                    className="text-white font-medium hover:text-blue-300 transition-colors underline"
-                  >
-                    Register
-                  </Link>
-                </p>
-              </div>
-
-              {/* Ссылка на главную */}
-              <div className="mt-4 text-center">
+            {/* Переход к регистрации */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-white/70">
+                No account?{' '}
                 <Link
-                  href="/"
-                  className="inline-flex items-center gap-2 text-white/70 text-sm hover:text-white transition-colors"
+                  href="/auth/register"
+                  className="font-medium text-white underline transition-colors hover:text-blue-300"
                 >
-                  <ArrowLeft size={16} />
-                  Home
+                  Register
                 </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </p>
+            </div>
+
+            {/* Ссылка на главную */}
+            <div className="mt-4 text-center">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-white"
+              >
+                <ArrowLeft size={16} />
+                Home
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+    </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );

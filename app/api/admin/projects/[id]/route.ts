@@ -8,10 +8,10 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 // GET - получить конкретный проект
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<Project | ApiError>> {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -28,23 +28,19 @@ export async function GET(
     }
 
     return NextResponse.json(project[0] as unknown as Project);
-
   } catch (error) {
     console.error('Error fetching project:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch project' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch project' }, { status: 500 });
   }
 }
 
 // PUT - обновить проект
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<{ message: string } | ApiError>> {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -53,7 +49,7 @@ export async function PUT(
     const { id } = await params;
     const projectId = parseInt(id);
     const data: ProjectUpdateRequest = await request.json();
-    
+
     const {
       title,
       description,
@@ -64,16 +60,16 @@ export async function PUT(
       image_urls,
       year,
       featured,
-      status
+      status,
     } = data;
 
     // Get old image URLs for cleanup
     const oldProject = await sql`
-      SELECT image_urls FROM projects 
+      SELECT image_urls FROM projects
       WHERE id = ${projectId}
     `;
 
-    const oldImageUrls = oldProject.length > 0 ? (oldProject[0].image_urls || []) : [];
+    const oldImageUrls = oldProject.length > 0 ? oldProject[0].image_urls || [] : [];
     const newImageUrls = image_urls || [];
 
     // Find unused image IDs
@@ -98,9 +94,9 @@ export async function PUT(
     if (unusedImageIds.length > 0) {
       try {
         await sql`
-          DELETE FROM images 
-          WHERE id = ANY(${unusedImageIds}) 
-          AND entity_type = 'project' 
+          DELETE FROM images
+          WHERE id = ANY(${unusedImageIds})
+          AND entity_type = 'project'
           AND entity_id = ${projectId.toString()}
         `;
         console.log(`Cleaned up ${unusedImageIds.length} unused project images`);
@@ -110,23 +106,19 @@ export async function PUT(
     }
 
     return NextResponse.json({ message: 'Project updated successfully' });
-
   } catch (error) {
     console.error('Error updating project:', error);
-    return NextResponse.json(
-      { error: 'Failed to update project' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
   }
 }
 
 // DELETE - удалить проект
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<{ message: string } | ApiError>> {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -140,7 +132,7 @@ export async function DELETE(
       SELECT image_urls FROM projects WHERE id = ${projectId}
     `;
 
-    const imageUrls = project.length > 0 ? (project[0].image_urls || []) : [];
+    const imageUrls = project.length > 0 ? project[0].image_urls || [] : [];
 
     // Удаляем проект (связанные лайки и комментарии удалятся автоматически благодаря CASCADE)
     await sql`
@@ -151,9 +143,9 @@ export async function DELETE(
     if (imageUrls.length > 0) {
       try {
         await sql`
-          DELETE FROM images 
-          WHERE id = ANY(${imageUrls}) 
-          AND entity_type = 'project' 
+          DELETE FROM images
+          WHERE id = ANY(${imageUrls})
+          AND entity_type = 'project'
           AND entity_id = ${projectId.toString()}
         `;
         console.log(`Cleaned up ${imageUrls.length} project images`);
@@ -163,12 +155,8 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Project deleted successfully' });
-
   } catch (error) {
     console.error('Error deleting project:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete project' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
   }
 }

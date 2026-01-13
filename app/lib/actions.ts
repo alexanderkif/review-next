@@ -45,8 +45,8 @@ export async function loginUser(prevState: unknown, formData: FormData) {
   try {
     // Получаем пользователя из базы данных
     const user = await sql`
-      SELECT id, email, name, password_hash 
-      FROM users 
+      SELECT id, email, name, password_hash
+      FROM users
       WHERE email = ${email}
     `;
 
@@ -69,7 +69,6 @@ export async function loginUser(prevState: unknown, formData: FormData) {
 
     // Здесь должна быть логика создания сессии
     // В демо версии просто перенаправляем на главную
-
   } catch (error) {
     console.error('Login error:', error);
     return {
@@ -117,7 +116,6 @@ export async function registerUser(prevState: unknown, formData: FormData) {
       VALUES (${name}, ${email}, ${hashedPassword})
       RETURNING id, name, email
     `;
-
   } catch (error) {
     console.error('Registration error:', error);
     return {
@@ -129,18 +127,25 @@ export async function registerUser(prevState: unknown, formData: FormData) {
 }
 
 // Лайки проектов
-export async function toggleProjectLike(projectId: number, userId: string) {
+export async function toggleProjectLike(projectId: number) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      throw new Error('Unauthorized');
+    }
+
+    const userId = session.user.id;
+
     // Check if like already exists
     const existingLike = await sql`
-      SELECT id FROM project_likes 
+      SELECT id FROM project_likes
       WHERE project_id = ${projectId} AND user_id = ${userId}
     `;
 
     if (existingLike.length > 0) {
       // Убираем лайк
       await sql`
-        DELETE FROM project_likes 
+        DELETE FROM project_likes
         WHERE project_id = ${projectId} AND user_id = ${userId}
       `;
     } else {
@@ -153,7 +158,6 @@ export async function toggleProjectLike(projectId: number, userId: string) {
 
     revalidatePath('/projects');
     return { success: true };
-
   } catch (error) {
     console.error('Toggle like error:', error);
     return {
@@ -163,17 +167,24 @@ export async function toggleProjectLike(projectId: number, userId: string) {
 }
 
 // Комментарии к проектам
-export async function addProjectComment(projectId: number, userId: string, comment: string) {
-  const validatedFields = CommentSchema.safeParse({
-    projectId,
-    comment,
-  });
-
-  if (!validatedFields.success) {
-    throw new Error('Invalid comment data');
-  }
-
+export async function addProjectComment(projectId: number, comment: string) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      throw new Error('Unauthorized');
+    }
+
+    const userId = session.user.id;
+
+    const validatedFields = CommentSchema.safeParse({
+      projectId,
+      comment,
+    });
+
+    if (!validatedFields.success) {
+      throw new Error('Invalid comment data');
+    }
+
     await sql`
       INSERT INTO project_comments (project_id, user_id, comment)
       VALUES (${projectId}, ${userId}, ${comment})
@@ -181,33 +192,38 @@ export async function addProjectComment(projectId: number, userId: string, comme
 
     revalidatePath(`/projects/${projectId}`);
     revalidatePath('/projects');
-
   } catch (error) {
     console.error('Add comment error:', error);
-    throw new Error('Error adding comment');
+    throw error;
   }
 }
 
 // Альтернативная версия для form actions
 export async function addProjectCommentAction(prevState: unknown, formData: FormData) {
-  const validatedFields = CommentSchema.safeParse({
-    projectId: parseInt(formData.get('projectId') as string),
-    comment: formData.get('comment'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Проверьте правильность заполнения полей.',
-    };
-  }
-
-  const { projectId, comment } = validatedFields.data;
-
-  // В демо версии используем фиктивного пользователя
-  const userId = 1; // В реальном приложении получаем из сессии
-
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return {
+        message: 'Необходимо авторизоваться для добавления комментариев.',
+      };
+    }
+
+    const userId = session.user.id;
+
+    const validatedFields = CommentSchema.safeParse({
+      projectId: parseInt(formData.get('projectId') as string),
+      comment: formData.get('comment'),
+    });
+
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'Проверьте правильность заполнения полей.',
+      };
+    }
+
+    const { projectId, comment } = validatedFields.data;
+
     await sql`
       INSERT INTO project_comments (project_id, user_id, comment)
       VALUES (${projectId}, ${userId}, ${comment})
@@ -216,7 +232,6 @@ export async function addProjectCommentAction(prevState: unknown, formData: Form
     revalidatePath(`/projects/${projectId}`);
     revalidatePath('/projects');
     return { success: true, message: 'Комментарий добавлен успешно.' };
-
   } catch (error) {
     console.error('Add comment error:', error);
     return {
@@ -224,8 +239,6 @@ export async function addProjectCommentAction(prevState: unknown, formData: Form
     };
   }
 }
-
-
 
 // Comment management functions
 export async function updateComment(commentId: number, content: string) {
@@ -253,7 +266,7 @@ export async function updateComment(commentId: number, content: string) {
 
     // Update the comment
     await sql`
-      UPDATE project_comments 
+      UPDATE project_comments
       SET comment = ${content}, updated_at = NOW()
       WHERE id = ${commentId}
     `;

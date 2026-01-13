@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md,mjs}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md,mjs}\""
   },
   "dependencies": {
     "@types/nodemailer": "^7.0.3",
@@ -23,6 +25,7 @@
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "recharts": "^3.3.0",
+    "server-only": "^0.0.1",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.12"
@@ -34,6 +37,8 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
+    "prettier": "^3.7.4",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

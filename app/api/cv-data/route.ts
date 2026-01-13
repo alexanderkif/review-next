@@ -61,14 +61,14 @@ export async function GET(): Promise<NextResponse<CVData | ApiError>> {
         linkedin: cv.linkedin_url,
         avatar: (() => {
           if (!cv.avatar_url) return [];
-          
+
           // Skip empty JSON arrays
           if (cv.avatar_url === '[]') return [];
-          
+
           try {
             // Handle both array and JSON string formats
-            const avatarUrls = Array.isArray(cv.avatar_url) 
-              ? cv.avatar_url 
+            const avatarUrls = Array.isArray(cv.avatar_url)
+              ? cv.avatar_url
               : JSON.parse(cv.avatar_url);
             return avatarUrls.map((uuid: string) => `/api/images/${uuid}`);
           } catch {
@@ -83,24 +83,24 @@ export async function GET(): Promise<NextResponse<CVData | ApiError>> {
         tools: cv.skills_tools || [],
         backend: cv.skills_backend || [],
       },
-      experience: experience.map(exp => ({
+      experience: experience.map((exp) => ({
         title: exp.title,
         company: exp.company,
         period: exp.period,
         description: exp.description,
         current: exp.is_current,
       })),
-      education: education.map(edu => ({
+      education: education.map((edu) => ({
         degree: edu.degree,
         institution: edu.institution,
         period: edu.period,
         description: edu.description,
       })),
-      languages: languages.map(lang => ({
+      languages: languages.map((lang) => ({
         language: lang.language,
         level: lang.level,
       })),
-      projects: projects.map(proj => ({
+      projects: projects.map((proj) => ({
         title: proj.title,
         description: proj.short_description,
         year: proj.year,
@@ -109,12 +109,8 @@ export async function GET(): Promise<NextResponse<CVData | ApiError>> {
         status: proj.status,
       })),
     });
-
   } catch (error) {
     console.error('Error fetching CV data:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch CV data' }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch CV data' }, { status: 500 });
   }
 }

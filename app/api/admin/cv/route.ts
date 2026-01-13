@@ -7,23 +7,28 @@ import type { Experience, Education, Language, ApiError } from '../../../types/a
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 // GET - get CV data
-export async function GET(): Promise<NextResponse<{
-  cv: Record<string, unknown>;
-  experience: Experience[];
-  education: Education[];
-  languages: Language[];
-} | ApiError>> {
+export async function GET(): Promise<
+  NextResponse<
+    | {
+        cv: Record<string, unknown>;
+        experience: Experience[];
+        education: Education[];
+        languages: Language[];
+      }
+    | ApiError
+  >
+> {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const cvData = await sql`
-      SELECT * FROM cv_data 
-      WHERE is_active = true 
-      ORDER BY created_at DESC 
+      SELECT * FROM cv_data
+      WHERE is_active = true
+      ORDER BY created_at DESC
       LIMIT 1
     `;
 
@@ -35,21 +40,21 @@ export async function GET(): Promise<NextResponse<{
 
     // Get work experience
     const experience = await sql`
-      SELECT * FROM cv_experience 
+      SELECT * FROM cv_experience
       WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC, created_at DESC
     `;
 
     // Get education
     const education = await sql`
-      SELECT * FROM cv_education 
+      SELECT * FROM cv_education
       WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC, created_at DESC
     `;
 
     // Get languages
     const languages = await sql`
-      SELECT * FROM cv_languages 
+      SELECT * FROM cv_languages
       WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC
     `;
@@ -58,29 +63,25 @@ export async function GET(): Promise<NextResponse<{
       cv: cv as unknown as Record<string, unknown>,
       experience: experience as unknown as Experience[],
       education: education as unknown as Education[],
-      languages: languages as unknown as Language[]
+      languages: languages as unknown as Language[],
     });
-
   } catch (error) {
     console.error('Error fetching CV data:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch CV data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch CV data' }, { status: 500 });
   }
 }
 
 // PUT - update main CV data
 export async function PUT(request: NextRequest) {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const data = await request.json();
-    
+
     const {
       name,
       title,
@@ -94,13 +95,13 @@ export async function PUT(request: NextRequest) {
       about,
       skills_frontend,
       skills_tools,
-      skills_backend
+      skills_backend,
     } = data;
 
     // Находим активное CV
     const currentCV = await sql`
-      SELECT id FROM cv_data 
-      WHERE is_active = true 
+      SELECT id FROM cv_data
+      WHERE is_active = true
       LIMIT 1
     `;
 
@@ -112,19 +113,22 @@ export async function PUT(request: NextRequest) {
 
     // Get old avatar URLs for cleanup
     const oldCV = await sql`
-      SELECT avatar_url FROM cv_data 
+      SELECT avatar_url FROM cv_data
       WHERE id = ${cvId}
     `;
 
-    const oldAvatarUrls = oldCV.length > 0 ? (() => {
-      const avatarUrl = oldCV[0].avatar_url;
-      if (!avatarUrl || avatarUrl === '[]') return [];
-      try {
-        return Array.isArray(avatarUrl) ? avatarUrl : JSON.parse(avatarUrl);
-      } catch {
-        return avatarUrl ? [avatarUrl] : [];
-      }
-    })() : [];
+    const oldAvatarUrls =
+      oldCV.length > 0
+        ? (() => {
+            const avatarUrl = oldCV[0].avatar_url;
+            if (!avatarUrl || avatarUrl === '[]') return [];
+            try {
+              return Array.isArray(avatarUrl) ? avatarUrl : JSON.parse(avatarUrl);
+            } catch {
+              return avatarUrl ? [avatarUrl] : [];
+            }
+          })()
+        : [];
 
     const newAvatarUrls = (() => {
       if (!avatar_url || avatar_url === '[]') return [];
@@ -137,12 +141,12 @@ export async function PUT(request: NextRequest) {
 
     // Find unused avatar image IDs
     const unusedAvatarIds = oldAvatarUrls.filter((id: string) => !newAvatarUrls.includes(id));
-    
+
     console.log('Avatar cleanup debug:', {
       oldAvatarUrls,
       newAvatarUrls,
       unusedAvatarIds,
-      cvId
+      cvId,
     });
 
     // Update data
@@ -168,17 +172,23 @@ export async function PUT(request: NextRequest) {
     // Clean up unused avatar images
     if (unusedAvatarIds.length > 0) {
       try {
-        console.log(`Attempting to cleanup ${unusedAvatarIds.length} unused avatar images:`, unusedAvatarIds);
-        
+        console.log(
+          `Attempting to cleanup ${unusedAvatarIds.length} unused avatar images:`,
+          unusedAvatarIds,
+        );
+
         const deletedImages = await sql`
-          DELETE FROM images 
-          WHERE id = ANY(${unusedAvatarIds}) 
-          AND entity_type = 'avatar' 
+          DELETE FROM images
+          WHERE id = ANY(${unusedAvatarIds})
+          AND entity_type = 'avatar'
           AND entity_id = ${cvId.toString()}
           RETURNING id
         `;
-        
-        console.log(`Successfully cleaned up ${deletedImages.length} unused avatar images:`, deletedImages.map(img => img.id));
+
+        console.log(
+          `Successfully cleaned up ${deletedImages.length} unused avatar images:`,
+          deletedImages.map((img) => img.id),
+        );
       } catch (cleanupError) {
         console.warn('Failed to cleanup unused avatar images:', cleanupError);
       }
@@ -186,12 +196,8 @@ export async function PUT(request: NextRequest) {
 
     await revalidateCVData();
     return NextResponse.json({ message: 'CV updated successfully' });
-
   } catch (error) {
     console.error('Error updating CV:', error);
-    return NextResponse.json(
-      { error: 'Failed to update CV' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update CV' }, { status: 500 });
   }
 }

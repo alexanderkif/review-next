@@ -13,7 +13,7 @@ export async function POST(): Promise<NextResponse<SyncImagesResponse | ApiError
   try {
     // Check admin authorization
     const { isAdmin } = await verifyAdminAuth();
-    
+
     if (!isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -31,8 +31,8 @@ export async function POST(): Promise<NextResponse<SyncImagesResponse | ApiError
     for (const project of projects) {
       // Get images from images table for this project
       const images = await sql`
-        SELECT id FROM images 
-        WHERE entity_type = 'project' 
+        SELECT id FROM images
+        WHERE entity_type = 'project'
         AND entity_id = ${project.id.toString()}
         ORDER BY created_at ASC
       `;
@@ -42,14 +42,14 @@ export async function POST(): Promise<NextResponse<SyncImagesResponse | ApiError
         const currentImageUrls = project.image_urls || [];
 
         // Check if sync is needed
-        const needsSync = 
+        const needsSync =
           imageIds.length !== currentImageUrls.length ||
           !imageIds.every((id: string) => currentImageUrls.includes(id));
 
         if (needsSync) {
           // Update project with correct image URLs
           await sql`
-            UPDATE projects 
+            UPDATE projects
             SET image_urls = ${imageIds}
             WHERE id = ${project.id}
           `;
@@ -58,7 +58,7 @@ export async function POST(): Promise<NextResponse<SyncImagesResponse | ApiError
           results.push({
             projectId: project.id,
             oldImageUrls: currentImageUrls,
-            newImageUrls: imageIds
+            newImageUrls: imageIds,
           });
 
           console.log(`Updated project ${project.id}: ${imageIds.length} images synced`);
@@ -70,14 +70,16 @@ export async function POST(): Promise<NextResponse<SyncImagesResponse | ApiError
       success: true,
       message: `Successfully synchronized ${updatedCount} projects`,
       updatedCount,
-      details: results
+      details: results,
     });
-
   } catch (error) {
     console.error('Error synchronizing images:', error);
     return NextResponse.json(
-      { error: 'Failed to synchronize images', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      {
+        error: 'Failed to synchronize images',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 },
     );
   }
 }

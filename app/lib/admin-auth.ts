@@ -1,3 +1,4 @@
+import 'server-only';
 import { auth } from '../../auth';
 
 export async function verifyAdminAuth() {
@@ -10,14 +11,14 @@ export async function verifyAdminAuth() {
 
     // Check user role
     if (session.user.role === 'admin') {
-      return { 
-        isAdmin: true, 
+      return {
+        isAdmin: true,
         user: {
           id: session.user.id,
           email: session.user.email as string,
           role: session.user.role as string,
-          name: session.user.name as string
-        }
+          name: session.user.name as string,
+        },
       };
     }
 

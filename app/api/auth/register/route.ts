@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     if (existingUser.length > 0) {
       return NextResponse.json(
         { message: 'User with this email already exists', field: 'email' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,25 +73,31 @@ export async function POST(request: NextRequest) {
     if (!emailSent) {
       // If email failed to send, delete user
       await sql`DELETE FROM users WHERE id = ${newUser.id}`;
-      
-      return NextResponse.json({
-        message: 'Error sending verification email. Please try later.',
-      }, { status: 500 });
+
+      return NextResponse.json(
+        {
+          message: 'Error sending verification email. Please try later.',
+        },
+        { status: 500 },
+      );
     }
 
-    return NextResponse.json({
-      message: 'Registration almost complete! Check your email and follow the link to confirm your email address.',
-      requiresVerification: true,
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        role: newUser.role,
-        created_at: newUser.created_at,
-        email_verified: false
-      }
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        message:
+          'Registration almost complete! Check your email and follow the link to confirm your email address.',
+        requiresVerification: true,
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          name: newUser.name,
+          role: newUser.role,
+          created_at: newUser.created_at,
+          email_verified: false,
+        },
+      },
+      { status: 201 },
+    );
   } catch (error) {
     console.error('Registration error:', error);
 
@@ -99,13 +105,10 @@ export async function POST(request: NextRequest) {
       const firstError = error.issues[0];
       return NextResponse.json(
         { message: firstError.message, field: firstError.path[0] },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

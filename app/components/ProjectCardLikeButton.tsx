@@ -14,10 +14,10 @@ interface ProjectCardLikeButtonProps {
   initialCount: number;
 }
 
-export default function ProjectCardLikeButton({ 
-  projectId, 
-  initialLiked, 
-  initialCount 
+export default function ProjectCardLikeButton({
+  projectId,
+  initialLiked,
+  initialCount,
 }: ProjectCardLikeButtonProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -28,24 +28,24 @@ export default function ProjectCardLikeButton({
 
   const handleLike = async () => {
     if (isLiking) return;
-    
+
     // Проверяем авторизацию
     if (!session?.user) {
       router.push(`/auth/login?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
-    
+
     setIsLiking(true);
     const prevLiked = isLiked;
     const prevCount = likesCount;
-    
+
     // Optimistic update
     setIsLiked(!isLiked);
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-    
+
     try {
-      const result = await toggleProjectLike(projectId, session.user.id);
-      
+      const result = await toggleProjectLike(projectId);
+
       if (!result.success) {
         // Revert on error
         setIsLiked(prevLiked);
@@ -63,10 +63,10 @@ export default function ProjectCardLikeButton({
 
   return (
     <Tooltip content={isLiked ? 'Remove like' : 'Add like'} position="top">
-      <button 
+      <button
         onClick={handleLike}
         disabled={isLiking}
-        className={`flex items-center gap-1 transition-colors disabled:opacity-50 cursor-pointer ${
+        className={`flex cursor-pointer items-center gap-1 transition-colors disabled:opacity-50 ${
           isLiked ? 'text-red-400' : 'text-white/70 hover:text-red-400'
         }`}
       >

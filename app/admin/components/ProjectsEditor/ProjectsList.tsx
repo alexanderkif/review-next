@@ -1,7 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import Tooltip from '../../../components/ui/Tooltip';
-import { Edit3, Trash2, Star, Calendar, Heart, MessageCircle, Github, ExternalLink } from 'lucide-react';
+import {
+  Edit3,
+  Trash2,
+  Star,
+  Calendar,
+  Heart,
+  MessageCircle,
+  Github,
+  ExternalLink,
+} from 'lucide-react';
 import { Project, getStatusLabel } from './types';
 
 interface ProjectsListProps {
@@ -12,28 +21,26 @@ interface ProjectsListProps {
 
 export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsListProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {projects.map((project) => (
         <Card key={project.id}>
           <CardHeader>
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="mb-2 flex items-center gap-2">
                   <CardTitle className="text-lg">{project.title}</CardTitle>
                   {project.featured && (
-                    <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                    <Star size={16} className="fill-yellow-500 text-yellow-500" />
                   )}
                 </div>
-                <p className="text-slate-600 text-sm line-clamp-2">
-                  {project.short_description}
-                </p>
+                <p className="line-clamp-2 text-sm text-slate-600">{project.short_description}</p>
               </div>
-              <div className="flex gap-2 ml-4">
+              <div className="ml-4 flex gap-2">
                 <Tooltip content="Edit project" position="top" variant="clay">
                   <Button
                     size="sm"
                     onClick={() => onEdit(project)}
-                    className="group p-2 min-h-[32px] min-w-[32px]"
+                    className="group min-h-[32px] min-w-[32px] p-2"
                     aria-label="Edit project"
                   >
                     <Edit3 size={14} className="icon-warning" />
@@ -43,7 +50,7 @@ export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsLis
                   <Button
                     size="sm"
                     onClick={() => onDelete(project.id)}
-                    className="group p-2 hover:bg-red-50 transition-all min-h-[32px] min-w-[32px]"
+                    className="group min-h-[32px] min-w-[32px] p-2 transition-all hover:bg-red-50"
                     aria-label="Delete project"
                   >
                     <Trash2 size={14} className="icon-danger" />
@@ -58,13 +65,13 @@ export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsLis
                 {project.technologies.slice(0, 3).map((tech) => (
                   <span
                     key={tech}
-                    className="px-2 py-1 bg-slate-100 text-slate-700 text-xs rounded-lg"
+                    className="rounded-lg bg-slate-100 px-2 py-1 text-xs text-slate-700"
                   >
                     {tech}
                   </span>
                 ))}
                 {project.technologies.length > 3 && (
-                  <span className="px-2 py-1 bg-slate-100 text-slate-500 text-xs rounded-lg">
+                  <span className="rounded-lg bg-slate-100 px-2 py-1 text-xs text-slate-500">
                     +{project.technologies.length - 3} more
                   </span>
                 )}
@@ -110,9 +117,7 @@ export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsLis
                 </div>
               </div>
 
-              <div className="text-xs text-slate-500">
-                Status: {getStatusLabel(project.status)}
-              </div>
+              <div className="text-xs text-slate-500">Status: {getStatusLabel(project.status)}</div>
             </div>
           </CardContent>
         </Card>

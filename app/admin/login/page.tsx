@@ -15,10 +15,10 @@ function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
-  
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,15 +53,15 @@ function AdminLoginForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
       setErrors({ general: 'Заполните все поля' });
       return;
@@ -98,8 +98,8 @@ function AdminLoginForm() {
   // Показываем загрузку при проверке базы данных
   if (checkingDb) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
       </div>
     );
   }
@@ -110,13 +110,13 @@ function AdminLoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
       <div className="w-full max-w-md">
         {/* Back navigation */}
         <div className="mb-6">
-          <Link 
+          <Link
             href="/"
-            className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg px-2 py-1 transition-all"
+            className="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-800"
           >
             <ArrowLeft size={16} />
             Back to Home
@@ -126,13 +126,11 @@ function AdminLoginForm() {
         {/* Форма авторизации */}
         <Card className="animate-fade-in">
           <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-blue-600">
               <Shield className="text-white" size={24} />
             </div>
-            <CardTitle className="text-2xl text-slate-800">
-              Admin Panel
-            </CardTitle>
-            <p className="text-slate-600 text-sm mt-2">
+            <CardTitle className="text-2xl text-slate-800">Admin Panel</CardTitle>
+            <p className="mt-2 text-sm text-slate-600">
               Enter credentials to access the admin panel
             </p>
           </CardHeader>
@@ -140,20 +138,22 @@ function AdminLoginForm() {
           <CardContent>
             {/* Error messages */}
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
-                {error === 'CredentialsSignin' ? 'Invalid email or password' : 'An error occurred during login'}
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+                {error === 'CredentialsSignin'
+                  ? 'Invalid email or password'
+                  : 'An error occurred during login'}
               </div>
             )}
 
             {errors.general && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
                 {errors.general}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
                   Email
                 </label>
                 <Input
@@ -169,7 +169,7 @@ function AdminLoginForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+                <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
                   Password
                 </label>
                 <div className="relative">
@@ -186,21 +186,21 @@ function AdminLoginForm() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg p-1 transition-colors cursor-pointer"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer rounded-lg p-1 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
-              <Button 
+              <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 text-white hover:text-white shadow-[3px_3px_6px_#9ca3af,_-1.5px_-1.5px_6px_rgba(255,255,255,0.1),_inset_-2px_-2px_1px_rgba(0,0,0,0.3)] transition-all hover:[background:linear-gradient(90deg,#10b981_0%,#3b82f6_100%)]"
+                className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 text-white shadow-[3px_3px_6px_#9ca3af,_-1.5px_-1.5px_6px_rgba(255,255,255,0.1),_inset_-2px_-2px_1px_rgba(0,0,0,0.3)] transition-all hover:text-white hover:[background:linear-gradient(90deg,#10b981_0%,#3b82f6_100%)]"
                 disabled={loading}
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                     Signing in...
                   </div>
                 ) : (
@@ -211,7 +211,6 @@ function AdminLoginForm() {
                 )}
               </Button>
             </form>
-
           </CardContent>
         </Card>
       </div>
@@ -221,11 +220,13 @@ function AdminLoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
+        </div>
+      }
+    >
       <AdminLoginForm />
     </Suspense>
   );

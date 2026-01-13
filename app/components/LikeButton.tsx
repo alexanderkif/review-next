@@ -15,22 +15,18 @@ interface LikeButtonProps {
   initialCount: number;
 }
 
-export default function LikeButton({ 
-  projectId, 
-  initialLiked, 
-  initialCount
-}: LikeButtonProps) {
+export default function LikeButton({ projectId, initialLiked, initialCount }: LikeButtonProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  
+
   const [optimisticLiked, setOptimisticLiked] = useOptimistic(
     { liked: initialLiked, count: initialCount },
     (state, liked: boolean) => ({
       liked,
-      count: liked ? state.count + 1 : state.count - 1
-    })
+      count: liked ? state.count + 1 : state.count - 1,
+    }),
   );
 
   const handleLike = () => {
@@ -45,7 +41,7 @@ export default function LikeButton({
       setOptimisticLiked(newLiked);
 
       try {
-        await toggleProjectLike(projectId, session.user.id);
+        await toggleProjectLike(projectId);
       } catch (error) {
         // В случае ошибки откатываем оптимистичное обновление
         setOptimisticLiked(!newLiked);
@@ -60,17 +56,14 @@ export default function LikeButton({
         size="sm"
         onClick={handleLike}
         disabled={isPending}
-        className={`flex items-center gap-2 transition-all !min-h-[44px] !min-w-[44px] px-4 py-2 ${
+        className={`flex !min-h-[44px] !min-w-[44px] items-center gap-2 px-4 py-2 transition-all ${
           optimisticLiked.liked
             ? '!text-red-400 hover:!text-red-300'
             : '!text-white/70 hover:!text-white'
         } ${isPending ? 'opacity-70' : ''}`}
         aria-label={optimisticLiked.liked ? 'Remove like' : 'Add like'}
       >
-        <Heart 
-          size={16} 
-          className={optimisticLiked.liked ? 'fill-current' : ''} 
-        />
+        <Heart size={16} className={optimisticLiked.liked ? 'fill-current' : ''} />
         <span>{optimisticLiked.count}</span>
       </Button>
     </Tooltip>

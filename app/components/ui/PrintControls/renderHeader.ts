@@ -7,7 +7,7 @@ export const renderHeader = (
   cvData: CVData,
   helveticaBold: PDFFont,
   helveticaFont: PDFFont,
-  y: number
+  y: number,
 ): number => {
   let currentY = y;
   const { MARGIN, COLORS, FONT_SIZE } = PDF_CONFIG;
@@ -42,7 +42,7 @@ export const renderContactInfo = (
   cvData: CVData,
   helveticaFont: PDFFont,
   y: number,
-  pageAnnotations: PDFRef[]
+  pageAnnotations: PDFRef[],
 ): { newY: number; annotations: PDFRef[] } => {
   let currentY = y;
   let contactX = PDF_CONFIG.MARGIN;
@@ -79,7 +79,7 @@ export const renderContactInfo = (
           S: 'URI',
           URI: page.doc.context.obj(`mailto:${emailText}`),
         }),
-      })
+      }),
     );
 
     newAnnotations.push(linkAnnotation);
@@ -133,7 +133,7 @@ export const renderContactInfo = (
             S: 'URI',
             URI: page.doc.context.obj(phone),
           }),
-        })
+        }),
       );
       newAnnotations.push(linkAnnotation);
     }
@@ -158,10 +158,7 @@ export const renderContactInfo = (
 
   // Location
   if (cvData.personalInfo?.location) {
-    const locationWidth = helveticaFont.widthOfTextAtSize(
-      cvData.personalInfo.location,
-      10
-    );
+    const locationWidth = helveticaFont.widthOfTextAtSize(cvData.personalInfo.location, 10);
 
     if (contactX + locationWidth > PAGE_WIDTH - MARGIN) {
       currentY -= 12;
@@ -210,7 +207,7 @@ export const renderContactInfo = (
           S: 'URI',
           URI: page.doc.context.obj(websiteText),
         }),
-      })
+      }),
     );
 
     newAnnotations.push(linkAnnotation);
@@ -262,7 +259,7 @@ export const renderContactInfo = (
           S: 'URI',
           URI: page.doc.context.obj(githubText),
         }),
-      })
+      }),
     );
 
     newAnnotations.push(linkAnnotation);
@@ -302,7 +299,7 @@ export const renderContactInfo = (
           S: 'URI',
           URI: page.doc.context.obj(linkedinText),
         }),
-      })
+      }),
     );
 
     newAnnotations.push(linkAnnotation);

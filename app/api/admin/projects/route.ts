@@ -8,7 +8,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 // GET - get all projects
 export async function GET(): Promise<NextResponse<Project[] | ApiError>> {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -27,27 +27,23 @@ export async function GET(): Promise<NextResponse<Project[] | ApiError>> {
     `;
 
     return NextResponse.json(projects as unknown as Project[]);
-
   } catch (error) {
     console.error('Error fetching projects:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch projects' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
   }
 }
 
 // POST - create new project
 export async function POST(request: NextRequest): Promise<NextResponse<Project | ApiError>> {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const data: ProjectCreateRequest = await request.json();
-    
+
     const {
       title,
       description,
@@ -58,7 +54,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Project |
       image_urls,
       year,
       featured,
-      status
+      status,
     } = data;
 
     const result = await sql`
@@ -89,12 +85,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<Project |
     `;
 
     return NextResponse.json(result[0] as unknown as Project);
-
   } catch (error) {
     console.error('Error creating project:', error);
-    return NextResponse.json(
-      { error: 'Failed to create project' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
   }
 }

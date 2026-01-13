@@ -7,7 +7,7 @@ import { SignJWT } from 'jose';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || 'your-super-secret-key-change-this-in-production'
+  process.env.NEXTAUTH_SECRET || 'your-super-secret-key-change-this-in-production',
 );
 
 export async function POST(request: NextRequest) {
@@ -17,10 +17,7 @@ export async function POST(request: NextRequest) {
     const password = formData.get('password') as string;
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
     // Найти пользователя в базе данных
@@ -31,29 +28,23 @@ export async function POST(request: NextRequest) {
     `;
 
     if (userResult.length === 0) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     const user = userResult[0];
 
     // Check password
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
-    
+
     if (!passwordMatch) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     // Create JWT token
-    const token = await new SignJWT({ 
-      userId: user.id, 
-      email: user.email, 
-      role: user.role 
+    const token = await new SignJWT({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('24h')
@@ -65,17 +56,13 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 24 * 60 * 60 // 24 hours
+      maxAge: 24 * 60 * 60, // 24 hours
     });
 
     // Redirect to admin panel
     return NextResponse.redirect(new URL('/admin', request.url));
-
   } catch (error) {
     console.error('Admin login error:', error);
-    return NextResponse.json(
-      { error: 'Authorization error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Authorization error' }, { status: 500 });
   }
 }

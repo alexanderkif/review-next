@@ -21,9 +21,7 @@ interface CardHeaderProps {
 }
 
 export const CardHeader = ({ children, className }: CardHeaderProps) => (
-  <div className={cn('mb-4', className)}>
-    {children}
-  </div>
+  <div className={cn('mb-4', className)}>{children}</div>
 );
 
 interface CardContentProps {
@@ -32,9 +30,7 @@ interface CardContentProps {
 }
 
 export const CardContent = ({ children, className }: CardContentProps) => (
-  <div className={className}>
-    {children}
-  </div>
+  <div className={className}>{children}</div>
 );
 
 interface CardTitleProps {
@@ -43,7 +39,5 @@ interface CardTitleProps {
 }
 
 export const CardTitle = ({ children, className }: CardTitleProps) => (
-  <h3 className={cn('text-xl font-semibold text-slate-800', className)}>
-    {children}
-  </h3>
+  <h3 className={cn('text-xl font-semibold text-slate-800', className)}>{children}</h3>
 );

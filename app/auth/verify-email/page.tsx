@@ -23,7 +23,7 @@ function VerifyEmailContent() {
   const router = useRouter();
   const [state, setState] = useState<VerificationState>({
     status: 'loading',
-    message: 'Checking verification token...'
+    message: 'Checking verification token...',
   });
 
   const verifyEmail = async (token: string) => {
@@ -39,38 +39,38 @@ function VerifyEmailContent() {
           setState({
             status: 'already-verified',
             message: data.message,
-            user: data.user
+            user: data.user,
           });
         } else {
           setState({
             status: 'success',
             message: data.message,
-            user: data.user
+            user: data.user,
           });
         }
       } else {
         setState({
           status: 'error',
-          message: data.error || 'Email verification error'
+          message: data.error || 'Email verification error',
         });
       }
     } catch (error) {
       logger.error('Verification error:', error);
       setState({
         status: 'error',
-        message: 'An error occurred during email verification. Please try later.'
+        message: 'An error occurred during email verification. Please try later.',
       });
     }
   };
 
   useEffect(() => {
     const token = searchParams.get('token');
-    
+
     if (!token) {
       setTimeout(() => {
         setState({
           status: 'error',
-          message: 'Verification token not found in link'
+          message: 'Verification token not found in link',
         });
       }, 0);
       return;
@@ -84,37 +84,29 @@ function VerifyEmailContent() {
     switch (state.status) {
       case 'loading':
         return (
-          <div className="text-center py-8">
-            <RefreshCw className="animate-spin mx-auto mb-4 text-blue-500" size={48} />
+          <div className="py-8 text-center">
+            <RefreshCw className="mx-auto mb-4 animate-spin text-blue-500" size={48} />
             <p className="text-slate-600">{state.message}</p>
           </div>
         );
 
       case 'success':
         return (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <CheckCircle className="mx-auto mb-4 text-green-500" size={64} />
-            <h2 className="text-2xl font-bold text-green-700 mb-4">
-              🎉 Email Verified!
-            </h2>
-            <p className="text-slate-700 mb-6">{state.message}</p>
+            <h2 className="mb-4 text-2xl font-bold text-green-700">🎉 Email Verified!</h2>
+            <p className="mb-6 text-slate-700">{state.message}</p>
             {state.user && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+              <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
                 <h3 className="font-semibold text-green-800">Welcome, {state.user.name}!</h3>
-                <p className="text-green-700 text-sm">{state.user.email}</p>
+                <p className="text-sm text-green-700">{state.user.email}</p>
               </div>
             )}
             <div className="space-y-3">
-              <Button 
-                className="w-full"
-                onClick={() => router.push('/auth/login')}
-              >
+              <Button className="w-full" onClick={() => router.push('/auth/login')}>
                 Login to Account
               </Button>
-              <Button 
-                className="w-full"
-                onClick={() => router.push('/')}
-              >
+              <Button className="w-full" onClick={() => router.push('/')}>
                 Home
               </Button>
             </div>
@@ -123,17 +115,12 @@ function VerifyEmailContent() {
 
       case 'already-verified':
         return (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <Mail className="mx-auto mb-4 text-blue-500" size={64} />
-            <h2 className="text-2xl font-bold text-blue-700 mb-4">
-              Email Already Verified
-            </h2>
-            <p className="text-slate-700 mb-6">{state.message}</p>
+            <h2 className="mb-4 text-2xl font-bold text-blue-700">Email Already Verified</h2>
+            <p className="mb-6 text-slate-700">{state.message}</p>
             <div className="space-y-3">
-              <Button 
-                className="w-full"
-                onClick={() => router.push('/auth/login')}
-              >
+              <Button className="w-full" onClick={() => router.push('/auth/login')}>
                 Login to Account
               </Button>
             </div>
@@ -142,23 +129,15 @@ function VerifyEmailContent() {
 
       case 'error':
         return (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <XCircle className="mx-auto mb-4 text-red-500" size={64} />
-            <h2 className="text-2xl font-bold text-red-700 mb-4">
-              Verification Error
-            </h2>
-            <p className="text-slate-700 mb-6">{state.message}</p>
+            <h2 className="mb-4 text-2xl font-bold text-red-700">Verification Error</h2>
+            <p className="mb-6 text-slate-700">{state.message}</p>
             <div className="space-y-3">
-              <Button 
-                className="w-full"
-                onClick={() => router.push('/auth/register')}
-              >
+              <Button className="w-full" onClick={() => router.push('/auth/register')}>
                 Retry Registration
               </Button>
-              <Button 
-                className="w-full"
-                onClick={() => router.push('/')}
-              >
+              <Button className="w-full" onClick={() => router.push('/')}>
                 Home
               </Button>
             </div>
@@ -168,23 +147,18 @@ function VerifyEmailContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Link 
-                href="/" 
-                className="text-slate-500 hover:text-slate-700 transition-colors"
-              >
+            <div className="mb-2 flex items-center gap-2">
+              <Link href="/" className="text-slate-500 transition-colors hover:text-slate-700">
                 <ArrowLeft size={20} />
               </Link>
               <CardTitle>Email Verification</CardTitle>
             </div>
           </CardHeader>
-          <CardContent>
-            {renderContent()}
-          </CardContent>
+          <CardContent>{renderContent()}</CardContent>
         </Card>
       </div>
     </div>
@@ -193,11 +167,13 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-        <RefreshCw className="animate-spin text-blue-500" size={48} />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+          <RefreshCw className="animate-spin text-blue-500" size={48} />
+        </div>
+      }
+    >
       <VerifyEmailContent />
     </Suspense>
   );

@@ -46,9 +46,7 @@ export default function PasswordSection({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Current Password
-          </label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Current Password</label>
           <div className="relative">
             <Input
               type={showCurrentPassword ? 'text' : 'password'}
@@ -60,7 +58,7 @@ export default function PasswordSection({
             <button
               type="button"
               onClick={toggleCurrentPassword}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-400 hover:text-slate-600"
             >
               {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -68,9 +66,7 @@ export default function PasswordSection({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            New Password
-          </label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">New Password</label>
           <div className="relative">
             <Input
               type={showNewPassword ? 'text' : 'password'}
@@ -82,7 +78,7 @@ export default function PasswordSection({
             <button
               type="button"
               onClick={toggleNewPassword}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-400 hover:text-slate-600"
             >
               {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -90,7 +86,7 @@ export default function PasswordSection({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label className="mb-1 block text-sm font-medium text-slate-700">
             Confirm New Password
           </label>
           <div className="relative">
@@ -104,22 +100,20 @@ export default function PasswordSection({
             <button
               type="button"
               onClick={toggleConfirmPassword}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-400 hover:text-slate-600"
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
         </div>
 
-        <div className="flex justify-end mt-4">
+        <div className="mt-4 flex justify-end">
           <Button
             onClick={onUpdate}
-            disabled={
-              saving || !currentPassword || !newPassword || !confirmPassword
-            }
+            disabled={saving || !currentPassword || !newPassword || !confirmPassword}
           >
             {saving ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             ) : (
               <Save size={16} className="mr-2" />
             )}

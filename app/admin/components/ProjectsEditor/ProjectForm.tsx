@@ -30,21 +30,17 @@ export default function ProjectForm({
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>
-            {project.id === 0 ? 'New Project' : 'Edit Project'}
-          </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>{project.id === 0 ? 'New Project' : 'Edit Project'}</CardTitle>
           <Button size="sm" onClick={onCancel} className="p-2">
             <X size={16} />
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Project Title *
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Project Title *</label>
             <Input
               value={project.title || ''}
               onChange={(e) => onUpdate('title', e.target.value)}
@@ -53,9 +49,7 @@ export default function ProjectForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Year *
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Year *</label>
             <Input
               type="number"
               value={project.year || ''}
@@ -66,7 +60,7 @@ export default function ProjectForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-slate-700">
             Short Description *
           </label>
           <Input
@@ -78,7 +72,7 @@ export default function ProjectForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-slate-700">
             Detailed Description *
           </label>
           <Textarea
@@ -90,11 +84,9 @@ export default function ProjectForm({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              GitHub URL
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">GitHub URL</label>
             <Input
               value={project.github_url || ''}
               onChange={(e) => onUpdate('github_url', e.target.value)}
@@ -103,9 +95,7 @@ export default function ProjectForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Demo URL
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Demo URL</label>
             <Input
               value={project.demo_url || ''}
               onChange={(e) => onUpdate('demo_url', e.target.value)}
@@ -114,13 +104,11 @@ export default function ProjectForm({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Status
-            </label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Status</label>
             <select
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] focus:ring-2 focus:ring-emerald-500/50 focus:outline-none"
               value={project.status}
               onChange={(e) => onUpdate('status', e.target.value)}
             >
@@ -132,16 +120,14 @@ export default function ProjectForm({
 
           <div className="flex items-end">
             <div className="w-full">
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Featured
-              </label>
-              <div className="px-4 py-3 rounded-xl border border-slate-200 bg-white shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] flex items-center">
-                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+              <label className="mb-2 block text-sm font-medium text-slate-700">Featured</label>
+              <div className="flex items-center rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff]">
+                <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
                   <input
                     type="checkbox"
                     checked={project.featured}
                     onChange={(e) => onUpdate('featured', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer"
+                    className="h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-emerald-500"
                   />
                   Mark as featured project
                 </label>
@@ -152,10 +138,8 @@ export default function ProjectForm({
 
         {/* Technologies */}
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-medium text-slate-700">
-              Technologies
-            </label>
+          <div className="mb-3 flex items-center justify-between">
+            <label className="block text-sm font-medium text-slate-700">Technologies</label>
             <Tooltip content="Add technology" position="top" variant="clay">
               <Button
                 size="sm"
@@ -179,7 +163,7 @@ export default function ProjectForm({
                   <Button
                     size="sm"
                     onClick={() => onRemoveTechnology(index)}
-                    className="group hover:bg-red-50 transition-all p-2 min-h-[36px] min-w-[36px]"
+                    className="group min-h-[36px] min-w-[36px] p-2 transition-all hover:bg-red-50"
                     aria-label="Remove technology"
                   >
                     <Trash2 size={16} className="icon-danger" />
@@ -192,16 +176,14 @@ export default function ProjectForm({
 
         {/* Project Images */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-3">
-            Project Images
-          </label>
+          <label className="mb-3 block text-sm font-medium text-slate-700">Project Images</label>
           <MultipleImageUpload
             entityType="project"
             entityId={project.id?.toString() || 'new'}
             value={
               Array.isArray(project.image_urls)
                 ? project.image_urls.filter(
-                    (id): id is string => typeof id === 'string' && id.length > 0
+                    (id): id is string => typeof id === 'string' && id.length > 0,
                   )
                 : []
             }

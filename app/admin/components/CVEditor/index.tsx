@@ -31,7 +31,7 @@ export default function CVEditor() {
           ...data,
           experience: data.experience || [],
           education: data.education || [],
-          languages: data.languages || []
+          languages: data.languages || [],
         };
         setCvData(normalizedData);
       } else {
@@ -76,8 +76,8 @@ export default function CVEditor() {
       ...cvData,
       cv: {
         ...cvData.cv,
-        [field]: value
-      }
+        [field]: value,
+      },
     });
   };
 
@@ -94,7 +94,10 @@ export default function CVEditor() {
   const removeSkill = (category: SkillCategory, index: number) => {
     if (!cvData) return;
     const currentSkills = cvData.cv[category] || [];
-    updateSkills(category, currentSkills.filter((_, i) => i !== index));
+    updateSkills(
+      category,
+      currentSkills.filter((_, i) => i !== index),
+    );
   };
 
   const updateSkill = (category: SkillCategory, index: number, value: string) => {
@@ -121,7 +124,7 @@ export default function CVEditor() {
       period: '',
       description: '',
       is_current: false,
-      sort_order: (cvData.experience || []).length
+      sort_order: (cvData.experience || []).length,
     };
     setCvData({ ...cvData, experience: [...(cvData.experience || []), newExp] });
   };
@@ -171,7 +174,7 @@ export default function CVEditor() {
       institution: '',
       period: '',
       description: '',
-      sort_order: (cvData.education || []).length
+      sort_order: (cvData.education || []).length,
     };
     setCvData({ ...cvData, education: [...(cvData.education || []), newEdu] });
   };
@@ -219,7 +222,7 @@ export default function CVEditor() {
       id: Date.now(),
       language: '',
       level: '',
-      sort_order: (cvData.languages || []).length
+      sort_order: (cvData.languages || []).length,
     };
     setCvData({ ...cvData, languages: [...(cvData.languages || []), newLang] });
   };
@@ -256,7 +259,7 @@ export default function CVEditor() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -281,17 +284,17 @@ export default function CVEditor() {
   return (
     <div className="space-y-6">
       {/* Navigation */}
-      <div className="flex flex-wrap space-x-1 bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] px-1 py-2 rounded-xl shadow-[4.5px_4.5px_9px_#c5c5c5,_-2.25px_-2.25px_9px_#ffffff,_inset_-2px_-2px_1.5px_#8a8a8acc] mb-8 gap-y-1">
+      <div className="mb-8 flex flex-wrap space-x-1 gap-y-1 rounded-xl bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] px-1 py-2 shadow-[4.5px_4.5px_9px_#c5c5c5,_-2.25px_-2.25px_9px_#ffffff,_inset_-2px_-2px_1.5px_#8a8a8acc]">
         {sections.map((section) => {
           const Icon = section.icon;
           return (
             <button
               key={section.id}
               onClick={() => setActiveSection(section.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+              className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                 activeSection === section.id
                   ? 'bg-gradient-to-r from-emerald-600 to-blue-600 text-white shadow-[3px_3px_6px_#9ca3af,_-1.5px_-1.5px_6px_rgba(255,255,255,0.1)]'
-                  : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'
               }`}
             >
               <Icon size={16} />

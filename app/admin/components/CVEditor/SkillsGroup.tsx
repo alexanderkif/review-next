@@ -21,14 +21,12 @@ export default function SkillsGroup({
   onAdd,
   onRemove,
   onUpdate,
-  placeholder = 'Skill name'
+  placeholder = 'Skill name',
 }: SkillsGroupProps) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-3">
-        <label className="block text-sm font-medium text-slate-700">
-          {label}
-        </label>
+      <div className="mb-3 flex items-center justify-between">
+        <label className="block text-sm font-medium text-slate-700">{label}</label>
         <Tooltip content={`Add ${label.toLowerCase()}`} position="top" variant="clay">
           <Button
             size="sm"
@@ -52,7 +50,7 @@ export default function SkillsGroup({
               <Button
                 size="sm"
                 onClick={() => onRemove(category, index)}
-                className="group hover:bg-red-50 transition-all p-2 min-h-[36px] min-w-[36px]"
+                className="group min-h-[36px] min-w-[36px] p-2 transition-all hover:bg-red-50"
                 aria-label={`Remove ${label.toLowerCase()}`}
               >
                 <Trash2 size={16} className="icon-danger" />

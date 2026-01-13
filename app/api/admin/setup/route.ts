@@ -19,18 +19,18 @@ export async function GET() {
       FROM users 
       WHERE role = 'admin'
     `;
-    
+
     const needsSetup = parseInt(adminUsers[0].count) === 0;
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       needsSetup,
-      message: needsSetup ? 'Database setup required' : 'Database is ready'
+      message: needsSetup ? 'Database setup required' : 'Database is ready',
     });
   } catch {
     // If tables don't exist, setup is needed
-    return NextResponse.json({ 
+    return NextResponse.json({
       needsSetup: true,
-      message: 'Database setup required'
+      message: 'Database setup required',
     });
   }
 }
@@ -44,25 +44,22 @@ export async function POST(request: NextRequest) {
         FROM users 
         WHERE role = 'admin'
       `;
-      
+
       if (parseInt(existingUsers[0].count) > 0) {
-        return NextResponse.json(
-          { error: 'Database is already initialized' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Database is already initialized' }, { status: 400 });
       }
     } catch {
       // Если таблицы не существуют, продолжаем инициализацию
     }
 
     const data = await request.json();
-    
+
     // Validate data
     const validationResult = setupSchema.safeParse(data);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid data', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -223,17 +220,13 @@ export async function POST(request: NextRequest) {
       VALUES (${name}, ${email}, ${hashedPassword}, 'admin')
     `;
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'Database initialized successfully',
-      admin: { name, email }
+      admin: { name, email },
     });
-
   } catch (error) {
     console.error('Database setup error:', error);
-    return NextResponse.json(
-      { error: 'Database initialization error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Database initialization error' }, { status: 500 });
   }
 }

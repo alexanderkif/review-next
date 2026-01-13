@@ -20,11 +20,11 @@ export default function ConditionalNavigation() {
     const timer = setTimeout(check404, 0);
     return () => clearTimeout(timer);
   }, [pathname]);
-  
+
   // Don't show main navigation in admin panel, auth pages, or 404 page
   if (pathname.startsWith('/admin') || pathname.startsWith('/auth') || is404) {
     return null;
   }
-  
+
   return <Navigation />;
 }

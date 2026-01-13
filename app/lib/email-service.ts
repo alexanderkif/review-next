@@ -37,13 +37,13 @@ export function generateVerificationToken(): string {
 export async function sendVerificationEmail(
   email: string,
   name: string,
-  token: string
+  token: string,
 ): Promise<boolean> {
   try {
     const transporter = createTransporter();
-    
+
     const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`;
-    
+
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: email,
@@ -118,13 +118,10 @@ export async function sendVerificationEmail(
 }
 
 // Send successful verification notification
-export async function sendWelcomeEmail(
-  email: string,
-  name: string
-): Promise<boolean> {
+export async function sendWelcomeEmail(email: string, name: string): Promise<boolean> {
   try {
     const transporter = createTransporter();
-    
+
     const mailOptions = {
       from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
       to: email,

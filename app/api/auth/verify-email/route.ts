@@ -10,10 +10,7 @@ export async function GET(request: NextRequest) {
     const token = searchParams.get('token');
 
     if (!token) {
-      return NextResponse.json(
-        { error: 'Verification token not found' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Verification token not found' }, { status: 400 });
     }
 
     // Find user with given token
@@ -24,10 +21,7 @@ export async function GET(request: NextRequest) {
     `;
 
     if (users.length === 0) {
-      return NextResponse.json(
-        { error: 'Invalid verification token' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid verification token' }, { status: 400 });
     }
 
     const user = users[0];
@@ -36,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (new Date() > new Date(user.email_verification_expires)) {
       return NextResponse.json(
         { error: 'Verification token has expired. Request a new verification email.' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,7 +38,7 @@ export async function GET(request: NextRequest) {
     if (user.email_verified) {
       return NextResponse.json(
         { message: 'Email already verified', alreadyVerified: true },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -64,21 +58,23 @@ export async function GET(request: NextRequest) {
 
     console.log(`Email verified for user: ${user.email}`);
 
-    return NextResponse.json({
-      message: 'Email successfully verified! You can now log into the system.',
-      verified: true,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email
-      }
-    }, { status: 200 });
-
+    return NextResponse.json(
+      {
+        message: 'Email successfully verified! You can now log into the system.',
+        verified: true,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('Email verification error:', error);
     return NextResponse.json(
       { error: 'Internal server error during email verification' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

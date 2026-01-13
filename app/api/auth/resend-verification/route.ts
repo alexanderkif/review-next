@@ -22,20 +22,14 @@ export async function POST(request: NextRequest) {
     `;
 
     if (users.length === 0) {
-      return NextResponse.json(
-        { error: 'User with this email not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User with this email not found' }, { status: 404 });
     }
 
     const user = users[0];
 
     // Check if email is already verified
     if (user.email_verified) {
-      return NextResponse.json(
-        { message: 'Email already verified' },
-        { status: 200 }
-      );
+      return NextResponse.json({ message: 'Email already verified' }, { status: 200 });
     }
 
     // Check if emails are not sent too frequently (no more than once per 5 minutes)
@@ -49,7 +43,7 @@ export async function POST(request: NextRequest) {
     if (recentEmails.length > 0) {
       return NextResponse.json(
         { error: 'Verification email can be requested no more than once every 5 minutes' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -71,31 +65,24 @@ export async function POST(request: NextRequest) {
     const emailSent = await sendVerificationEmail(user.email, user.name, verificationToken);
 
     if (!emailSent) {
-      return NextResponse.json(
-        { error: 'Error sending email. Try again later.' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Error sending email. Try again later.' }, { status: 500 });
     }
 
-    return NextResponse.json({
-      message: 'New verification email sent to your email address',
-      sent: true
-    }, { status: 200 });
-
+    return NextResponse.json(
+      {
+        message: 'New verification email sent to your email address',
+        sent: true,
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('Resend verification error:', error);
 
     if (error instanceof z.ZodError) {
       const firstError = error.issues[0];
-      return NextResponse.json(
-        { error: firstError.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: firstError.message }, { status: 400 });
     }
 
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

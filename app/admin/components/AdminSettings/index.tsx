@@ -180,10 +180,7 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
       const data = await response.json();
 
       if (response.ok) {
-        showToast(
-          `Successfully cleaned! Deleted: ${data.deletedCount || 0} images`,
-          'success'
-        );
+        showToast(`Successfully cleaned! Deleted: ${data.deletedCount || 0} images`, 'success');
       } else {
         showToast(data.error || 'Error cleaning images', 'error');
       }
@@ -218,9 +215,7 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
 
     if (!doubleConfirmed) return;
 
-    const finalConfirm = window.prompt(
-      'Type "CLEAR" (uppercase) for final confirmation:'
-    );
+    const finalConfirm = window.prompt('Type "CLEAR" (uppercase) for final confirmation:');
 
     if (finalConfirm !== 'CLEAR') {
       showToast('Cancelled. Invalid confirmation code.', 'info');
@@ -244,9 +239,7 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
           message += 'Cleared tables:\n' + data.cleared_tables.join('\n');
         }
         if (data.skipped_tables && data.skipped_tables.length > 0) {
-          message +=
-            '\n\nSkipped tables (did not exist):\n' +
-            data.skipped_tables.join('\n');
+          message += '\n\nSkipped tables (did not exist):\n' + data.skipped_tables.join('\n');
         }
         if (data.seeded_data) {
           message += '\n\nSeeded data created successfully.';
@@ -306,9 +299,7 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
           showConfirmPassword={showConfirmPassword}
           toggleCurrentPassword={() => setShowCurrentPassword(!showCurrentPassword)}
           toggleNewPassword={() => setShowNewPassword(!showNewPassword)}
-          toggleConfirmPassword={() =>
-            setShowConfirmPassword(!showConfirmPassword)
-          }
+          toggleConfirmPassword={() => setShowConfirmPassword(!showConfirmPassword)}
           saving={saving}
           onUpdate={handleUpdatePassword}
         />

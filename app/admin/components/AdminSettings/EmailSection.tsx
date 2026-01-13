@@ -36,18 +36,12 @@ export default function EmailSection({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Current email
-          </label>
-          <p className="text-slate-600 text-sm bg-slate-50 p-2 rounded">
-            {currentEmail}
-          </p>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Current email</label>
+          <p className="rounded bg-slate-50 p-2 text-sm text-slate-600">{currentEmail}</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            New Email
-          </label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">New Email</label>
           <Input
             type="email"
             value={email || ''}
@@ -57,7 +51,7 @@ export default function EmailSection({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label className="mb-1 block text-sm font-medium text-slate-700">
             Current Password (for confirmation)
           </label>
           <div className="relative">
@@ -71,17 +65,17 @@ export default function EmailSection({
             <button
               type="button"
               onClick={toggleShowPassword}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-400 hover:text-slate-600"
             >
               {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
         </div>
 
-        <div className="flex justify-end mt-4">
+        <div className="mt-4 flex justify-end">
           <Button onClick={onUpdate} disabled={saving || !email || !currentPassword}>
             {saving ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             ) : (
               <Save size={16} className="mr-2" />
             )}

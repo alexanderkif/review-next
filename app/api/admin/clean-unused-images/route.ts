@@ -15,10 +15,7 @@ export async function DELETE(): Promise<NextResponse<CleanUnusedImagesResponse |
     // Check admin authorization
     const { isAdmin } = await verifyAdminAuth();
     if (!isAdmin) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     logger.info('Starting cleanup of unused images');
@@ -84,15 +81,14 @@ export async function DELETE(): Promise<NextResponse<CleanUnusedImagesResponse |
       message: `Successfully deleted ${deletedCount} unused image${deletedCount !== 1 ? 's' : ''}`,
       deleted: deletedCount,
     });
-
   } catch (error) {
     logger.error('Error cleaning unused images:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to clean unused images',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

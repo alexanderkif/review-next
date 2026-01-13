@@ -7,7 +7,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function PUT(request: NextRequest) {
   const { isAdmin, user } = await verifyAdminAuth();
-  
+
   if (!isAdmin || !user || !user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -29,8 +29,8 @@ export async function PUT(request: NextRequest) {
       }
 
       const isCurrentPasswordValid = await bcrypt.compare(
-        currentPassword, 
-        userResult[0].password_hash
+        currentPassword,
+        userResult[0].password_hash,
       );
 
       if (!isCurrentPasswordValid) {
@@ -47,7 +47,6 @@ export async function PUT(request: NextRequest) {
       `;
 
       return NextResponse.json({ message: 'Name successfully updated' });
-
     } else if (action === 'update_email') {
       // Check if new email is taken
       const emailExists = await sql`
@@ -67,7 +66,6 @@ export async function PUT(request: NextRequest) {
       `;
 
       return NextResponse.json({ message: 'Email successfully updated' });
-
     } else if (action === 'update_password') {
       // Hash new password
       const hashedNewPassword = await bcrypt.hash(newPassword, 12);
@@ -80,16 +78,11 @@ export async function PUT(request: NextRequest) {
       `;
 
       return NextResponse.json({ message: 'Password successfully updated' });
-
     } else {
       return NextResponse.json({ error: 'Неизвестное действие' }, { status: 400 });
     }
-
   } catch (error) {
     console.error('Error updating admin profile:', error);
-    return NextResponse.json(
-      { error: 'Profile update error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Profile update error' }, { status: 500 });
   }
 }

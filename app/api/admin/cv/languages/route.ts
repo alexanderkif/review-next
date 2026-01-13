@@ -7,14 +7,14 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function PUT(request: NextRequest) {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const { languages } = await request.json();
-    
+
     // Получаем CV ID
     const cvResult = await sql`
       SELECT id FROM cv_data 
@@ -34,7 +34,8 @@ export async function PUT(request: NextRequest) {
 
     // Add new languages
     for (const [index, lang] of languages.entries()) {
-      if (lang.language && lang.level) { // Проверяем что есть основные поля
+      if (lang.language && lang.level) {
+        // Проверяем что есть основные поля
         await sql`
           INSERT INTO cv_languages (cv_id, language, level, sort_order)
           VALUES (${cvId}, ${lang.language}, ${lang.level}, ${index})
@@ -44,12 +45,8 @@ export async function PUT(request: NextRequest) {
 
     await revalidateCVData();
     return NextResponse.json({ message: 'Languages updated successfully' });
-
   } catch (error) {
     console.error('Error updating languages:', error);
-    return NextResponse.json(
-      { error: 'Failed to update languages' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update languages' }, { status: 500 });
   }
 }

@@ -14,31 +14,28 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full">
         <input
           className={cn(
-            'w-full px-4 py-3 rounded-xl border transition-all duration-300',
-            'placeholder:text-slate-400 focus:outline-none focus:ring-2',
-            
+            'w-full rounded-xl border px-4 py-3 transition-all duration-300',
+            'placeholder:text-slate-400 focus:ring-2 focus:outline-none',
+
             // Variants
             {
-              'clay': 'bg-white shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] border-slate-200 text-slate-800 focus:ring-blue-500/50 focus:shadow-[inset_1px_1px_1px_#d1d1d1,_inset_-1px_-1px_1px_#ffffff]',
-              'glass': 'bg-white/10 backdrop-blur-md border-white/20 text-white placeholder:text-white/70 focus:ring-white/50 focus:bg-white/20'
+              clay: 'border-slate-200 bg-white text-slate-800 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] focus:shadow-[inset_1px_1px_1px_#d1d1d1,_inset_-1px_-1px_1px_#ffffff] focus:ring-blue-500/50',
+              glass:
+                'border-white/20 bg-white/10 text-white backdrop-blur-md placeholder:text-white/70 focus:bg-white/20 focus:ring-white/50',
             }[variant],
-            
+
             error && 'border-red-400 focus:ring-red-500/50',
-            
-            className
+
+            className,
           )}
           ref={ref}
           {...props}
         />
-        
-        {error && (
-          <p className="mt-2 text-sm text-red-500 animate-fade-in">
-            {error}
-          </p>
-        )}
+
+        {error && <p className="animate-fade-in mt-2 text-sm text-red-500">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = 'Input';
@@ -54,31 +51,28 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <div className="w-full">
         <textarea
           className={cn(
-            'w-full px-4 py-3 rounded-xl border transition-all duration-300 resize-none',
-            'placeholder:text-slate-400 focus:outline-none focus:ring-2',
-            
+            'w-full resize-none rounded-xl border px-4 py-3 transition-all duration-300',
+            'placeholder:text-slate-400 focus:ring-2 focus:outline-none',
+
             // Variants
             {
-              'clay': 'bg-white shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] border-slate-200 text-slate-800 focus:ring-blue-500/50',
-              'glass': 'bg-white/10 backdrop-blur-md border-white/20 text-white placeholder:text-white/70 focus:ring-white/50'
+              clay: 'border-slate-200 bg-white text-slate-800 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] focus:ring-blue-500/50',
+              glass:
+                'border-white/20 bg-white/10 text-white backdrop-blur-md placeholder:text-white/70 focus:ring-white/50',
             }[variant],
-            
+
             error && 'border-red-400 focus:ring-red-500/50',
-            
-            className
+
+            className,
           )}
           ref={ref}
           {...props}
         />
-        
-        {error && (
-          <p className="mt-2 text-sm text-red-500">
-            {error}
-          </p>
-        )}
+
+        {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
 Textarea.displayName = 'Textarea';

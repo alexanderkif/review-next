@@ -91,20 +91,20 @@ const Navigation = () => {
   };
 
   return (
-    <nav 
+    <nav
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isClayPage
-          ? 'theme-clay backdrop-blur-md bg-gradient-to-br from-[#e8edf2] via-[#f0f4f8] to-[#dfe7ed] border-b border-slate-200/30 shadow-[0_3px_9px_rgba(199,206,212,0.3),_0_-1.5px_6px_rgba(255,255,255,0.4),_inset_0_-2px_1.5px_#8a8a8acc]'
+          ? 'theme-clay border-b border-slate-200/30 bg-gradient-to-br from-[#e8edf2] via-[#f0f4f8] to-[#dfe7ed] shadow-[0_3px_9px_rgba(199,206,212,0.3),_0_-1.5px_6px_rgba(255,255,255,0.4),_inset_0_-2px_1.5px_#8a8a8acc] backdrop-blur-md'
           : 'theme-glass glass-nav'
       }`}
       aria-label="Main navigation"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link 
-            href="/" 
-            className="hidden sm:flex items-center space-x-2 focus:outline-none rounded-lg"
+          <Link
+            href="/"
+            className="hidden items-center space-x-2 rounded-lg focus:outline-none sm:flex"
             aria-label="Home"
           >
             <div className="overflow-hidden">
@@ -112,23 +112,25 @@ const Navigation = () => {
                 avatarUrl={Array.isArray(cvData?.avatar) ? cvData.avatar[0] : cvData?.avatar}
                 name={cvData?.name || 'Portfolio'}
                 size="sm"
-                className="w-10 h-10 rounded-xl border-2 border-white/20"
+                className="h-10 w-10 rounded-xl border-2 border-white/20"
                 fallbackLetter={avatarLetter}
                 disableRotation={true}
               />
             </div>
-            <span className={`text-xl font-bold transition-colors hidden lg:inline ${
-              isClayPage ? 'text-slate-800' : 'text-white'
-            }`}>
-              {isProjectsPage ? 'My Projects' : (cvData?.title || 'Loading...')}
+            <span
+              className={`hidden text-xl font-bold transition-colors lg:inline ${
+                isClayPage ? 'text-slate-800' : 'text-white'
+              }`}
+            >
+              {isProjectsPage ? 'My Projects' : cvData?.title || 'Loading...'}
             </span>
           </Link>
 
           {/* Navigation Links */}
-          <div className="flex items-center justify-between flex-1 md:flex-initial md:space-x-1">
+          <div className="flex flex-1 items-center justify-between md:flex-initial md:space-x-1">
             <ul className="flex items-center space-x-1" role="list">
               <li>
-                <Link 
+                <Link
                   href="/"
                   className={getLinkStyles(currentPath === '/' || currentPath === null)}
                   aria-current={currentPath === '/' ? 'page' : undefined}
@@ -137,9 +139,9 @@ const Navigation = () => {
                   <span className="relative z-10">Resume</span>
                 </Link>
               </li>
-              
+
               <li>
-                <Link 
+                <Link
                   href="/projects"
                   className={getLinkStyles(isProjectsPage)}
                   aria-current={isProjectsPage ? 'page' : undefined}
@@ -151,10 +153,10 @@ const Navigation = () => {
             </ul>
 
             {/* User Authentication Section */}
-            <div className="md:ml-6 md:pl-6 md:border-l border-slate-400/60 flex items-center space-x-1 md:space-x-2">
+            <div className="flex items-center space-x-1 border-slate-400/60 md:ml-6 md:space-x-2 md:border-l md:pl-6">
               {status === 'loading' ? (
-                <div 
-                  className="w-6 h-6 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin"
+                <div
+                  className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"
                   role="status"
                   aria-label="Loading user data"
                 />
@@ -162,7 +164,7 @@ const Navigation = () => {
                 <>
                   {/* Show Admin panel only for Admins */}
                   {session.user.role === 'admin' && (
-                    <Link 
+                    <Link
                       href="/admin"
                       className={buttonStyles('secondary')}
                       aria-label="Admin panel"
@@ -171,12 +173,15 @@ const Navigation = () => {
                       <span className="hidden md:inline">Admin</span>
                     </Link>
                   )}
-                  
+
                   {/* User information */}
-                  <div className="flex items-center space-x-2 text-sm" aria-label={`Logged in as ${session.user.name}`}>
+                  <div
+                    className="flex items-center space-x-2 text-sm"
+                    aria-label={`Logged in as ${session.user.name}`}
+                  >
                     {session.user.avatar_url ? (
-                      <Image 
-                        src={session.user.avatar_url} 
+                      <Image
+                        src={session.user.avatar_url}
                         alt={session.user.name || 'User avatar'}
                         width={24}
                         height={24}
@@ -184,19 +189,21 @@ const Navigation = () => {
                         className="rounded-full object-cover"
                       />
                     ) : (
-                      <User 
-                        size={16} 
+                      <User
+                        size={16}
                         className={isClayPage ? 'text-slate-600' : 'text-white/80'}
                         aria-hidden="true"
                       />
                     )}
-                    <span className={`font-medium hidden md:block truncate max-w-[150px] ${
-                      isClayPage ? 'text-slate-700' : 'text-white'
-                    }`}>
+                    <span
+                      className={`hidden max-w-[150px] truncate font-medium md:block ${
+                        isClayPage ? 'text-slate-700' : 'text-white'
+                      }`}
+                    >
                       {session.user.name}
                     </span>
                   </div>
-                  
+
                   {/* Logout button */}
                   <button
                     onClick={handleSignOut}
@@ -209,17 +216,14 @@ const Navigation = () => {
                 </>
               ) : (
                 <>
-                  <Link 
+                  <Link
                     href={`/auth/login?callbackUrl=${encodeURIComponent(currentPath || '/')}`}
                     className={buttonStyles('secondary')}
                   >
                     Log In
                   </Link>
-                  
-                  <Link 
-                    href="/auth/register"
-                    className={buttonStyles('primary')}
-                  >
+
+                  <Link href="/auth/register" className={buttonStyles('primary')}>
                     Register
                   </Link>
                 </>

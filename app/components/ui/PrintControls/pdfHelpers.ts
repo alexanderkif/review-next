@@ -6,7 +6,7 @@ export const checkNewPage = (
   requiredSpace: number,
   page: PDFPage,
   pageAnnotations: PDFRef[],
-  pdfDoc: PDFDocument
+  pdfDoc: PDFDocument,
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
   if (y - requiredSpace < PDF_CONFIG.MARGIN) {
     // Set annotations for current page before creating new one
@@ -27,7 +27,7 @@ export const wrapText = (
   text: string,
   maxWidth: number,
   fontSize: number,
-  font: PDFFont
+  font: PDFFont,
 ): string[] => {
   const words = text.split(' ');
   const lines: string[] = [];
@@ -55,7 +55,7 @@ export const drawTextWithGreenBullets = (
   yPos: number,
   fontSize: number,
   font: PDFFont,
-  defaultColor: ReturnType<typeof rgb>
+  defaultColor: ReturnType<typeof rgb>,
 ) => {
   const textWithBullets = text.replace(/\s-\s/g, ' • ');
   const parts = textWithBullets.split('•');
@@ -95,7 +95,7 @@ export const renderSectionHeader = (
   page: PDFPage,
   title: string,
   y: number,
-  helveticaBold: PDFFont
+  helveticaBold: PDFFont,
 ): number => {
   const { MARGIN, PAGE_WIDTH, COLORS, LINE_HEIGHT } = PDF_CONFIG;
   let currentY = y;

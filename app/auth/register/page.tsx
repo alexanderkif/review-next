@@ -18,7 +18,7 @@ function RegisterForm() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -31,15 +31,15 @@ function RegisterForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Очищаем ошибку при изменении поля
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: '',
       }));
     }
   };
@@ -75,7 +75,7 @@ function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -105,7 +105,9 @@ function RegisterForm() {
           setUserEmail(formData.email);
         } else {
           // Registration without verification (for backward compatibility)
-          router.push(`/auth/login?message=Registration successful! You can now log into the system.&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+          router.push(
+            `/auth/login?message=Registration successful! You can now log into the system.&callbackUrl=${encodeURIComponent(callbackUrl)}`,
+          );
         }
       } else {
         // Registration error
@@ -153,35 +155,33 @@ function RegisterForm() {
   // Компонент успешной регистрации
   if (registrationSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4">
         <div className="w-full max-w-md">
           <Card className="backdrop-blur-lg">
             <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+              <div className="mx-auto mb-4 flex h-16 w-16 animate-bounce items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-blue-600">
                 <CheckCircle className="text-white" size={24} />
               </div>
               <CardTitle className="text-2xl text-white">Check your email!</CardTitle>
             </CardHeader>
-            
+
             <CardContent className="space-y-6 text-center">
               <div className="space-y-3">
-                <p className="text-white/90">
-                  We sent a confirmation email to:
-                </p>
-                <div className="bg-white/10 rounded-lg p-3 border border-white/20">
-                  <Mail className="inline-block mr-2" size={16} />
+                <p className="text-white/90">We sent a confirmation email to:</p>
+                <div className="rounded-lg border border-white/20 bg-white/10 p-3">
+                  <Mail className="mr-2 inline-block" size={16} />
                   <span className="font-medium text-white">{userEmail}</span>
                 </div>
               </div>
 
-              <div className="space-y-2 text-white/80 text-sm">
+              <div className="space-y-2 text-sm text-white/80">
                 <p>📧 Check your &quot;Inbox&quot; and &quot;Spam&quot; folders</p>
                 <p>🔗 Click the link in the email to confirm</p>
                 <p>⏰ Link is valid for 24 hours</p>
               </div>
 
               {resendMessage && (
-                <div className="bg-white/10 rounded-lg p-3 border border-white/20">
+                <div className="rounded-lg border border-white/20 bg-white/10 p-3">
                   <p className="text-sm text-white">{resendMessage}</p>
                 </div>
               )}
@@ -194,7 +194,7 @@ function RegisterForm() {
                 >
                   {resendLoading ? (
                     <>
-                      <RefreshCw className="animate-spin mr-2" size={16} />
+                      <RefreshCw className="mr-2 animate-spin" size={16} />
                       Sending...
                     </>
                   ) : (
@@ -207,7 +207,9 @@ function RegisterForm() {
 
                 <Button
                   className="w-full"
-                  onClick={() => router.push(`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)}
+                  onClick={() =>
+                    router.push(`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)
+                  }
                 >
                   Go to Login
                 </Button>
@@ -234,22 +236,20 @@ function RegisterForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Card className="backdrop-blur-lg">
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-float">
+            <div className="animate-float mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-blue-600">
               <User className="text-white" size={24} />
             </div>
             <CardTitle className="text-2xl text-white">Registration</CardTitle>
-            <p className="text-white/70 mt-2">
-              Create an account to comment on projects
-            </p>
+            <p className="mt-2 text-white/70">Create an account to comment on projects</p>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             {errors.general && (
-              <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-100 text-sm animate-fade-in">
+              <div className="animate-fade-in rounded-lg border border-red-500/30 bg-red-500/20 p-3 text-sm text-red-100">
                 {errors.general}
               </div>
             )}
@@ -292,7 +292,7 @@ function RegisterForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800 transition-colors z-10 cursor-pointer"
+                  className="absolute top-1/2 right-3 z-10 -translate-y-1/2 cursor-pointer text-slate-600 transition-colors hover:text-slate-800"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -311,20 +311,16 @@ function RegisterForm() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-800 transition-colors z-10 cursor-pointer"
+                  className="absolute top-1/2 right-3 z-10 -translate-y-1/2 cursor-pointer text-slate-600 transition-colors hover:text-slate-800"
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full mt-6"
-                disabled={loading}
-              >
+              <Button type="submit" className="mt-6 w-full" disabled={loading}>
                 {loading ? (
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                     Creating Account...
                   </div>
                 ) : (
@@ -340,7 +336,7 @@ function RegisterForm() {
                   <div className="w-full border-t border-white/20"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white/10 text-white/70">Or continue with</span>
+                  <span className="bg-white/10 px-2 text-white/70">Or continue with</span>
                 </div>
               </div>
               <div className="mt-6">
@@ -348,11 +344,11 @@ function RegisterForm() {
               </div>
             </div>
 
-            <div className="text-center text-white/70 text-sm mt-6">
+            <div className="mt-6 text-center text-sm text-white/70">
               Already have an account?{' '}
               <Link
                 href={`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                className="text-white hover:text-blue-200 transition-colors font-medium"
+                className="font-medium text-white transition-colors hover:text-blue-200"
               >
                 Log In
               </Link>
@@ -361,7 +357,7 @@ function RegisterForm() {
             <div className="text-center">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+                className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
               >
                 <ArrowLeft size={16} />
                 Home

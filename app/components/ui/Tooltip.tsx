@@ -11,12 +11,12 @@ interface TooltipProps {
   variant?: 'glass' | 'clay';
 }
 
-export default function Tooltip({ 
-  content, 
-  children, 
+export default function Tooltip({
+  content,
+  children,
   position = 'top',
   delay = 300,
-  variant = 'glass'
+  variant = 'glass',
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [coords, setCoords] = useState({ x: 0, y: 0, transform: '' });
@@ -39,7 +39,7 @@ export default function Tooltip({
 
   const updatePosition = () => {
     if (!triggerRef.current) return;
-    
+
     const rect = triggerRef.current.getBoundingClientRect();
     const gap = 8;
 
@@ -91,30 +91,29 @@ export default function Tooltip({
       >
         {children}
       </div>
-      {typeof window !== 'undefined' && isVisible && createPortal(
-        <div
-          className="fixed z-[9999] pointer-events-none"
-          style={{
-            left: `${coords.x}px`,
-            top: `${coords.y}px`,
-            transform: coords.transform || 'translate(-50%, -100%)'
-          }}
-        >
-          <div className={`
-            ${variant === 'glass' 
-              ? 'bg-white/10 backdrop-blur-md border border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]' 
-              : 'bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] text-slate-700 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc]'
-            }
-            rounded-lg px-3 py-1.5 
-            ${variant === 'glass' ? 'text-white' : 'text-slate-700'}
-            text-xs font-medium whitespace-nowrap
-            animate-in fade-in zoom-in-95 duration-200
-          `}>
-            {content}
-          </div>
-        </div>,
-        document.body
-      )}
+      {typeof window !== 'undefined' &&
+        isVisible &&
+        createPortal(
+          <div
+            className="pointer-events-none fixed z-[9999]"
+            style={{
+              left: `${coords.x}px`,
+              top: `${coords.y}px`,
+              transform: coords.transform || 'translate(-50%, -100%)',
+            }}
+          >
+            <div
+              className={` ${
+                variant === 'glass'
+                  ? 'border border-white/30 bg-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-md'
+                  : 'bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] text-slate-700 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc]'
+              } rounded-lg px-3 py-1.5 ${variant === 'glass' ? 'text-white' : 'text-slate-700'} animate-in fade-in zoom-in-95 text-xs font-medium whitespace-nowrap duration-200`}
+            >
+              {content}
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

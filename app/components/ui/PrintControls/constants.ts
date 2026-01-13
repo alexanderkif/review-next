@@ -5,13 +5,13 @@ export const PDF_CONFIG = {
   PAGE_HEIGHT: 842,
   MARGIN: 60,
   LINE_HEIGHT: 12,
-  
+
   // Font sizes
   FONT_SIZE: {
     TITLE: 20,
     SUBTITLE: 12,
   },
-  
+
   // Colors
   COLORS: {
     GREEN: rgb(0.02, 0.59, 0.41), // #059669
@@ -20,5 +20,4 @@ export const PDF_CONFIG = {
   },
 };
 
-export const getContentWidth = () => 
-  PDF_CONFIG.PAGE_WIDTH - (PDF_CONFIG.MARGIN * 2);
+export const getContentWidth = () => PDF_CONFIG.PAGE_WIDTH - PDF_CONFIG.MARGIN * 2;

@@ -27,10 +27,7 @@ interface ProjectCommentsProps {
   comments: Comment[];
 }
 
-export default function ProjectComments({ 
-  projectId, 
-  comments
-}: ProjectCommentsProps) {
+export default function ProjectComments({ projectId, comments }: ProjectCommentsProps) {
   const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
@@ -45,7 +42,7 @@ export default function ProjectComments({
 
   const handleSubmitComment = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!session?.user) {
       setError('Please log in to add a comment');
       return;
@@ -60,7 +57,7 @@ export default function ProjectComments({
     setError(null);
 
     try {
-      await addProjectComment(projectId, session.user.id, commentText.trim());
+      await addProjectComment(projectId, commentText.trim());
       setCommentText('');
       router.refresh();
     } catch (error) {
@@ -110,7 +107,7 @@ export default function ProjectComments({
       message: 'Are you sure you want to delete this comment? This action cannot be undone.',
       confirmText: 'Delete',
       cancelText: 'Cancel',
-      type: 'danger'
+      type: 'danger',
     });
 
     if (!confirmed) {
@@ -142,12 +139,12 @@ export default function ProjectComments({
       month: 'short',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
   return (
-    <Card className="text-white animate-fade-in">
+    <Card className="animate-fade-in text-white">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
           <MessageCircle size={20} />
@@ -158,16 +155,17 @@ export default function ProjectComments({
         {/* Форма добавления комментария */}
         <div className="space-y-4">
           {!session?.user ? (
-            <div className="flex items-center justify-between p-4 bg-blue-500/20 backdrop-blur-sm rounded-lg border border-blue-500/30">
+            <div className="flex items-center justify-between rounded-lg border border-blue-500/30 bg-blue-500/20 p-4 backdrop-blur-sm">
               <div className="flex items-center gap-2">
                 <AlertCircle size={16} className="text-blue-400" />
-                <span className="text-blue-200">
-                  Please log in to leave a comment
-                </span>
+                <span className="text-blue-200">Please log in to leave a comment</span>
               </div>
               <div className="flex gap-2">
                 <Link href={`/auth/login?callbackUrl=${encodeURIComponent(pathname)}`}>
-                  <Button size="sm" className="text-blue-200 hover:text-white min-h-[44px] min-w-[44px]">
+                  <Button
+                    size="sm"
+                    className="min-h-[44px] min-w-[44px] text-blue-200 hover:text-white"
+                  >
                     Log In
                   </Button>
                 </Link>
@@ -190,25 +188,23 @@ export default function ProjectComments({
                   rows={4}
                 />
                 {error && (
-                  <div className="flex items-center gap-2 text-red-400 text-sm">
+                  <div className="flex items-center gap-2 text-sm text-red-400">
                     <AlertCircle size={14} />
                     {error}
                   </div>
                 )}
               </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-white/50">
-                  {commentText.length}/1000 characters
-                </span>
-                <Button 
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-white/50">{commentText.length}/1000 characters</span>
+                <Button
                   type="submit"
                   disabled={isSubmitting || !commentText.trim()}
                   className="flex items-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                       Sending...
                     </>
                   ) : (
@@ -226,20 +222,20 @@ export default function ProjectComments({
         {/* Список комментариев */}
         <div className="space-y-4">
           {comments.length === 0 ? (
-            <div className="text-center py-8 text-white/50">
+            <div className="py-8 text-center text-white/50">
               <MessageCircle size={48} className="mx-auto mb-3 opacity-30" />
               <p>No comments yet</p>
               <p className="text-sm">Be the first to leave a review!</p>
             </div>
           ) : (
             comments.map((comment) => (
-              <div 
+              <div
                 key={comment.id}
-                className="p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10"
+                className="rounded-lg border border-white/10 bg-white/5 p-4 backdrop-blur-sm"
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-purple-400">
                       <User size={16} className="text-white" />
                     </div>
                     <div className="flex-1">
@@ -254,7 +250,7 @@ export default function ProjectComments({
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Edit/Delete buttons */}
                   {canEditComment(comment) && (
                     <div className="flex items-center gap-2">
@@ -263,7 +259,7 @@ export default function ProjectComments({
                           <Tooltip content="Edit comment" position="top">
                             <button
                               onClick={() => handleEditComment(comment)}
-                              className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-gradient-to-br from-white/25 to-white/15 backdrop-blur-md border border-white/40 text-slate-200 hover:text-amber-400 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-amber-500/80 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)]"
+                              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2.5 text-slate-200 backdrop-blur-md transition-all hover:text-amber-400 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-amber-500/80 focus:outline-none"
                               aria-label="Edit comment"
                             >
                               <Edit2 size={16} />
@@ -273,11 +269,11 @@ export default function ProjectComments({
                             <button
                               onClick={() => handleDeleteComment(comment.id)}
                               disabled={isDeleting === comment.id}
-                              className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-gradient-to-br from-white/25 to-white/15 backdrop-blur-md border border-white/40 text-slate-200 hover:text-red-400 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-500/80 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2.5 text-slate-200 backdrop-blur-md transition-all hover:text-red-400 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-red-500/80 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                               aria-label="Delete comment"
                             >
                               {isDeleting === comment.id ? (
-                                <div className="w-5 h-5 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-red-400/30 border-t-red-400" />
                               ) : (
                                 <Trash2 size={16} />
                               )}
@@ -288,7 +284,7 @@ export default function ProjectComments({
                     </div>
                   )}
                 </div>
-                
+
                 {/* Comment content or edit form */}
                 {editingComment === comment.id ? (
                   <div className="space-y-3">
@@ -300,7 +296,7 @@ export default function ProjectComments({
                       rows={3}
                       className="text-sm"
                     />
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="text-xs text-white/50">
                         {editText.length}/1000 characters
                       </span>
@@ -320,7 +316,7 @@ export default function ProjectComments({
                           disabled={isUpdating || !editText.trim()}
                         >
                           {isUpdating ? (
-                            <div className="w-3.5 h-3.5 border border-white/30 border-t-white rounded-full animate-spin mr-1" />
+                            <div className="mr-1 h-3.5 w-3.5 animate-spin rounded-full border border-white/30 border-t-white" />
                           ) : (
                             <Check size={14} className="mr-1" />
                           )}
@@ -330,7 +326,7 @@ export default function ProjectComments({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-white/90 leading-relaxed whitespace-pre-line">
+                  <p className="leading-relaxed whitespace-pre-line text-white/90">
                     {comment.content}
                   </p>
                 )}

@@ -3,10 +3,10 @@ import type { NextRequest } from 'next/server';
 
 export default function proxy(request: NextRequest) {
   const response = NextResponse.next();
-  
+
   // Add pathname to headers so we can access it in layout
   response.headers.set('x-pathname', request.nextUrl.pathname);
-  
+
   return response;
 }
 

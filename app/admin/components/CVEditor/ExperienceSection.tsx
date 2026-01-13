@@ -20,7 +20,7 @@ export default function ExperienceSection({
   onUpdate,
   onAdd,
   onRemove,
-  onSave
+  onSave,
 }: ExperienceSectionProps) {
   return (
     <Card>
@@ -34,13 +34,11 @@ export default function ExperienceSection({
         {experience.map((exp, index) => (
           <div
             key={exp.id}
-            className="p-6 bg-gradient-to-br from-white via-slate-50 to-slate-100 rounded-xl shadow-[inset_-2px_-2px_1.5px_rgba(255,255,255,0.7),inset_2px_2px_1.5px_rgba(0,0,0,0.1)] border border-white/20"
+            className="rounded-xl border border-white/20 bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-[inset_-2px_-2px_1.5px_rgba(255,255,255,0.7),inset_2px_2px_1.5px_rgba(0,0,0,0.1)]"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Position
-                </label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Position</label>
                 <Input
                   value={exp.title || ''}
                   onChange={(e) => onUpdate(index, 'title', e.target.value)}
@@ -48,9 +46,7 @@ export default function ExperienceSection({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Company
-                </label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Company</label>
                 <Input
                   value={exp.company || ''}
                   onChange={(e) => onUpdate(index, 'company', e.target.value)}
@@ -58,9 +54,7 @@ export default function ExperienceSection({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Work Period
-                </label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Work Period</label>
                 <Input
                   value={exp.period || ''}
                   onChange={(e) => onUpdate(index, 'period', e.target.value)}
@@ -73,11 +67,11 @@ export default function ExperienceSection({
                   id={`current-${exp.id}`}
                   checked={exp.is_current}
                   onChange={(e) => onUpdate(index, 'is_current', e.target.checked)}
-                  className="rounded cursor-pointer"
+                  className="cursor-pointer rounded"
                 />
                 <label
                   htmlFor={`current-${exp.id}`}
-                  className="text-sm text-slate-700 cursor-pointer"
+                  className="cursor-pointer text-sm text-slate-700"
                 >
                   Current Position
                 </label>
@@ -91,12 +85,12 @@ export default function ExperienceSection({
                 rows={3}
               />
             </div>
-            <div className="flex justify-end mt-4">
+            <div className="mt-4 flex justify-end">
               <Tooltip content="Delete experience" position="top" variant="clay">
                 <Button
                   size="sm"
                   onClick={() => onRemove(index)}
-                  className="group hover:bg-red-50 transition-all"
+                  className="group transition-all hover:bg-red-50"
                   aria-label="Delete experience"
                 >
                   <Trash2 size={16} className="icon-danger" />
@@ -113,13 +107,9 @@ export default function ExperienceSection({
             Add Work Experience
           </Button>
 
-          <Button
-            onClick={onSave}
-            disabled={saving}
-            className="flex items-center gap-2"
-          >
+          <Button onClick={onSave} disabled={saving} className="flex items-center gap-2">
             {saving ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             ) : (
               <Save size={16} />
             )}

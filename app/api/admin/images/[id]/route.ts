@@ -7,12 +7,12 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse<ImageDeleteResponse | ApiError>> {
   try {
     // Check admin authorization
     const { isAdmin } = await verifyAdminAuth();
-    
+
     if (!isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -25,8 +25,8 @@ export async function DELETE(
 
     // Start transaction to ensure data consistency
     let updatedImageIds: string[] = [];
-    
-    await sql.begin(async sql => {
+
+    await sql.begin(async (sql) => {
       // First, get image info before deleting
       const imageInfo = await sql`
         SELECT id, entity_type, entity_id 
@@ -52,7 +52,7 @@ export async function DELETE(
           SET image_urls = array_remove(image_urls, ${imageId})
           WHERE id = ${image.entity_id}
         `;
-        
+
         // Get updated list of image IDs for this project
         const images = await sql`
           SELECT id FROM images 
@@ -68,30 +68,32 @@ export async function DELETE(
         const currentData = await sql`
           SELECT avatar_url FROM cv_data WHERE id = ${image.entity_id}
         `;
-        
+
         if (currentData.length > 0) {
           let avatarArray;
           const currentAvatar = currentData[0].avatar_url;
-          
+
           if (!currentAvatar || currentAvatar === '[]' || currentAvatar === '') {
             avatarArray = [];
           } else {
             try {
-              avatarArray = Array.isArray(currentAvatar) ? currentAvatar : JSON.parse(currentAvatar);
+              avatarArray = Array.isArray(currentAvatar)
+                ? currentAvatar
+                : JSON.parse(currentAvatar);
             } catch {
               avatarArray = [currentAvatar];
             }
           }
-          
+
           // Remove the image ID from array
           const updatedArray = avatarArray.filter((id: string) => id !== imageId);
-          
+
           await sql`
             UPDATE cv_data 
             SET avatar_url = ${JSON.stringify(updatedArray)}
             WHERE id = ${image.entity_id}
           `;
-          
+
           updatedImageIds = updatedArray;
         }
       }
@@ -100,14 +102,16 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       message: 'Image deleted successfully and references updated',
-      imageIds: updatedImageIds
+      imageIds: updatedImageIds,
     });
-
   } catch (error) {
     console.error('DELETE /api/admin/images/[id]: Error deleting image:', error);
     return NextResponse.json(
-      { error: 'Failed to delete image', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      {
+        error: 'Failed to delete image',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 },
     );
   }
 }

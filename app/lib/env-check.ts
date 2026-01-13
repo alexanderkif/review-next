@@ -12,18 +12,11 @@ export function validateEnvironment() {
   if (missingVars.length > 0) {
     console.warn(
       `⚠️  Missing environment variables: ${missingVars.join(', ')}\n` +
-      `   App will show "no data" state until variables are configured.\n` +
-      `   For production, please set up these variables in .env.local`
+        `   App will show "no data" state until variables are configured.\n` +
+        `   For production, please set up these variables in .env.local`,
     );
     return false;
   }
 
   return true;
-}
-
-export function getConnectionStatus() {
-  return {
-    hasDatabase: !!process.env.POSTGRES_URL,
-    environment: process.env.NODE_ENV || 'development',
-  };
 }

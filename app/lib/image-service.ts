@@ -31,7 +31,7 @@ export async function createImagesTable() {
   try {
     // First drop the existing table if it exists with wrong schema
     await sql`DROP TABLE IF EXISTS images CASCADE`;
-    
+
     await sql`
       CREATE TABLE images (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -74,7 +74,7 @@ export async function saveImage(
   imageData: string,
   mimeType: string,
   width?: number,
-  height?: number
+  height?: number,
 ): Promise<string | null> {
   try {
     // Calculate size from base64
@@ -109,7 +109,7 @@ export async function getImageById(imageId: string): Promise<ImageRecord | null>
     const result = await sql`
       SELECT * FROM images WHERE id = ${imageId} LIMIT 1
     `;
-    return result[0] as ImageRecord || null;
+    return (result[0] as ImageRecord) || null;
   } catch (error) {
     console.error('Error fetching image:', error);
     return null;
@@ -119,7 +119,7 @@ export async function getImageById(imageId: string): Promise<ImageRecord | null>
 // Get images for entity
 export async function getImagesForEntity(
   entityType: 'avatar' | 'project' | 'user',
-  entityId: string
+  entityId: string,
 ): Promise<ImageMetadata[]> {
   try {
     const result = await sql`
@@ -145,7 +145,7 @@ const getAvatarForCV = async (cvId: string): Promise<ImageMetadata | null> => {
       ORDER BY created_at DESC
       LIMIT 1
     `;
-    return result[0] as ImageMetadata || null;
+    return (result[0] as ImageMetadata) || null;
   } catch (error) {
     console.error('Error fetching avatar:', error);
     return null;
@@ -153,19 +153,15 @@ const getAvatarForCV = async (cvId: string): Promise<ImageMetadata | null> => {
 };
 
 // Cached version for better performance
-export const getCVAvatar = unstable_cache(
-  getAvatarForCV,
-  ['cv-avatar'],
-  { 
-    revalidate: 3600, // 1 hour
-    tags: ['images', 'cv']
-  }
-);
+export const getCVAvatar = unstable_cache(getAvatarForCV, ['cv-avatar'], {
+  revalidate: 3600, // 1 hour
+  tags: ['images', 'cv'],
+});
 
 // Delete images for entity
 export async function deleteImagesForEntity(
   entityType: 'avatar' | 'project' | 'user',
-  entityId: string
+  entityId: string,
 ): Promise<boolean> {
   try {
     await sql`
@@ -184,12 +180,12 @@ export async function createImageFromUrl(
   imageBuffer: Buffer,
   contentType: string,
   entityType: 'avatar' | 'project' | 'user',
-  entityId: string
+  entityId: string,
 ): Promise<{ id: string }> {
   try {
     // Convert buffer to base64
     const base64Data = `data:${contentType};base64,${imageBuffer.toString('base64')}`;
-    
+
     // Calculate size
     const sizeBytes = imageBuffer.length;
 
@@ -222,7 +218,7 @@ export async function createImageFromUrl(
 // Get all images for a specific entity
 export async function getImagesByEntity(
   entityType: 'avatar' | 'project' | 'user',
-  entityId: string
+  entityId: string,
 ): Promise<ImageMetadata[]> {
   try {
     const result = await sql`

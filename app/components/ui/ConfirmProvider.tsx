@@ -36,7 +36,7 @@ export const ConfirmProvider = ({ children }: ConfirmProviderProps) => {
     message: '',
     confirmText: 'Confirm',
     cancelText: 'Cancel',
-    type: 'warning'
+    type: 'warning',
   });
   const [resolver, setResolver] = useState<((value: boolean) => void) | null>(null);
 
@@ -46,7 +46,7 @@ export const ConfirmProvider = ({ children }: ConfirmProviderProps) => {
         confirmText: 'Confirm',
         cancelText: 'Cancel',
         type: 'warning',
-        ...opts
+        ...opts,
       });
       setIsOpen(true);
       setResolver(() => resolve);

@@ -7,14 +7,14 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function PUT(request: NextRequest) {
   const { isAdmin } = await verifyAdminAuth();
-  
+
   if (!isAdmin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const { experience } = await request.json();
-    
+
     // Получаем CV ID
     const cvResult = await sql`
       SELECT id FROM cv_data 
@@ -34,7 +34,8 @@ export async function PUT(request: NextRequest) {
 
     // Add new work experience
     for (const [index, exp] of experience.entries()) {
-      if (exp.title && exp.company) { // Проверяем что есть основные поля
+      if (exp.title && exp.company) {
+        // Проверяем что есть основные поля
         await sql`
           INSERT INTO cv_experience (cv_id, title, company, period, description, is_current, sort_order)
           VALUES (${cvId}, ${exp.title}, ${exp.company}, ${exp.period}, ${exp.description}, ${exp.is_current}, ${index})
@@ -44,12 +45,8 @@ export async function PUT(request: NextRequest) {
 
     await revalidateCVData();
     return NextResponse.json({ message: 'Experience updated successfully' });
-
   } catch (error) {
     console.error('Error updating experience:', error);
-    return NextResponse.json(
-      { error: 'Failed to update experience' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update experience' }, { status: 500 });
   }
 }

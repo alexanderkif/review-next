@@ -20,7 +20,7 @@ export default function LanguagesSection({
   onUpdate,
   onAdd,
   onRemove,
-  onSave
+  onSave,
 }: LanguagesSectionProps) {
   return (
     <Card>
@@ -34,7 +34,7 @@ export default function LanguagesSection({
         {languages.map((lang, index) => (
           <div
             key={lang.id}
-            className="flex items-center gap-4 p-6 bg-gradient-to-br from-white via-slate-50 to-slate-100 rounded-xl shadow-[inset_-2px_-2px_1.5px_rgba(255,255,255,0.7),inset_2px_2px_1.5px_rgba(0,0,0,0.1)] border border-white/20"
+            className="flex items-center gap-4 rounded-xl border border-white/20 bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-[inset_-2px_-2px_1.5px_rgba(255,255,255,0.7),inset_2px_2px_1.5px_rgba(0,0,0,0.1)]"
           >
             <div className="flex-1">
               <Input
@@ -54,7 +54,7 @@ export default function LanguagesSection({
               <Button
                 size="sm"
                 onClick={() => onRemove(index)}
-                className="group hover:bg-red-50 transition-all p-2 min-h-[36px] min-w-[36px]"
+                className="group min-h-[36px] min-w-[36px] p-2 transition-all hover:bg-red-50"
                 aria-label="Delete language"
               >
                 <Trash2 size={16} className="icon-danger" />
@@ -69,13 +69,9 @@ export default function LanguagesSection({
             Add Language
           </Button>
 
-          <Button
-            onClick={onSave}
-            disabled={saving}
-            className="flex items-center gap-2"
-          >
+          <Button onClick={onSave} disabled={saving} className="flex items-center gap-2">
             {saving ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             ) : (
               <Save size={16} />
             )}

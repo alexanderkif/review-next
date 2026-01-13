@@ -28,18 +28,14 @@ export default function NameSection({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Current name
-          </label>
-          <p className="text-slate-600 text-sm bg-slate-50 p-2 rounded">
+          <label className="mb-1 block text-sm font-medium text-slate-700">Current name</label>
+          <p className="rounded bg-slate-50 p-2 text-sm text-slate-600">
             {currentName || 'Not set'}
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            New Name
-          </label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">New Name</label>
           <Input
             type="text"
             value={name}
@@ -49,13 +45,10 @@ export default function NameSection({
           />
         </div>
 
-        <div className="flex justify-end mt-4">
-          <Button
-            onClick={onUpdate}
-            disabled={saving || !name.trim() || name === currentName}
-          >
+        <div className="mt-4 flex justify-end">
+          <Button onClick={onUpdate} disabled={saving || !name.trim() || name === currentName}>
             {saving ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             ) : (
               <Save size={16} className="mr-2" />
             )}

@@ -14,7 +14,7 @@ export default function AdminAuthCheck({ children }: AdminAuthCheckProps) {
 
   useEffect(() => {
     if (status === 'loading') return; // Ждем загрузки сессии
-    
+
     if (status === 'unauthenticated' || !session?.user) {
       router.push('/admin/login');
       return;
@@ -28,9 +28,9 @@ export default function AdminAuthCheck({ children }: AdminAuthCheckProps) {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin mx-auto mb-4" />
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
           <p className="text-slate-600">Checking authorization...</p>
         </div>
       </div>
@@ -39,7 +39,7 @@ export default function AdminAuthCheck({ children }: AdminAuthCheckProps) {
 
   if (!session?.user || session.user.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
         <div className="text-center">
           <p className="text-slate-600">Redirecting...</p>
         </div>

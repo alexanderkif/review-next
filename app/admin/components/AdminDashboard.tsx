@@ -2,16 +2,7 @@
 
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
-import {
-  User,
-  FileText,
-  FolderOpen,
-  Settings,
-  LogOut,
-  Home,
-  Edit3,
-  Eye
-} from 'lucide-react';
+import { User, FileText, FolderOpen, Settings, LogOut, Home, Edit3, Eye } from 'lucide-react';
 import { logger } from '../../lib/logger';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -38,7 +29,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
     try {
       await signOut({
         callbackUrl: '/admin/login',
-        redirect: true
+        redirect: true,
       });
     } catch (error) {
       logger.error('Logout error:', error);
@@ -55,22 +46,20 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#e8edf2] via-[#f0f4f8] to-[#dfe7ed]">
       {/* Header */}
-      <header className="bg-gradient-to-br from-[#e8edf2] via-[#f0f4f8] to-[#dfe7ed] backdrop-blur-md shadow-[0_1.5px_4.5px_rgba(199,206,212,0.3),_inset_0_-2px_1.5px_#8a8a8acc] border-b border-slate-200/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+      <header className="border-b border-slate-200/30 bg-gradient-to-br from-[#e8edf2] via-[#f0f4f8] to-[#dfe7ed] shadow-[0_1.5px_4.5px_rgba(199,206,212,0.3),_inset_0_-2px_1.5px_#8a8a8acc] backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-lg flex items-center justify-center">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-blue-600">
                 <Settings className="text-white" size={18} />
               </div>
-              <h1 className="text-xl font-semibold text-slate-800 hidden md:block">
-                Admin Panel
-              </h1>
+              <h1 className="hidden text-xl font-semibold text-slate-800 md:block">Admin Panel</h1>
             </div>
 
             <div className="flex items-center gap-4">
               <Link
                 href="/"
-                className="px-4 py-2.5 rounded-xl font-medium text-sm transition-colors duration-200 inline-flex items-center gap-2 cursor-pointer bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] text-slate-800 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc] hover:text-emerald-600 hover:[background:linear-gradient(135deg,#edf2f7_0%,#e5ecf1_100%)]"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] px-4 py-2.5 text-sm font-medium text-slate-800 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc] transition-colors duration-200 hover:text-emerald-600 hover:[background:linear-gradient(135deg,#edf2f7_0%,#e5ecf1_100%)]"
               >
                 <Eye size={16} />
                 <span className="md:hidden">Site</span>
@@ -79,7 +68,9 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
 
               <div className="flex items-center gap-2 text-sm">
                 <User size={16} className="text-slate-500" />
-                <span className="text-slate-700 truncate max-w-[150px]">{user?.name || user?.email}</span>
+                <span className="max-w-[150px] truncate text-slate-700">
+                  {user?.name || user?.email}
+                </span>
               </div>
 
               <Button
@@ -95,19 +86,20 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap space-x-1 bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] px-1 py-2 rounded-xl shadow-[4.5px_4.5px_9px_#c5c5c5,_-2.25px_-2.25px_9px_#ffffff,_inset_-2px_-2px_1.5px_#8a8a8acc] mb-8 gap-y-1">
+        <div className="mb-8 flex flex-wrap space-x-1 gap-y-1 rounded-xl bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] px-1 py-2 shadow-[4.5px_4.5px_9px_#c5c5c5,_-2.25px_-2.25px_9px_#ffffff,_inset_-2px_-2px_1.5px_#8a8a8acc]">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === tab.id
+                className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
+                  activeTab === tab.id
                     ? 'bg-gradient-to-r from-emerald-600 to-blue-600 text-white shadow-[3px_3px_6px_#9ca3af,_-1.5px_-1.5px_6px_rgba(255,255,255,0.1)]'
-                    : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
-                  }`}
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'
+                }`}
               >
                 <Icon size={16} />
                 {tab.label}
@@ -119,7 +111,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
         {/* Content */}
         <div className="space-y-6">
           {activeTab === 'overview' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               <Card className="flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -127,14 +119,11 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
                     Resume
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col flex-1">
-                  <p className="text-slate-600 text-sm mb-4 flex-1">
+                <CardContent className="flex flex-1 flex-col">
+                  <p className="mb-4 flex-1 text-sm text-slate-600">
                     Manage resume data, work experience and skills
                   </p>
-                  <Button
-                    onClick={() => setActiveTab('cv')}
-                    className="w-full mt-auto"
-                  >
+                  <Button onClick={() => setActiveTab('cv')} className="mt-auto w-full">
                     <Edit3 size={16} className="mr-2" />
                     Edit
                   </Button>
@@ -148,14 +137,11 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
                     Projects
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col flex-1">
-                  <p className="text-slate-600 text-sm mb-4 flex-1">
+                <CardContent className="flex flex-1 flex-col">
+                  <p className="mb-4 flex-1 text-sm text-slate-600">
                     Add and edit portfolio projects
                   </p>
-                  <Button
-                    onClick={() => setActiveTab('projects')}
-                    className="w-full mt-auto"
-                  >
+                  <Button onClick={() => setActiveTab('projects')} className="mt-auto w-full">
                     <FolderOpen size={16} className="mr-2" />
                     Manage
                   </Button>
@@ -169,14 +155,11 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
                     Settings
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col flex-1">
-                  <p className="text-slate-600 text-sm mb-4 flex-1">
+                <CardContent className="flex flex-1 flex-col">
+                  <p className="mb-4 flex-1 text-sm text-slate-600">
                     General site and account settings
                   </p>
-                  <Button
-                    onClick={() => setActiveTab('settings')}
-                    className="w-full mt-auto"
-                  >
+                  <Button onClick={() => setActiveTab('settings')} className="mt-auto w-full">
                     <Settings size={16} className="mr-2" />
                     Configure
                   </Button>
@@ -187,7 +170,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
 
           {activeTab === 'cv' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-slate-800">Resume Management</h2>
               </div>
 
@@ -195,13 +178,9 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
             </div>
           )}
 
-          {activeTab === 'projects' && (
-            <ProjectsEditor />
-          )}
+          {activeTab === 'projects' && <ProjectsEditor />}
 
-          {activeTab === 'settings' && user && (
-            <AdminSettings user={user} />
-          )}
+          {activeTab === 'settings' && user && <AdminSettings user={user} />}
         </div>
       </div>
     </div>

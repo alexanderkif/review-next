@@ -7,11 +7,11 @@ import AdminAuthCheck from './components/AdminAuthCheck';
 // Динамический импорт тяжелого AdminDashboard
 const AdminDashboard = dynamic(() => import('./components/AdminDashboard'), {
   loading: () => (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent" />
     </div>
   ),
-  ssr: false
+  ssr: false,
 });
 
 export default function AdminPage() {

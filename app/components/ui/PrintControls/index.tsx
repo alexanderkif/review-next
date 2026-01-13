@@ -18,12 +18,12 @@ const PrintControls = ({ className = '' }: PrintControlsProps) => {
       // Fetch CV data and projects
       const [cvResponse, projectsResponse] = await Promise.all([
         fetch('/api/cv-data'),
-        fetch('/api/admin/projects')
+        fetch('/api/admin/projects'),
       ]);
-      
+
       if (!cvResponse.ok) throw new Error('Failed to fetch CV data');
       const cvData: CVData = await cvResponse.json();
-      
+
       // Add projects to CV data if available
       if (projectsResponse.ok) {
         const projects = await projectsResponse.json();
@@ -65,7 +65,7 @@ const PrintControls = ({ className = '' }: PrintControlsProps) => {
         <button
           onClick={generatePDF}
           disabled={isGenerating}
-          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-emerald-600 to-blue-600 text-white hover:text-white shadow-[3px_3px_6px_#9ca3af,_-1.5px_-1.5px_6px_rgba(255,255,255,0.1),_inset_-2px_-2px_1px_rgba(0,0,0,0.3)] transition-all duration-200 will-change-auto disabled:opacity-75 disabled:cursor-wait cursor-pointer hover:[background:linear-gradient(90deg,#10b981_0%,#3b82f6_100%)]`}
+          className={`inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-[3px_3px_6px_#9ca3af,_-1.5px_-1.5px_6px_rgba(255,255,255,0.1),_inset_-2px_-2px_1px_rgba(0,0,0,0.3)] transition-all duration-200 will-change-auto hover:text-white hover:[background:linear-gradient(90deg,#10b981_0%,#3b82f6_100%)] disabled:cursor-wait disabled:opacity-75`}
           style={{ WebkitFontSmoothing: 'antialiased', textRendering: 'optimizeLegibility' }}
         >
           {isGenerating ? (

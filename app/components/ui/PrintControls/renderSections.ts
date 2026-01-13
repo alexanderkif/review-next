@@ -1,7 +1,12 @@
 import { PDFDocument, PDFFont, PDFPage, PDFRef } from 'pdf-lib';
 import { CVData } from './types';
 import { PDF_CONFIG, getContentWidth } from './constants';
-import { checkNewPage, wrapText, drawTextWithGreenBullets, renderSectionHeader } from './pdfHelpers';
+import {
+  checkNewPage,
+  wrapText,
+  drawTextWithGreenBullets,
+  renderSectionHeader,
+} from './pdfHelpers';
 
 export const renderHighlights = (
   page: PDFPage,
@@ -10,7 +15,7 @@ export const renderHighlights = (
   helveticaBold: PDFFont,
   helveticaFont: PDFFont,
   y: number,
-  pageAnnotations: PDFRef[]
+  pageAnnotations: PDFRef[],
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
   if (!cvData.about) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
@@ -19,7 +24,7 @@ export const renderHighlights = (
   let currentPage = page;
   let currentY = y;
   let annotations = [...pageAnnotations];
-  const { MARGIN, PAGE_WIDTH, COLORS, LINE_HEIGHT } = PDF_CONFIG;
+  const { MARGIN, COLORS, LINE_HEIGHT } = PDF_CONFIG;
   const contentWidth = getContentWidth();
 
   const result = checkNewPage(currentY, 40, currentPage, annotations, pdfDoc);
@@ -30,12 +35,10 @@ export const renderHighlights = (
   currentY = renderSectionHeader(currentPage, 'HIGHLIGHTS', currentY, helveticaBold);
 
   // Parse and render highlights
-  const highlights = cvData.about
-    .split('\n')
-    .filter((line: string) => {
-      const trimmed = line.trim();
-      return trimmed && (trimmed.startsWith('•') || trimmed.startsWith('-'));
-    });
+  const highlights = cvData.about.split('\n').filter((line: string) => {
+    const trimmed = line.trim();
+    return trimmed && (trimmed.startsWith('•') || trimmed.startsWith('-'));
+  });
 
   for (const highlight of highlights) {
     const result = checkNewPage(currentY, 30, currentPage, annotations, pdfDoc);
@@ -48,13 +51,7 @@ export const renderHighlights = (
 
     for (let i = 0; i < lines.length; i++) {
       if (i > 0) {
-        const result = checkNewPage(
-          currentY,
-          LINE_HEIGHT,
-          currentPage,
-          annotations,
-          pdfDoc
-        );
+        const result = checkNewPage(currentY, LINE_HEIGHT, currentPage, annotations, pdfDoc);
         currentPage = result.newPage;
         currentY = result.newY;
         annotations = result.newAnnotations;
@@ -92,7 +89,7 @@ export const renderWorkExperience = (
   helveticaBold: PDFFont,
   helveticaFont: PDFFont,
   y: number,
-  pageAnnotations: PDFRef[]
+  pageAnnotations: PDFRef[],
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
   if (!cvData.experience?.length) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
@@ -101,7 +98,7 @@ export const renderWorkExperience = (
   let currentPage = page;
   let currentY = y;
   let annotations = [...pageAnnotations];
-  const { MARGIN, PAGE_WIDTH, COLORS, LINE_HEIGHT } = PDF_CONFIG;
+  const { MARGIN, COLORS, LINE_HEIGHT } = PDF_CONFIG;
   const contentWidth = getContentWidth();
 
   // Check space for section header
@@ -137,7 +134,7 @@ export const renderWorkExperience = (
       currentY,
       10,
       helveticaBold,
-      COLORS.GRAY
+      COLORS.GRAY,
     );
     currentY -= 14;
 
@@ -150,20 +147,14 @@ export const renderWorkExperience = (
       currentY,
       8,
       helveticaFont,
-      COLORS.LIGHT_GRAY
+      COLORS.LIGHT_GRAY,
     );
     currentY -= 16;
 
     // Description
     const descLines = wrapText(exp.description, contentWidth, 10, helveticaFont);
     for (const line of descLines) {
-      const result = checkNewPage(
-        currentY,
-        LINE_HEIGHT + 2,
-        currentPage,
-        annotations,
-        pdfDoc
-      );
+      const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
       currentPage = result.newPage;
       currentY = result.newY;
       annotations = result.newAnnotations;
@@ -190,7 +181,7 @@ export const renderEducation = (
   helveticaBold: PDFFont,
   helveticaFont: PDFFont,
   y: number,
-  pageAnnotations: PDFRef[]
+  pageAnnotations: PDFRef[],
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
   if (!cvData.education?.length) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
@@ -199,7 +190,7 @@ export const renderEducation = (
   let currentPage = page;
   let currentY = y;
   let annotations = [...pageAnnotations];
-  const { MARGIN, PAGE_WIDTH, COLORS, LINE_HEIGHT } = PDF_CONFIG;
+  const { MARGIN, COLORS, LINE_HEIGHT } = PDF_CONFIG;
   const contentWidth = getContentWidth();
 
   const result = checkNewPage(currentY, 40, currentPage, annotations, pdfDoc);
@@ -231,7 +222,7 @@ export const renderEducation = (
       currentY,
       10,
       helveticaBold,
-      COLORS.GRAY
+      COLORS.GRAY,
     );
     currentY -= 14;
 
@@ -242,7 +233,7 @@ export const renderEducation = (
       currentY,
       8,
       helveticaFont,
-      COLORS.LIGHT_GRAY
+      COLORS.LIGHT_GRAY,
     );
     currentY -= 16;
 
@@ -250,25 +241,19 @@ export const renderEducation = (
       // Check if description contains URL
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       const match = urlRegex.exec(edu.description);
-      
+
       if (match) {
         // Has URL - render prefix text and URL on same line
         const url = match[0];
         const prefix = edu.description.substring(0, match.index);
-        
-        const result = checkNewPage(
-          currentY,
-          LINE_HEIGHT + 2,
-          currentPage,
-          annotations,
-          pdfDoc
-        );
+
+        const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
         currentPage = result.newPage;
         currentY = result.newY;
         annotations = result.newAnnotations;
 
         let lineX = MARGIN;
-        
+
         // Draw prefix (e.g., "WES: ")
         if (prefix) {
           currentPage.drawText(prefix, {
@@ -280,7 +265,7 @@ export const renderEducation = (
           });
           lineX += helveticaFont.widthOfTextAtSize(prefix, 10);
         }
-        
+
         // Draw URL in green
         const urlWidth = helveticaFont.widthOfTextAtSize(url, 10);
         currentPage.drawText(url, {
@@ -290,7 +275,7 @@ export const renderEducation = (
           font: helveticaFont,
           color: COLORS.GREEN,
         });
-        
+
         // Add link annotation
         const linkAnnotation = currentPage.doc.context.register(
           currentPage.doc.context.obj({
@@ -304,22 +289,16 @@ export const renderEducation = (
               S: 'URI',
               URI: currentPage.doc.context.obj(url),
             }),
-          })
+          }),
         );
         annotations.push(linkAnnotation);
-        
+
         currentY -= LINE_HEIGHT + 2;
       } else {
         // No URL - render normally
         const descLines = wrapText(edu.description, contentWidth, 10, helveticaFont);
         for (const line of descLines) {
-          const result = checkNewPage(
-            currentY,
-            LINE_HEIGHT + 2,
-            currentPage,
-            annotations,
-            pdfDoc
-          );
+          const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
           currentPage = result.newPage;
           currentY = result.newY;
           annotations = result.newAnnotations;
@@ -348,7 +327,7 @@ export const renderLanguages = (
   helveticaBold: PDFFont,
   helveticaFont: PDFFont,
   y: number,
-  pageAnnotations: PDFRef[]
+  pageAnnotations: PDFRef[],
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
   if (!cvData.languages?.length) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
@@ -357,6 +336,7 @@ export const renderLanguages = (
   let currentPage = page;
   let currentY = y;
   let annotations = [...pageAnnotations];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { MARGIN, PAGE_WIDTH, COLORS, LINE_HEIGHT } = PDF_CONFIG;
 
   const result = checkNewPage(currentY, 40, currentPage, annotations, pdfDoc);
@@ -370,15 +350,14 @@ export const renderLanguages = (
   const columnWidth = (PAGE_WIDTH - 3 * MARGIN) / 2;
   const leftColumnX = MARGIN;
   const rightColumnX = MARGIN + columnWidth + MARGIN;
-  
+
   let leftY = currentY;
   let rightY = currentY;
   let currentColumn: 'left' | 'right' = 'left';
 
   for (const lang of cvData.languages) {
-    const columnX = currentColumn === 'left' ? leftColumnX : rightColumnX;
     const columnY = currentColumn === 'left' ? leftY : rightY;
-    
+
     // Check if language fits in current column
     if (columnY - 16 < MARGIN) {
       if (currentColumn === 'left') {
@@ -406,7 +385,7 @@ export const renderLanguages = (
         currentColumn = 'left';
       }
     }
-    
+
     const finalColumnX = currentColumn === 'left' ? leftColumnX : rightColumnX;
     const finalColumnY = currentColumn === 'left' ? leftY : rightY;
 
@@ -418,7 +397,7 @@ export const renderLanguages = (
       finalColumnY,
       10,
       helveticaFont,
-      COLORS.GRAY
+      COLORS.GRAY,
     );
 
     if (currentColumn === 'left') {
@@ -430,7 +409,11 @@ export const renderLanguages = (
     }
   }
 
-  return { newPage: currentPage, newY: Math.min(leftY, rightY), newAnnotations: annotations };
+  return {
+    newPage: currentPage,
+    newY: Math.min(leftY, rightY),
+    newAnnotations: annotations,
+  };
 };
 
 export const renderTechnicalSkills = (
@@ -440,9 +423,14 @@ export const renderTechnicalSkills = (
   helveticaBold: PDFFont,
   helveticaFont: PDFFont,
   y: number,
-  pageAnnotations: PDFRef[]
+  pageAnnotations: PDFRef[],
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
-  if (!cvData.skills || (!cvData.skills.frontend?.length && !cvData.skills.tools?.length && !cvData.skills.backend?.length)) {
+  if (
+    !cvData.skills ||
+    (!cvData.skills.frontend?.length &&
+      !cvData.skills.tools?.length &&
+      !cvData.skills.backend?.length)
+  ) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
   }
 
@@ -450,11 +438,15 @@ export const renderTechnicalSkills = (
   let currentY = y;
   let annotations = [...pageAnnotations];
   const { MARGIN, PAGE_WIDTH, PAGE_HEIGHT, COLORS, LINE_HEIGHT } = PDF_CONFIG;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const contentWidth = getContentWidth();
 
   // Force new page for Technical Skills
   if (annotations.length > 0) {
-    currentPage.node.set(currentPage.doc.context.obj('Annots'), currentPage.doc.context.obj(annotations));
+    currentPage.node.set(
+      currentPage.doc.context.obj('Annots'),
+      currentPage.doc.context.obj(annotations),
+    );
     annotations = [];
   }
   currentPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
@@ -482,13 +474,13 @@ export const renderTechnicalSkills = (
     const spaceWidth = helveticaFont.widthOfTextAtSize(' ', 10);
     const bulletWidth = helveticaFont.widthOfTextAtSize('•', 10);
     const maxLineWidth = PAGE_WIDTH - 2 * MARGIN;
-    
+
     for (let i = 0; i < skills.length; i++) {
       const skill = skills[i];
       const skillWidth = helveticaFont.widthOfTextAtSize(skill, 10);
       const needsBullet = i > 0;
-      const bulletSpace = needsBullet ? (spaceWidth * 2 + bulletWidth + spaceWidth * 2) : 0;
-      
+      const bulletSpace = needsBullet ? spaceWidth * 2 + bulletWidth + spaceWidth * 2 : 0;
+
       // Check if skill fits on current line
       if (lineX + bulletSpace + skillWidth > maxLineWidth && lineX > MARGIN) {
         // Move to next line
@@ -501,20 +493,20 @@ export const renderTechnicalSkills = (
       } else if (needsBullet) {
         // Add spaces before bullet
         lineX += spaceWidth * 2;
-        
+
         // Draw green bullet
-        const bulletY = currentY + (10 * 0.3);
+        const bulletY = currentY + 10 * 0.3;
         currentPage.drawCircle({
-          x: lineX + (10 * 0.15),
+          x: lineX + 10 * 0.15,
           y: bulletY,
           size: 2,
           color: COLORS.GREEN,
         });
-        
+
         // Add bullet width and spaces after bullet
         lineX += bulletWidth + spaceWidth * 2;
       }
-      
+
       currentPage.drawText(skill, {
         x: lineX,
         y: currentY,
@@ -524,7 +516,7 @@ export const renderTechnicalSkills = (
       });
       lineX += skillWidth;
     }
-    
+
     currentY -= LINE_HEIGHT + 8;
   };
 
@@ -550,9 +542,9 @@ export const renderFeaturedProjects = (
   helveticaBold: PDFFont,
   helveticaFont: PDFFont,
   y: number,
-  pageAnnotations: PDFRef[]
+  pageAnnotations: PDFRef[],
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
-  const featuredProjects = cvData.projects?.filter(p => p.featured);
+  const featuredProjects = cvData.projects?.filter((p) => p.featured);
   if (!featuredProjects?.length) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
   }
@@ -561,6 +553,7 @@ export const renderFeaturedProjects = (
   let currentY = y;
   let annotations = [...pageAnnotations];
   const { MARGIN, PAGE_WIDTH, PAGE_HEIGHT, COLORS, LINE_HEIGHT } = PDF_CONFIG;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const contentWidth = getContentWidth();
   const columnWidth = (PAGE_WIDTH - 3 * MARGIN) / 2;
 
@@ -581,7 +574,7 @@ export const renderFeaturedProjects = (
 
     const description = project.short_description || project.description;
     const projectLines = wrapText(description, columnWidth, 10, helveticaFont);
-    const projectHeight = 14 + (projectLines.length * LINE_HEIGHT) + 12 + 21;
+    const projectHeight = 14 + projectLines.length * LINE_HEIGHT + 12 + 21;
 
     if (projectY - projectHeight < MARGIN) {
       if (currentColumn === 'left') {
@@ -624,9 +617,14 @@ export const renderFeaturedProjects = (
       projectY -= LINE_HEIGHT;
     }
 
-    const statusLabel = project.status === 'completed' ? 'Completed' :
-                       project.status === 'in-progress' ? 'In Progress' :
-                       project.status === 'archived' ? 'Archived' : project.status;
+    const statusLabel =
+      project.status === 'completed'
+        ? 'Completed'
+        : project.status === 'in-progress'
+          ? 'In Progress'
+          : project.status === 'archived'
+            ? 'Archived'
+            : project.status;
 
     drawTextWithGreenBullets(
       currentPage,
@@ -635,7 +633,7 @@ export const renderFeaturedProjects = (
       projectY,
       8,
       helveticaFont,
-      COLORS.LIGHT_GRAY
+      COLORS.LIGHT_GRAY,
     );
     projectY -= 12;
 
@@ -664,7 +662,7 @@ export const renderFeaturedProjects = (
             S: 'URI',
             URI: currentPage.doc.context.obj(project.github_url),
           }),
-        })
+        }),
       );
 
       annotations.push(linkAnnotation);
@@ -674,9 +672,9 @@ export const renderFeaturedProjects = (
         const spaceWidth = helveticaFont.widthOfTextAtSize('  ', 9);
         projectLinksX += spaceWidth;
 
-        const bulletY = projectY + (9 * 0.3);
+        const bulletY = projectY + 9 * 0.3;
         currentPage.drawCircle({
-          x: projectLinksX + (9 * 0.15),
+          x: projectLinksX + 9 * 0.15,
           y: bulletY,
           size: 1.5,
           color: COLORS.GREEN,
@@ -708,7 +706,7 @@ export const renderFeaturedProjects = (
             S: 'URI',
             URI: currentPage.doc.context.obj(project.demo_url),
           }),
-        })
+        }),
       );
 
       annotations.push(linkAnnotation);

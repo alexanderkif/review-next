@@ -4,8 +4,18 @@ import { useState, useEffect, useMemo } from 'react';
 import LazyImage from './LazyImage';
 import { logger } from '../../lib/logger';
 
-const FallbackAvatar = ({ sizeClass, className, letterFallback }: { sizeClass: string; className?: string; letterFallback: string }) => (
-  <div className={`bg-gradient-to-br from-emerald-600 to-blue-600 flex items-center justify-center text-white font-bold rounded-3xl ${sizeClass} ${className}`}>
+const FallbackAvatar = ({
+  sizeClass,
+  className,
+  letterFallback,
+}: {
+  sizeClass: string;
+  className?: string;
+  letterFallback: string;
+}) => (
+  <div
+    className={`flex items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-600 to-blue-600 font-bold text-white ${sizeClass} ${className}`}
+  >
     {letterFallback}
   </div>
 );
@@ -22,7 +32,7 @@ interface LazyAvatarProps {
 const sizeClasses = {
   sm: 'w-10 h-10 text-lg',
   md: 'w-32 h-32 text-4xl',
-  lg: 'w-48 h-48 text-6xl'
+  lg: 'w-48 h-48 text-6xl',
 };
 
 const LazyAvatar = ({
@@ -31,11 +41,10 @@ const LazyAvatar = ({
   className = '',
   size = 'md',
   fallbackLetter,
-  disableRotation = false
+  disableRotation = false,
 }: LazyAvatarProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const letterFallback = fallbackLetter || name?.[0]?.toUpperCase() || 'A';
@@ -48,51 +57,22 @@ const LazyAvatar = ({
     return [avatarUrl];
   }, [avatarUrl]);
 
-  // Preload all avatar images
+  // Auto-rotate between multiple avatars every 5 seconds
   useEffect(() => {
-    if (avatarUrls.length <= 1) return;
-
-    avatarUrls.forEach((url, index) => {
-      if (index === currentImageIndex) return; // Skip current image, it's already loading
-
-      const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => new Set([...prev, index]));
-      };
-      img.onerror = () => {
-        console.warn(`Failed to preload avatar image ${index}:`, url);
-      };
-      
-      // Handle different URL formats
-      if (url.startsWith('data:') || url.startsWith('http')) {
-        img.src = url;
-      } else if (!url.startsWith('/') && !url.includes('/')) {
-        img.src = `/api/images/${url}`;
-      } else {
-        img.src = url;
-      }
-    });
-  }, [avatarUrls, currentImageIndex]);
-
-  // Check if all images are loaded
-  const allImagesLoaded = loadedImages.size >= Math.min(avatarUrls.length, 3); // Load at least first 3 images
-
-  // Auto-rotate between multiple avatars every 5 seconds (after images load)
-  useEffect(() => {
-    if (avatarUrls.length <= 1 || !allImagesLoaded || disableRotation || hoveredIndex !== null) return;
+    if (avatarUrls.length <= 1 || disableRotation || hoveredIndex !== null) return;
 
     const interval = setInterval(() => {
       setIsTransitioning(true);
-      
+
       // Start fade out, then change image after 250ms, then fade in
       setTimeout(() => {
-        setCurrentImageIndex(prev => (prev + 1) % avatarUrls.length);
+        setCurrentImageIndex((prev) => (prev + 1) % avatarUrls.length);
         setIsTransitioning(false);
       }, 250);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [avatarUrls.length, allImagesLoaded, disableRotation, hoveredIndex]);
+  }, [avatarUrls.length, disableRotation, hoveredIndex]);
 
   // Handle indicator hover
   const handleIndicatorHover = (index: number) => {
@@ -108,58 +88,61 @@ const LazyAvatar = ({
 
   // If no avatar URLs provided, show fallback
   if (avatarUrls.length === 0) {
-    return <FallbackAvatar sizeClass={sizeClass} className={className} letterFallback={letterFallback} />;
+    return (
+      <FallbackAvatar sizeClass={sizeClass} className={className} letterFallback={letterFallback} />
+    );
   }
-
-  const currentAvatarUrl = avatarUrls[currentImageIndex];
 
   return (
     <div className={`overflow-hidden rounded-3xl ${sizeClass} ${className} relative`}>
-      <div className={`transition-opacity duration-500 absolute inset-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-        <LazyImage
-          key={currentImageIndex}
-          src={currentAvatarUrl}
-          alt={`${name} avatar ${currentImageIndex + 1}`}
-          fill
-          sizes="(max-width: 768px) 128px, 192px"
-          onLoad={() => {
-            try {
-              // Mark current image as loaded
-              setLoadedImages(prev => new Set([...prev, currentImageIndex]));
-            } catch (error) {
-              logger.error('Error in onLoad handler:', error);
-            }
-          }}
-          onError={() => {
-            try {
-              console.warn('Avatar image failed to load:', currentAvatarUrl);
-              // If this avatar fails, try to move to next one if available
-              if (avatarUrls.length > 1) {
-                setCurrentImageIndex(prev => (prev + 1) % avatarUrls.length);
+      {/* Render all images but hide inactive ones */}
+      {avatarUrls.map((url, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            index === currentImageIndex && !isTransitioning ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ pointerEvents: index === currentImageIndex ? 'auto' : 'none' }}
+        >
+          <LazyImage
+            src={url}
+            alt={`${name} avatar ${index + 1}`}
+            fill
+            sizes="(max-width: 768px) 128px, 192px"
+            priority={index === currentImageIndex}
+            fetchPriority={index === currentImageIndex ? 'high' : 'low'}
+            onError={() => {
+              try {
+                console.warn('Avatar image failed to load:', url);
+                if (avatarUrls.length > 1 && index === currentImageIndex) {
+                  setCurrentImageIndex((prev) => (prev + 1) % avatarUrls.length);
+                }
+              } catch (error) {
+                logger.error('Error in onError handler:', error);
               }
-            } catch (error) {
-              logger.error('Error in onError handler:', error);
+            }}
+            fallback={
+              <div
+                className={`flex items-center justify-center bg-gradient-to-br from-emerald-600 to-blue-600 font-bold text-white ${sizeClass}`}
+              >
+                {letterFallback}
+              </div>
             }
-          }}
-          fallback={
-            <div className={`bg-gradient-to-br from-emerald-600 to-blue-600 flex items-center justify-center text-white font-bold ${sizeClass}`}>
-              {letterFallback}
-            </div>
-          }
-        />
-      </div>
-      
+          />
+        </div>
+      ))}
+
       {/* Indicator dots for multiple avatars */}
       {avatarUrls.length > 1 && !disableRotation && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+        <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
           {avatarUrls.map((_, index) => (
             <div
               key={index}
               onMouseEnter={() => handleIndicatorHover(index)}
               onMouseLeave={handleIndicatorLeave}
-              className={`w-2 h-2 rounded-full transition-colors duration-300 cursor-pointer ${
+              className={`h-2 w-2 cursor-pointer rounded-full transition-colors duration-300 ${
                 index === currentImageIndex
-                  ? 'bg-white shadow-lg scale-110'
+                  ? 'scale-110 bg-white shadow-lg'
                   : 'bg-white/60 hover:bg-white/80'
               }`}
             />

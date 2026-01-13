@@ -31,26 +31,29 @@ interface ToastProviderProps {
 export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const showToast = useCallback((message: string, type: ToastType = 'info', duration: number = 5000) => {
-    const id = Math.random().toString(36).substring(7);
-    setToasts(prev => [...prev, { id, message, type, duration }]);
-  }, []);
+  const showToast = useCallback(
+    (message: string, type: ToastType = 'info', duration: number = 5000) => {
+      const id = Math.random().toString(36).substring(7);
+      setToasts((prev) => [...prev, { id, message, type, duration }]);
+    },
+    [],
+  );
 
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed top-4 right-4 z-[9999] max-w-md w-full pointer-events-none pr-4 sm:pr-0">
-        <div className="flex flex-col gap-3 pointer-events-auto">
+      <div className="pointer-events-none fixed top-4 right-4 z-[9999] w-full max-w-md pr-4 sm:pr-0">
+        <div className="pointer-events-auto flex flex-col gap-3">
           {toasts.map((toast, index) => (
             <div
               key={toast.id}
               style={{
                 transform: `translateY(${index * 8}px)`,
-                transition: 'transform 300ms ease-out'
+                transition: 'transform 300ms ease-out',
               }}
             >
               <Toast

@@ -46,29 +46,21 @@ export default function ProjectsEditor() {
 
     if (project.id && project.id !== 0) {
       try {
-        const response = await fetch(
-          `/api/admin/images?entityType=project&entityId=${project.id}`
-        );
+        const response = await fetch(`/api/admin/images?entityType=project&entityId=${project.id}`);
         if (response.ok) {
           const images = await response.json();
-          const imageIds = images.map((img: { id: number | string }) =>
-            String(img.id)
-          );
+          const imageIds = images.map((img: { id: number | string }) => String(img.id));
 
           if (imageIds.length > 0) {
             projectWithImages.image_urls = imageIds;
           } else if (project.image_urls && Array.isArray(project.image_urls)) {
-            projectWithImages.image_urls = project.image_urls.map((id) =>
-              String(id)
-            );
+            projectWithImages.image_urls = project.image_urls.map((id) => String(id));
           }
         }
       } catch (error) {
         logger.error('Error loading project images:', error);
         if (project.image_urls && Array.isArray(project.image_urls)) {
-          projectWithImages.image_urls = project.image_urls.map((id) =>
-            String(id)
-          );
+          projectWithImages.image_urls = project.image_urls.map((id) => String(id));
         }
       }
     }
@@ -82,9 +74,7 @@ export default function ProjectsEditor() {
 
     try {
       const isNew = editingProject.id === 0;
-      const url = isNew
-        ? '/api/admin/projects'
-        : `/api/admin/projects/${editingProject.id}`;
+      const url = isNew ? '/api/admin/projects' : `/api/admin/projects/${editingProject.id}`;
       const method = isNew ? 'POST' : 'PUT';
 
       const response = await fetch(url, {
@@ -139,8 +129,7 @@ export default function ProjectsEditor() {
   const handleDeleteProject = async (projectId: number) => {
     const confirmed = await confirm({
       title: 'Delete Project',
-      message:
-        'Are you sure you want to delete this project? This action cannot be undone.',
+      message: 'Are you sure you want to delete this project? This action cannot be undone.',
       confirmText: 'Delete',
       cancelText: 'Cancel',
       type: 'danger',
@@ -199,7 +188,7 @@ export default function ProjectsEditor() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -207,7 +196,7 @@ export default function ProjectsEditor() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">Project Management</h2>
           <p className="text-slate-600">Total projects: {projects.length}</p>

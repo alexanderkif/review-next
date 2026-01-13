@@ -36,12 +36,14 @@ A professional developer portfolio website with **admin panel** and stunning **c
 ### 🛠 Tech Stack
 - **Framework**: Next.js 16 with Turbopack, React 19, TypeScript
 - **Styling**: Tailwind CSS 4.0, Custom CSS animations
+- **Code Quality**: ESLint 9, Prettier 3.7 with Tailwind plugin
 - **Database**: PostgreSQL with SSL (Vercel/Supabase compatible)
 - **Authentication**: NextAuth.js 5.0 with JWT sessions
 - **Email**: Nodemailer with SMTP/Gmail App Password support
-- **Security**: bcryptjs hashing, CSRF protection, SQL injection prevention
+- **Security**: bcryptjs hashing, CSRF protection, SQL injection prevention, server-only module protection
 - **Icons**: Lucide React icon library
 - **Image Processing**: Base64 encoding with size optimization
+- **PDF Generation**: pdf-lib for professional resume export
 
 ## 🚀 Quick Start
 
@@ -94,14 +96,34 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ### 5. Launch Application
 ```bash
-npm run dev
+npm run dev           # Start development server
+npm run build         # Production build
+npm run start         # Start production server
+npm run lint          # Check code quality with ESLint
+npm run format        # Format code with Prettier
+npm run format:check  # Check code formatting
 # Open http://localhost:3000
 ```
 
 ### 6. Initial Setup
 1. Visit `http://localhost:3000/admin/login`
 2. Complete **System Initialization** form:
-   - Admin username and password
+   - AdCode Quality Tools
+```bash
+# Format entire codebase
+npm run format
+
+# Check formatting without changes
+npm run format:check
+
+# Run ESLint
+npm run lint
+
+# Auto-fix ESLint issues
+npm run lint -- --fix
+```
+
+### 8. min username and password
    - Email for account recovery
 3. System creates database tables automatically
 4. Access admin panel to manage content
@@ -194,10 +216,10 @@ PostgreSQL database with **automatic initialization** - no manual setup required
 - **`cv_languages`** - Language skills with proficiency levels
 
 ### Smart Initialization
-✅ **Zero configuration required** - tables created automatically  
-✅ **Safe setup process** - validates existing data before creation  
-✅ **Migration support** - handles schema updates seamlessly  
-✅ **Data integrity** - foreign key relationships and constraints  
+✅ **Zero configuration required** - tables created automatically
+✅ **Safe setup process** - validates existing data before creation
+✅ **Migration support** - handles schema updates seamlessly
+✅ **Data integrity** - foreign key relationships and constraints
 
 ### Development Tools
 ```bash
@@ -212,7 +234,7 @@ npm run db:status
 
 **Mobile-first approach** with perfect scaling across devices:
 - **Mobile** (320px+) - Touch-optimized interface
-- **Tablet** (768px+) - Balanced layout with sidebars  
+- **Tablet** (768px+) - Balanced layout with sidebars
 - **Desktop** (1024px+) - Full-featured experience
 - **Wide screens** (1440px+) - Spacious, professional layout
 
@@ -224,6 +246,8 @@ npm run db:status
 - **Smart hiding** - removes navigation and interactive elements
 - **Consistent styling** - maintains visual hierarchy
 
+- **Server-only modules** - prevents accidental client-side imports of sensitive code
+- **Session-based authorization** - userId from server session, never from client arguments
 ## 🔒 Security Features
 
 ### Enterprise-Grade Authentication
@@ -256,9 +280,16 @@ NODE_ENV="production"
 3. **Deploy automatically** - Vercel handles SSL and CDN
 4. **Complete admin setup** on first visit
 
+### Code Quality & Maintainability
+- **Prettier** - consistent code formatting across the entire codebase
+- **Tailwind CSS plugin** - automatic class sorting for better readability
+- **ESLint** - catch bugs and enforce best practices
+- **TypeScript strict mode** - compile-time type safety
+- **Modular architecture** - clean separation of concerns
+
 ### Production Checklist
 - ✅ Environment variables configured
-- ✅ Strong `NEXTAUTH_SECRET` generated  
+- ✅ Strong `NEXTAUTH_SECRET` generated
 - ✅ Database connection tested
 - ✅ Email service configured
 - ✅ SSL certificate active
@@ -277,12 +308,30 @@ NODE_ENV="production"
 - **Meta tags** - dynamic SEO metadata for all pages
 - **Open Graph** - social media preview optimization
 - **Structured data** - JSON-LD schema for better search indexing
-- **Analytics integration** - ready for Google Analytics/Vercel Analytics
+- **Prettier config** - customize code style in `prettier.config.mjs`
 
-## 🎯 Customization
+### Content Management
+- **Rich text editor** - WYSIWYG editing for descriptions
+- **Drag & drop** - reorder projects and experience entries
+- **Image galleries** - multiple image support with carousels
+- **Live preview** - see changes instantly while editing
+- **PDF export** - generate professional resume PDFs with pdf-lib
 
-### Easy Theme Modification
-- **CSS variables** - centralized color and spacing control
+## 🛠 Development Best Practices
+
+### Code Quality Workflow
+1. **Write code** with proper TypeScript types
+2. **Format automatically** with Prettier on save (VS Code)
+3. **Run lint** before committing: `npm run lint`
+4. **Format entire project** when needed: `npm run format`
+5. **Check build** before deploying: `npm run build`
+
+### Pre-commit Checklist
+```bash
+npm run lint          # ✓ No ESLint errors
+npm run format:check  # ✓ Code properly formatted
+npm run build         # ✓ Production build succeeds
+```rol
 - **Tailwind config** - extend design system easily
 - **Component variants** - multiple button and card styles
 - **Animation library** - pre-built smooth transitions

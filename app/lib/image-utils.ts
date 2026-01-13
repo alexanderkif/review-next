@@ -14,10 +14,10 @@ export const IMAGE_SIZE_LIMITS = {
 // Supported image formats
 export const SUPPORTED_FORMATS = [
   'image/jpeg',
-  'image/jpg', 
+  'image/jpg',
   'image/png',
   'image/webp',
-  'image/gif'
+  'image/gif',
 ] as const;
 
 /**
@@ -25,7 +25,7 @@ export const SUPPORTED_FORMATS = [
  */
 export function validateImageFile(file: File, maxSizeMB: number): string | null {
   // Check file type
-  if (!SUPPORTED_FORMATS.includes(file.type as typeof SUPPORTED_FORMATS[number])) {
+  if (!SUPPORTED_FORMATS.includes(file.type as (typeof SUPPORTED_FORMATS)[number])) {
     return 'Unsupported file format. Please use JPEG, PNG, WebP, or GIF.';
   }
 
@@ -55,9 +55,9 @@ export function fileToBase64(file: File): Promise<string> {
  * Uses HTML5 Canvas API for client-side compression
  */
 export function compressImage(
-  file: File, 
-  maxSizeMB: number, 
-  quality: number = 0.8
+  file: File,
+  maxSizeMB: number,
+  quality: number = 0.8,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -68,9 +68,9 @@ export function compressImage(
       // Calculate new dimensions maintaining aspect ratio
       const maxWidth = 1920; // Full HD width
       const maxHeight = 1080; // Full HD height
-      
+
       let { width, height } = img;
-      
+
       if (width > height) {
         if (width > maxWidth) {
           height = (height * maxWidth) / width;
@@ -89,19 +89,19 @@ export function compressImage(
       // Draw and compress
       if (ctx) {
         ctx.drawImage(img, 0, 0, width, height);
-        
+
         // Convert to base64 with compression
         const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        
+
         // Check if compression was successful
         const compressedSizeBytes = (compressedDataUrl.length * 3) / 4;
         const maxSizeBytes = maxSizeMB * 1024 * 1024;
-        
+
         if (compressedSizeBytes > maxSizeBytes && quality > 0.1) {
           // Try with lower quality
           return resolve(compressImage(file, maxSizeMB, quality - 0.1));
         }
-        
+
         resolve(compressedDataUrl);
       } else {
         reject(new Error('Canvas context not available'));
@@ -119,7 +119,7 @@ export function compressImage(
 export function getBase64Size(base64: string): number {
   // Remove data:image/... prefix if present
   const base64Data = base64.split(',')[1] || base64;
-  
+
   // Calculate size: each base64 character represents 6 bits
   // Padding characters (=) don't count
   const padding = (base64Data.match(/=/g) || []).length;
@@ -131,11 +131,11 @@ export function getBase64Size(base64: string): number {
  */
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
-  
+
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
@@ -161,8 +161,8 @@ export function validateBase64Image(base64: string, maxSizeMB: number): string |
  * Process image file with all validations and compression
  */
 export async function processImageFile(
-  file: File, 
-  maxSizeMB: number
+  file: File,
+  maxSizeMB: number,
 ): Promise<{ success: true; base64: string } | { success: false; error: string }> {
   try {
     // First validation
@@ -173,13 +173,13 @@ export async function processImageFile(
 
     // Try simple conversion first
     let base64 = await fileToBase64(file);
-    
+
     // Check if compression is needed
     const base64Error = validateBase64Image(base64, maxSizeMB);
     if (base64Error) {
       // Compress the image
       base64 = await compressImage(file, maxSizeMB);
-      
+
       // Final validation
       const finalError = validateBase64Image(base64, maxSizeMB);
       if (finalError) {
@@ -188,11 +188,10 @@ export async function processImageFile(
     }
 
     return { success: true, base64 };
-
   } catch (error) {
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to process image' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to process image',
     };
   }
 }

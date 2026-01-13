@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 body {
   font-family: Arial, Helvetica, sans-serif;
@@ -18,7 +18,6 @@ body {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -30,7 +29,6 @@ body {
 }
 
 @keyframes glow {
-
   0%,
   100% {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
@@ -43,10 +41,11 @@ body {
 
 /* Navigation glass style */
 .glass-nav {
-  background: linear-gradient(135deg,
-      rgba(34, 197, 94, 0.95) 0%,
-      /* Изумрудный зеленый */
-      rgba(59, 130, 246, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.95) 0%,
+    /* Изумрудный зеленый */ rgba(59, 130, 246, 0.9) 100%
+  );
   /* Ярко-синий */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -112,19 +111,27 @@ body {
 }
 
 body.theme-glass {
-  background: linear-gradient(135deg,
-      #1e40af 0%,
-      #059669 25%,
-      #7c3aed 50%,
-      #0891b2 75%,
-      #4338ca 100%
-    );
+  background: linear-gradient(
+    135deg,
+    #1e40af 0%,
+    #059669 25%,
+    #7c3aed 50%,
+    #0891b2 75%,
+    #4338ca 100%
+  );
   background-attachment: fixed;
   color: var(--foreground);
   min-height: 100vh;
 }
 body.theme-clay {
-  background: linear-gradient(135deg, #e8edf2 0%, #f0f4f8 25%, #dfe7ed 50%, #f0f4f8 75%, #e8edf2 100%);
+  background: linear-gradient(
+    135deg,
+    #e8edf2 0%,
+    #f0f4f8 25%,
+    #dfe7ed 50%,
+    #f0f4f8 75%,
+    #e8edf2 100%
+  );
   color: var(--foreground);
   min-height: 100vh;
 }
@@ -178,20 +185,20 @@ body.theme-clay {
 /* GLASS THEME - Additional nested selectors */
 
 .theme-glass .btn {
-  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #ffffff;
-  box-shadow: inset -2px -2px 1px rgba(0,0,0,0.3);
+  box-shadow: inset -2px -2px 1px rgba(0, 0, 0, 0.3);
 }
 .theme-glass .btn:hover {
-  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.2) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 100%);
 }
 .theme-glass .btn.is-active,
 .theme-glass .btn.btn-primary {
   background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
   color: #ffffff;
-  box-shadow: inset -2px -2px 1px rgba(0,0,0,0.3);
+  box-shadow: inset -2px -2px 1px rgba(0, 0, 0, 0.3);
 }
 .theme-glass .btn.is-active:hover,
 .theme-glass .btn.btn-primary:hover {
@@ -202,15 +209,16 @@ body.theme-clay {
   pointer-events: none;
 }
 .theme-glass .card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.12) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.12) 100%);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 -1px 0 rgba(255, 255, 255, 0.15);
 }
 .theme-glass .card:hover {
-  background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.18) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.18) 100%);
 }
 
 /* CLAY THEME - Additional nested selectors */
@@ -218,7 +226,10 @@ body.theme-clay {
 .theme-clay .btn {
   background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
   color: #1e293b;
-  box-shadow: 3px 3px 6px #c5c5c5, -1.5px -1.5px 6px #ffffff, inset -2px -2px 1px #8a8a8acc;
+  box-shadow:
+    3px 3px 6px #c5c5c5,
+    -1.5px -1.5px 6px #ffffff,
+    inset -2px -2px 1px #8a8a8acc;
   transition: all 0.2s ease-in-out;
 }
 .theme-clay .btn:hover {
@@ -228,7 +239,10 @@ body.theme-clay {
 .theme-clay .btn.btn-secondary {
   background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
   color: #1e293b;
-  box-shadow: 3px 3px 6px #c5c5c5, -1.5px -1.5px 6px #ffffff, inset -2px -2px 1px #8a8a8acc;
+  box-shadow:
+    3px 3px 6px #c5c5c5,
+    -1.5px -1.5px 6px #ffffff,
+    inset -2px -2px 1px #8a8a8acc;
 }
 .theme-clay .btn.btn-secondary:hover {
   background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
@@ -238,7 +252,10 @@ body.theme-clay {
 .theme-clay .btn.btn-primary {
   background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
   color: #ffffff;
-  box-shadow: 3px 3px 6px #9ca3af, -1.5px -1.5px 6px rgba(255,255,255,0.1), inset -2px -2px 1px rgba(0,0,0,0.3);
+  box-shadow:
+    3px 3px 6px #9ca3af,
+    -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 1px rgba(0, 0, 0, 0.3);
 }
 .theme-clay .btn.is-active:hover,
 .theme-clay .btn.btn-primary:hover {
@@ -262,7 +279,10 @@ body.theme-clay {
 .theme-clay .btn.bg-yellow-600 {
   background: #ca8a04;
   color: #ffffff;
-  box-shadow: 3px 3px 6px #9ca3af, -1.5px -1.5px 6px rgba(255,255,255,0.1), inset -2px -2px 1px rgba(0,0,0,0.3);
+  box-shadow:
+    3px 3px 6px #9ca3af,
+    -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 1px rgba(0, 0, 0, 0.3);
 }
 .theme-clay .btn.bg-yellow-600:hover {
   background: #eab308;
@@ -273,7 +293,10 @@ body.theme-clay {
 .theme-clay .btn.bg-red-600 {
   background: #dc2626;
   color: #ffffff;
-  box-shadow: 3px 3px 6px #9ca3af, -1.5px -1.5px 6px rgba(255,255,255,0.1), inset -2px -2px 1px rgba(0,0,0,0.3);
+  box-shadow:
+    3px 3px 6px #9ca3af,
+    -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 1px rgba(0, 0, 0, 0.3);
 }
 .theme-clay .btn.bg-red-600:hover {
   background: #ef4444;
@@ -282,11 +305,17 @@ body.theme-clay {
 
 .theme-clay .card {
   background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
-  box-shadow: 4.5px 4.5px 9px #c5c5c5, -2.25px -2.25px 9px #ffffff, inset -2px -2px 1.5px #8a8a8acc;
+  box-shadow:
+    4.5px 4.5px 9px #c5c5c5,
+    -2.25px -2.25px 9px #ffffff,
+    inset -2px -2px 1.5px #8a8a8acc;
 }
 .theme-clay .card:hover {
   background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
-  box-shadow: 6px 6px 12px #c5c5c5, -3px -3px 12px #ffffff, inset -2px -2px 1.5px #8a8a8acc;
+  box-shadow:
+    6px 6px 12px #c5c5c5,
+    -3px -3px 12px #ffffff,
+    inset -2px -2px 1.5px #8a8a8acc;
 }
 
 /* UTILITY CLASSES for direct icon styling */
