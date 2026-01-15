@@ -26,10 +26,14 @@ export default function DangerZone({
       <CardContent className="space-y-4 pt-6">
         <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
           <h4 className="mb-2 font-medium text-slate-800">Clean Unused Images</h4>
-          <p className="mb-3 text-sm text-slate-600">
+          <p className="mb-3 text-sm text-slate-700">
             Removes images from storage that are not referenced in the database.
           </p>
-          <Button onClick={onCleanImages} disabled={cleaningImages} className="bg-yellow-600">
+          <Button
+            onClick={onCleanImages}
+            disabled={cleaningImages}
+            style={{ background: '#a16207', color: '#ffffff' }}
+          >
             {cleaningImages ? (
               <>
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
@@ -46,14 +50,14 @@ export default function DangerZone({
 
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <h4 className="mb-2 font-medium text-slate-800">Clear Database</h4>
-          <p className="mb-3 text-sm text-slate-600">
+          <p className="mb-3 text-sm text-slate-700">
             ⚠️ <strong>WARNING:</strong> This will delete ALL data from the database except admin
             users and reset it with sample data. This action CANNOT be undone!
           </p>
           <Button
             onClick={onClearDatabase}
             disabled={clearing}
-            className="bg-red-600 hover:bg-red-700"
+            style={{ background: '#dc2626', color: '#ffffff' }}
           >
             {clearing ? (
               <>

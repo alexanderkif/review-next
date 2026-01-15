@@ -106,7 +106,7 @@ const LazyAvatar = ({
         >
           <LazyImage
             src={url}
-            alt={`${name} avatar ${index + 1}`}
+            alt=""
             fill
             sizes="(max-width: 768px) 128px, 192px"
             priority={index === currentImageIndex}

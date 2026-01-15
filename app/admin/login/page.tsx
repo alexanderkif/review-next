@@ -7,7 +7,7 @@ import { signIn } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { ArrowLeft, Shield, User, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Shield, User } from 'lucide-react';
 import DatabaseSetup from '../components/DatabaseSetup';
 import { logger } from '../../lib/logger';
 
@@ -20,7 +20,6 @@ function AdminLoginForm() {
     email: '',
     password: '',
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
@@ -169,28 +168,17 @@ function AdminLoginForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
-                  Password
-                </label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    placeholder="Введите Password"
-                    className="w-full pr-12"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer rounded-lg p-1 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  label="Password"
+                  password
+                  required
+                  placeholder="Введите Password"
+                  className="w-full"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <Button

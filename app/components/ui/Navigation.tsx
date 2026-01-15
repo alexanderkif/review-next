@@ -103,9 +103,9 @@ const Navigation = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link
-            href="/"
-            className="hidden items-center space-x-2 rounded-lg focus:outline-none sm:flex"
-            aria-label="Home"
+            href={isProjectsPage ? '/projects' : '/'}
+            className="hidden items-center space-x-2 rounded-lg transition-all focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none sm:flex"
+            aria-label={isProjectsPage ? 'Projects' : 'Home'}
           >
             <div className="overflow-hidden">
               <LazyAvatar
@@ -130,25 +130,43 @@ const Navigation = () => {
           <div className="flex flex-1 items-center justify-between md:flex-initial md:space-x-1">
             <ul className="flex items-center space-x-1" role="list">
               <li>
-                <Link
-                  href="/"
-                  className={getLinkStyles(currentPath === '/' || currentPath === null)}
-                  aria-current={currentPath === '/' ? 'page' : undefined}
-                  style={{ WebkitFontSmoothing: 'antialiased' }}
-                >
-                  <span className="relative z-10">Resume</span>
-                </Link>
+                {currentPath === '/' || currentPath === null ? (
+                  <span
+                    className={getLinkStyles(true)}
+                    style={{ WebkitFontSmoothing: 'antialiased' }}
+                    aria-current="page"
+                  >
+                    <span className="relative z-10">Resume</span>
+                  </span>
+                ) : (
+                  <Link
+                    href="/"
+                    className={getLinkStyles(false)}
+                    style={{ WebkitFontSmoothing: 'antialiased' }}
+                  >
+                    <span className="relative z-10">Resume</span>
+                  </Link>
+                )}
               </li>
 
               <li>
-                <Link
-                  href="/projects"
-                  className={getLinkStyles(isProjectsPage)}
-                  aria-current={isProjectsPage ? 'page' : undefined}
-                  style={{ WebkitFontSmoothing: 'antialiased' }}
-                >
-                  <span className="relative z-10">Projects</span>
-                </Link>
+                {isProjectsPage ? (
+                  <span
+                    className={getLinkStyles(true)}
+                    style={{ WebkitFontSmoothing: 'antialiased' }}
+                    aria-current="page"
+                  >
+                    <span className="relative z-10">Projects</span>
+                  </span>
+                ) : (
+                  <Link
+                    href="/projects"
+                    className={getLinkStyles(false)}
+                    style={{ WebkitFontSmoothing: 'antialiased' }}
+                  >
+                    <span className="relative z-10">Projects</span>
+                  </Link>
+                )}
               </li>
             </ul>
 
@@ -182,7 +200,7 @@ const Navigation = () => {
                     {session.user.avatar_url ? (
                       <Image
                         src={session.user.avatar_url}
-                        alt={session.user.name || 'User avatar'}
+                        alt=""
                         width={24}
                         height={24}
                         sizes="24px"
@@ -191,7 +209,7 @@ const Navigation = () => {
                     ) : (
                       <User
                         size={16}
-                        className={isClayPage ? 'text-slate-600' : 'text-white/80'}
+                        className={isClayPage ? 'text-slate-600' : 'text-white/90'}
                         aria-hidden="true"
                       />
                     )}

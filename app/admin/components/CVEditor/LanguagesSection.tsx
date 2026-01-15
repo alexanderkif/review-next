@@ -38,6 +38,7 @@ export default function LanguagesSection({
           >
             <div className="flex-1">
               <Input
+                label="Language"
                 value={lang.language || ''}
                 onChange={(e) => onUpdate(index, 'language', e.target.value)}
                 placeholder="English"
@@ -45,6 +46,7 @@ export default function LanguagesSection({
             </div>
             <div className="flex-1">
               <Input
+                label="Proficiency Level"
                 value={lang.level || ''}
                 onChange={(e) => onUpdate(index, 'level', e.target.value)}
                 placeholder="B2 (Upper-Intermediate)"

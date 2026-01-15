@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
-import { Save, User, Eye, EyeOff } from 'lucide-react';
+import { Save, User } from 'lucide-react';
 
 interface EmailSectionProps {
   currentEmail: string;
@@ -9,8 +9,6 @@ interface EmailSectionProps {
   setEmail: (email: string) => void;
   currentPassword: string;
   setCurrentPassword: (password: string) => void;
-  showCurrentPassword: boolean;
-  toggleShowPassword: () => void;
   saving: boolean;
   onUpdate: () => void;
 }
@@ -21,8 +19,6 @@ export default function EmailSection({
   setEmail,
   currentPassword,
   setCurrentPassword,
-  showCurrentPassword,
-  toggleShowPassword,
   saving,
   onUpdate,
 }: EmailSectionProps) {
@@ -36,13 +32,13 @@ export default function EmailSection({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Current email</label>
+          <div className="mb-1 text-sm font-medium text-slate-700">Current email</div>
           <p className="rounded bg-slate-50 p-2 text-sm text-slate-600">{currentEmail}</p>
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">New Email</label>
           <Input
+            label="New Email"
             type="email"
             value={email || ''}
             onChange={(e) => setEmail(e.target.value)}
@@ -51,25 +47,13 @@ export default function EmailSection({
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            Current Password (for confirmation)
-          </label>
-          <div className="relative">
-            <Input
-              type={showCurrentPassword ? 'text' : 'password'}
-              value={currentPassword || ''}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Enter current password"
-              className="pr-10"
-            />
-            <button
-              type="button"
-              onClick={toggleShowPassword}
-              className="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-400 hover:text-slate-600"
-            >
-              {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
+          <Input
+            label="Current Password (for confirmation)"
+            password
+            value={currentPassword || ''}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder="Enter current password"
+          />
         </div>
 
         <div className="mt-4 flex justify-end">

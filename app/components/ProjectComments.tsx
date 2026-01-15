@@ -180,6 +180,8 @@ export default function ProjectComments({ projectId, comments }: ProjectComments
             <form onSubmit={handleSubmitComment} className="space-y-4">
               <div className="space-y-2">
                 <Textarea
+                  label="Your comment"
+                  hideLabel
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   placeholder="Write a comment..."
@@ -259,7 +261,7 @@ export default function ProjectComments({ projectId, comments }: ProjectComments
                           <Tooltip content="Edit comment" position="top">
                             <button
                               onClick={() => handleEditComment(comment)}
-                              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2.5 text-slate-200 backdrop-blur-md transition-all hover:text-amber-400 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-amber-500/80 focus:outline-none"
+                              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2.5 text-slate-200 backdrop-blur-md transition-all hover:text-amber-400 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                               aria-label="Edit comment"
                             >
                               <Edit2 size={16} />
@@ -269,7 +271,7 @@ export default function ProjectComments({ projectId, comments }: ProjectComments
                             <button
                               onClick={() => handleDeleteComment(comment.id)}
                               disabled={isDeleting === comment.id}
-                              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2.5 text-slate-200 backdrop-blur-md transition-all hover:text-red-400 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-red-500/80 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2.5 text-slate-200 backdrop-blur-md transition-all hover:text-red-400 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                               aria-label="Delete comment"
                             >
                               {isDeleting === comment.id ? (
@@ -289,6 +291,8 @@ export default function ProjectComments({ projectId, comments }: ProjectComments
                 {editingComment === comment.id ? (
                   <div className="space-y-3">
                     <Textarea
+                      label="Edit comment"
+                      hideLabel
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
                       disabled={isUpdating}
@@ -305,7 +309,8 @@ export default function ProjectComments({ projectId, comments }: ProjectComments
                           size="sm"
                           onClick={handleCancelEdit}
                           disabled={isUpdating}
-                          className="text-white/60 hover:text-white"
+                          className="rounded text-white/80 hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                          aria-label="Cancel edit"
                         >
                           <X size={14} className="mr-1" />
                           Cancel

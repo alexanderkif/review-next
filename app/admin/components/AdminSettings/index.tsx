@@ -18,9 +18,6 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [cleaningImages, setCleaningImages] = useState(false);
@@ -281,8 +278,6 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
           setEmail={setEmail}
           currentPassword={currentPassword}
           setCurrentPassword={setCurrentPassword}
-          showCurrentPassword={showCurrentPassword}
-          toggleShowPassword={() => setShowCurrentPassword(!showCurrentPassword)}
           saving={saving}
           onUpdate={handleUpdateEmail}
         />
@@ -294,12 +289,6 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
           setNewPassword={setNewPassword}
           confirmPassword={confirmPassword}
           setConfirmPassword={setConfirmPassword}
-          showCurrentPassword={showCurrentPassword}
-          showNewPassword={showNewPassword}
-          showConfirmPassword={showConfirmPassword}
-          toggleCurrentPassword={() => setShowCurrentPassword(!showCurrentPassword)}
-          toggleNewPassword={() => setShowNewPassword(!showNewPassword)}
-          toggleConfirmPassword={() => setShowConfirmPassword(!showConfirmPassword)}
           saving={saving}
           onUpdate={handleUpdatePassword}
         />

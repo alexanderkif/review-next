@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Card, CardContent, CardHeader } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { logger } from '../../lib/logger';
@@ -97,13 +97,14 @@ function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="animate-fade-in w-full max-w-md">
+        <h1 className="sr-only">Login</h1>
         <Card className="text-white backdrop-blur-xl">
           <CardHeader className="text-center">
             <div className="animate-float mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-blue-600 text-2xl font-bold text-white shadow-lg">
               А
             </div>
-            <CardTitle className="text-2xl text-white">Welcome</CardTitle>
-            <p className="text-sm text-white/70">Log into your account to leave comments</p>
+            <h2 className="text-2xl font-semibold text-white">Welcome</h2>
+            <p className="text-sm text-white/90">Log into your account to leave comments</p>
           </CardHeader>
 
           <CardContent>
@@ -133,15 +134,20 @@ function LoginForm() {
                 <Input
                   type="email"
                   name="email"
+                  id="login-email"
+                  label="Email"
+                  hideLabel
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleInputChange}
                   error={errors.email}
                   className={`pl-12 ${errors.email ? 'border-red-500/50' : ''}`}
+                  variant="glass"
                 />
                 <Mail
                   size={18}
-                  className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-600"
+                  className="absolute top-1/2 left-4 -translate-y-1/2 text-white/70"
+                  aria-hidden="true"
                 />
               </div>
 
@@ -149,20 +155,26 @@ function LoginForm() {
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
+                  id="login-password"
+                  label="Password"
+                  hideLabel
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleInputChange}
                   error={errors.password}
                   className={`pr-12 pl-12 ${errors.password ? 'border-red-500/50' : ''}`}
+                  variant="glass"
                 />
                 <Lock
                   size={18}
-                  className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-600"
+                  className="absolute top-1/2 left-4 -translate-y-1/2 text-white/70"
+                  aria-hidden="true"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer text-slate-600 transition-colors hover:text-slate-800"
+                  className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer rounded text-white/70 transition-colors hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -192,7 +204,7 @@ function LoginForm() {
                   <div className="w-full border-t border-white/20"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-white/10 px-2 text-white/70">Or continue with</span>
+                  <span className="bg-white/10 px-2 text-white/90">Or continue with</span>
                 </div>
               </div>
               <div className="mt-6">
@@ -202,7 +214,7 @@ function LoginForm() {
 
             {/* Переход к регистрации */}
             <div className="mt-6 text-center">
-              <p className="text-sm text-white/70">
+              <p className="text-sm text-white/90">
                 No account?{' '}
                 <Link
                   href="/auth/register"
@@ -217,7 +229,7 @@ function LoginForm() {
             <div className="mt-4 text-center">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-white"
+                className="inline-flex items-center gap-2 text-sm text-white/90 transition-colors hover:text-white"
               >
                 <ArrowLeft size={16} />
                 Home

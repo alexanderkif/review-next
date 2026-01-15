@@ -32,7 +32,7 @@ export default function ProjectForm({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{project.id === 0 ? 'New Project' : 'Edit Project'}</CardTitle>
-          <Button size="sm" onClick={onCancel} className="p-2">
+          <Button size="sm" onClick={onCancel} className="p-2" aria-label="Close form">
             <X size={16} />
           </Button>
         </div>
@@ -40,8 +40,8 @@ export default function ProjectForm({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Project Title *</label>
             <Input
+              label="Project Title"
               value={project.title || ''}
               onChange={(e) => onUpdate('title', e.target.value)}
               required
@@ -49,8 +49,8 @@ export default function ProjectForm({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Year *</label>
             <Input
+              label="Year"
               type="number"
               value={project.year || ''}
               onChange={(e) => onUpdate('year', parseInt(e.target.value))}
@@ -60,10 +60,8 @@ export default function ProjectForm({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Short Description *
-          </label>
           <Input
+            label="Short Description"
             value={project.short_description || ''}
             onChange={(e) => onUpdate('short_description', e.target.value)}
             placeholder="Brief project summary"
@@ -72,10 +70,8 @@ export default function ProjectForm({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Detailed Description *
-          </label>
           <Textarea
+            label="Detailed Description"
             rows={4}
             value={project.description || ''}
             onChange={(e) => onUpdate('description', e.target.value)}
@@ -86,8 +82,8 @@ export default function ProjectForm({
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">GitHub URL</label>
             <Input
+              label="GitHub URL"
               value={project.github_url || ''}
               onChange={(e) => onUpdate('github_url', e.target.value)}
               placeholder="https://github.com/user/repo"
@@ -95,8 +91,8 @@ export default function ProjectForm({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Demo URL</label>
             <Input
+              label="Demo URL"
               value={project.demo_url || ''}
               onChange={(e) => onUpdate('demo_url', e.target.value)}
               placeholder="https://demo.example.com"
@@ -106,9 +102,16 @@ export default function ProjectForm({
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Status</label>
+            <label
+              htmlFor="project-status"
+              className="mb-2 block text-sm font-medium text-slate-700"
+            >
+              Status
+            </label>
             <select
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] focus:ring-2 focus:ring-emerald-500/50 focus:outline-none"
+              id="project-status"
+              aria-label="Project Status"
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff] focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
               value={project.status}
               onChange={(e) => onUpdate('status', e.target.value)}
             >
@@ -120,14 +123,14 @@ export default function ProjectForm({
 
           <div className="flex items-end">
             <div className="w-full">
-              <label className="mb-2 block text-sm font-medium text-slate-700">Featured</label>
+              <div className="mb-2 text-sm font-medium text-slate-700">Featured</div>
               <div className="flex items-center rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff]">
                 <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
                   <input
                     type="checkbox"
                     checked={project.featured}
                     onChange={(e) => onUpdate('featured', e.target.checked)}
-                    className="h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-emerald-500"
+                    className="h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                   />
                   Mark as featured project
                 </label>
@@ -139,7 +142,7 @@ export default function ProjectForm({
         {/* Technologies */}
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <label className="block text-sm font-medium text-slate-700">Technologies</label>
+            <div className="text-sm font-medium text-slate-700">Technologies</div>
             <Tooltip content="Add technology" position="top" variant="clay">
               <Button
                 size="sm"
@@ -155,6 +158,7 @@ export default function ProjectForm({
             {project.technologies.map((tech, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Input
+                  label="Technology"
                   value={tech || ''}
                   onChange={(e) => onUpdateTechnology(index, e.target.value)}
                   placeholder="Technology name"
@@ -176,7 +180,7 @@ export default function ProjectForm({
 
         {/* Project Images */}
         <div>
-          <label className="mb-3 block text-sm font-medium text-slate-700">Project Images</label>
+          <div className="mb-3 text-sm font-medium text-slate-700">Project Images</div>
           <MultipleImageUpload
             entityType="project"
             entityId={project.id?.toString() || 'new'}

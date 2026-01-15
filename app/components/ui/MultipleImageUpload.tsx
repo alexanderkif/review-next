@@ -240,9 +240,18 @@ const MultipleImageUpload = ({
             onClick={handleClick}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
+            tabIndex={0}
+            role="button"
+            aria-label="Upload image"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleClick();
+              }
+            }}
             className={`relative cursor-pointer transition-all duration-200 ${
               isAvatar ? 'h-20' : 'h-24'
-            } flex items-center justify-center rounded-xl border-2 border-dashed border-slate-300 p-4 text-center hover:border-emerald-400 hover:bg-emerald-50/50 ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${uploading ? 'pointer-events-none' : ''} `}
+            } flex items-center justify-center rounded-xl border-2 border-dashed border-slate-300 p-4 text-center hover:border-emerald-400 hover:bg-emerald-50/50 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${uploading ? 'pointer-events-none' : ''} `}
           >
             {uploading ? (
               <div className="flex items-center gap-2">
@@ -280,6 +289,7 @@ const MultipleImageUpload = ({
         multiple
         className="hidden"
         disabled={disabled || uploading || value.length >= maxImages}
+        aria-label="Upload images"
       />
     </div>
   );

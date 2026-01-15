@@ -1,7 +1,35 @@
 @import 'tailwindcss';
 
+/* CSS Custom Properties - Design Tokens */
+:root {
+  /* Focus ring colors - emerald-600 to match site links */
+  --focus-ring-color: rgb(5 150 105);
+  --focus-ring-offset: rgb(255 255 255);
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Fix autofill styles for inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* For clay theme autofill */
+.theme-clay input:-webkit-autofill,
+.theme-clay input:-webkit-autofill:hover,
+.theme-clay input:-webkit-autofill:focus,
+.theme-clay input:-webkit-autofill:active {
+  -webkit-text-fill-color: #1e293b !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
 }
 
 /* Custom animations */
@@ -67,6 +95,50 @@ body {
 
 .animate-glow {
   animation: glow 2s ease-in-out infinite;
+}
+
+/* Screen reader only - visually hidden but accessible to assistive technology */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only:focus,
+.sr-only:active,
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-fade-in,
+  .animate-float,
+  .animate-glow {
+    animation: none !important;
+  }
 }
 
 /* Scroll customization */
@@ -147,15 +219,23 @@ body.theme-clay {
   font-size: 0.875rem;
   line-height: 1.25rem;
   border-radius: 0.75rem;
-  transition: colors 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   cursor: pointer;
   border: none;
   outline: none;
+  position: relative;
 }
 .btn:disabled {
   opacity: 0.5;
   pointer-events: none;
   cursor: not-allowed;
+}
+
+/* FOCUS STYLES FOR ACCESSIBILITY - UNIVERSAL STANDARD */
+.btn:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  /* Focus ring добавляется к существующим теням через запятую в специфичных стилях тем */
 }
 
 /* BUTTON SIZES */
@@ -194,15 +274,49 @@ body.theme-clay {
 .theme-glass .btn:hover {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 100%);
 }
+.theme-glass .btn:active {
+  transform: translateY(1px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.12) 100%);
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.1);
+}
+/* Отключить :active для span (индикаторы страниц, не интерактивны) */
+.theme-glass span.btn:active,
+.theme-glass .btn.is-active:active {
+  transform: none;
+  background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
+  box-shadow: inset -2px -2px 1px rgba(0, 0, 0, 0.3);
+}
+.theme-glass .btn:focus-visible {
+  box-shadow:
+    inset -2px -2px 1px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--focus-ring-offset),
+    0 0 0 4px var(--focus-ring-color);
+}
 .theme-glass .btn.is-active,
 .theme-glass .btn.btn-primary {
   background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
   color: #ffffff;
   box-shadow: inset -2px -2px 1px rgba(0, 0, 0, 0.3);
+  cursor: default;
 }
-.theme-glass .btn.is-active:hover,
 .theme-glass .btn.btn-primary:hover {
   background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+}
+.theme-glass .btn.btn-primary:active:not(.is-active) {
+  transform: translateY(2px);
+  background: linear-gradient(90deg, #047857 0%, #1d4ed8 100%);
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.5),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.1);
+}
+.theme-glass .btn.btn-primary:focus-visible,
+.theme-glass .btn.is-active:focus-visible {
+  box-shadow:
+    inset -2px -2px 1px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--focus-ring-offset),
+    0 0 0 4px var(--focus-ring-color);
 }
 .theme-glass .btn:disabled {
   opacity: 0.5;
@@ -236,6 +350,31 @@ body.theme-clay {
   background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
   color: #059669;
 }
+.theme-clay .btn:active {
+  transform: translateY(1px);
+  background: linear-gradient(135deg, #dfe7ed 0%, #d5dde4 100%);
+  box-shadow:
+    inset 2px 2px 4px #b0b0b0,
+    inset -1px -1px 3px #ffffff;
+}
+/* Отключить :active для span (индикаторы страниц, не интерактивны) */
+.theme-clay span.btn:active,
+.theme-clay .btn.is-active:active {
+  transform: none;
+  background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
+  box-shadow:
+    3px 3px 6px #9ca3af,
+    -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 1px rgba(0, 0, 0, 0.3);
+}
+.theme-clay .btn:focus-visible {
+  box-shadow:
+    3px 3px 6px #c5c5c5,
+    -1.5px -1.5px 6px #ffffff,
+    inset -2px -2px 1px #8a8a8acc,
+    0 0 0 2px var(--focus-ring-offset),
+    0 0 0 4px var(--focus-ring-color);
+}
 .theme-clay .btn.btn-secondary {
   background: linear-gradient(135deg, #e8edf2 0%, #dfe7ed 100%);
   color: #1e293b;
@@ -248,6 +387,21 @@ body.theme-clay {
   background: linear-gradient(135deg, #edf2f7 0%, #e5ecf1 100%);
   color: #059669;
 }
+.theme-clay .btn.btn-secondary:active {
+  transform: translateY(1px);
+  background: linear-gradient(135deg, #dfe7ed 0%, #d5dde4 100%);
+  box-shadow:
+    inset 2px 2px 4px #b0b0b0,
+    inset -1px -1px 3px #ffffff;
+}
+.theme-clay .btn.btn-secondary:focus-visible {
+  box-shadow:
+    3px 3px 6px #c5c5c5,
+    -1.5px -1.5px 6px #ffffff,
+    inset -2px -2px 1px #8a8a8acc,
+    0 0 0 2px var(--focus-ring-offset),
+    0 0 0 4px var(--focus-ring-color);
+}
 .theme-clay .btn.is-active,
 .theme-clay .btn.btn-primary {
   background: linear-gradient(90deg, #059669 0%, #2563eb 100%);
@@ -256,51 +410,31 @@ body.theme-clay {
     3px 3px 6px #9ca3af,
     -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
     inset -2px -2px 1px rgba(0, 0, 0, 0.3);
+  cursor: default;
 }
-.theme-clay .btn.is-active:hover,
 .theme-clay .btn.btn-primary:hover {
   background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
 }
-.theme-clay .btn:disabled {
-  opacity: 0.5;
-  pointer-events: none;
+.theme-clay .btn.btn-primary:active:not(.is-active) {
+  transform: translateY(2px);
+  background: linear-gradient(90deg, #047857 0%, #1d4ed8 100%);
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.1);
 }
-
-/* Red delete buttons - override hover color only, keep clay style */
-.theme-clay .btn.text-red-600 {
-  color: #dc2626;
+.theme-clay .btn.is-active:focus-visible,
+.theme-clay .btn.btn-primary:focus-visible {
+  box-shadow:
+    3px 3px 6px #9ca3af,
+    -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 1px rgba(0, 0, 0, 0.3),
+    0 0 0 3px rgba(255, 255, 255, 0.8),
+    0 0 0 5px #10b981;
+  transform: translateY(-1px);
 }
-.theme-clay .btn.text-red-600:hover {
+.text-red-600:hover {
   background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
   color: #b91c1c;
-}
-
-/* Yellow warning buttons - override default hover */
-.theme-clay .btn.bg-yellow-600 {
-  background: #ca8a04;
-  color: #ffffff;
-  box-shadow:
-    3px 3px 6px #9ca3af,
-    -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
-    inset -2px -2px 1px rgba(0, 0, 0, 0.3);
-}
-.theme-clay .btn.bg-yellow-600:hover {
-  background: #eab308;
-  color: #ffffff;
-}
-
-/* Red danger buttons - override default hover */
-.theme-clay .btn.bg-red-600 {
-  background: #dc2626;
-  color: #ffffff;
-  box-shadow:
-    3px 3px 6px #9ca3af,
-    -1.5px -1.5px 6px rgba(255, 255, 255, 0.1),
-    inset -2px -2px 1px rgba(0, 0, 0, 0.3);
-}
-.theme-clay .btn.bg-red-600:hover {
-  background: #ef4444;
-  color: #ffffff;
 }
 
 .theme-clay .card {
@@ -359,31 +493,42 @@ body.theme-clay {
   color: rgb(220 38 38); /* red-600 */
 }
 
-/* Info - Blue */
-.icon-info {
-  color: rgb(96 165 250); /* blue-400 */
-  transition: color 0.2s ease-in-out;
-}
-.icon-info:hover,
-.group:hover .icon-info {
-  color: rgb(37 99 235); /* blue-600 */
+/* UNIVERSAL FOCUS STYLE - WCAG AAA Compliant */
+/* Green emerald color to match email/link colors */
+
+/* Apply rounded corners to checkboxes */
+input[type='checkbox'] {
+  border-radius: 0.25rem !important;
 }
 
-/* Neutral - Gray */
-.icon-neutral {
-  transition: color 0.2s ease-in-out;
+/* Apply universal focus to all interactive elements by default */
+/* Using box-shadow instead of outline to follow border-radius */
+a:focus-visible,
+button:not(.btn):focus-visible,
+select:focus-visible,
+input[type='checkbox']:focus-visible,
+svg:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
-.theme-glass .icon-neutral {
-  color: rgba(255, 255, 255, 0.6);
+
+/* Для ссылок и обычных элементов без теней - используем box-shadow */
+a:focus-visible,
+select:focus-visible,
+input[type='checkbox']:focus-visible,
+svg:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--focus-ring-offset),
+    0 0 0 4px var(--focus-ring-color);
 }
-.theme-glass .icon-neutral:hover,
-.theme-glass .group:hover .icon-neutral {
-  color: rgba(255, 255, 255, 0.9);
+
+/* Для button без класса .btn - добавляем обводку к существующим теням */
+button:not(.btn):focus-visible {
+  box-shadow:
+    0 0 0 2px var(--focus-ring-offset),
+    0 0 0 4px var(--focus-ring-color);
 }
-.theme-clay .icon-neutral {
-  color: rgb(100 116 139); /* slate-500 */
-}
-.theme-clay .icon-neutral:hover,
-.theme-clay .group:hover .icon-neutral {
-  color: rgb(51 65 85); /* slate-700 */
+
+g.recharts-layer.recharts-pie:focus {
+  outline-color: var(--focus-ring-color);
 }

@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Card, CardContent, CardHeader } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { User, Mail, ArrowLeft, Eye, EyeOff, CheckCircle, RefreshCw } from 'lucide-react';
@@ -157,12 +157,13 @@ function RegisterForm() {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="w-full max-w-md">
+          <h1 className="sr-only">Registration Confirmation</h1>
           <Card className="backdrop-blur-lg">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 animate-bounce items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-blue-600">
                 <CheckCircle className="text-white" size={24} />
               </div>
-              <CardTitle className="text-2xl text-white">Check your email!</CardTitle>
+              <h2 className="text-2xl font-semibold text-white">Check your email!</h2>
             </CardHeader>
 
             <CardContent className="space-y-6 text-center">
@@ -225,7 +226,7 @@ function RegisterForm() {
                 </Button>
               </div>
 
-              <div className="text-xs text-white/60">
+              <div className="text-xs text-white/80">
                 Didn&apos;t receive the email? Check your email address or try resending.
               </div>
             </CardContent>
@@ -238,13 +239,14 @@ function RegisterForm() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md">
+        <h1 className="sr-only">Register</h1>
         <Card className="backdrop-blur-lg">
           <CardHeader className="text-center">
             <div className="animate-float mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-blue-600">
               <User className="text-white" size={24} />
             </div>
-            <CardTitle className="text-2xl text-white">Registration</CardTitle>
-            <p className="mt-2 text-white/70">Create an account to comment on projects</p>
+            <h2 className="text-2xl font-semibold text-white">Registration</h2>
+            <p className="mt-2 text-white/90">Create an account to comment on projects</p>
           </CardHeader>
 
           <CardContent className="space-y-4">
@@ -259,11 +261,15 @@ function RegisterForm() {
                 <Input
                   name="name"
                   type="text"
+                  id="register-name"
+                  label="Name"
+                  hideLabel
                   placeholder="Enter your name"
                   value={formData.name}
                   onChange={handleInputChange}
                   error={errors.name}
                   className={errors.name ? 'border-red-500/50' : ''}
+                  variant="glass"
                 />
               </div>
 
@@ -271,11 +277,15 @@ function RegisterForm() {
                 <Input
                   name="email"
                   type="email"
+                  id="register-email"
+                  label="Email"
+                  hideLabel
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleInputChange}
                   error={errors.email}
                   className={errors.email ? 'border-red-500/50' : ''}
+                  variant="glass"
                 />
               </div>
 
@@ -283,16 +293,21 @@ function RegisterForm() {
                 <Input
                   name="password"
                   type={showPassword ? 'text' : 'password'}
+                  id="register-password"
+                  label="Password"
+                  hideLabel
                   placeholder="Enter password (minimum 6 characters)"
                   value={formData.password}
                   onChange={handleInputChange}
                   error={errors.password}
                   className={errors.password ? 'border-red-500/50' : ''}
+                  variant="glass"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute top-1/2 right-3 z-10 -translate-y-1/2 cursor-pointer text-slate-600 transition-colors hover:text-slate-800"
+                  className="absolute top-1/2 right-3 z-10 -translate-y-1/2 cursor-pointer rounded text-white/70 transition-colors hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -302,16 +317,21 @@ function RegisterForm() {
                 <Input
                   name="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
+                  id="register-confirm-password"
+                  label="Confirm Password"
+                  hideLabel
                   placeholder="Confirm password"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   error={errors.confirmPassword}
                   className={errors.confirmPassword ? 'border-red-500/50' : ''}
+                  variant="glass"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute top-1/2 right-3 z-10 -translate-y-1/2 cursor-pointer text-slate-600 transition-colors hover:text-slate-800"
+                  className="absolute top-1/2 right-3 z-10 -translate-y-1/2 cursor-pointer rounded text-white/70 transition-colors hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -357,7 +377,7 @@ function RegisterForm() {
             <div className="text-center">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+                className="inline-flex items-center gap-2 text-sm text-white/90 transition-colors hover:text-white"
               >
                 <ArrowLeft size={16} />
                 Home

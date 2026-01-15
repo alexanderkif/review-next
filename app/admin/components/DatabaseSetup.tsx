@@ -72,7 +72,7 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
                 name="name"
                 type="text"
                 required
-                className="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                className="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none sm:text-sm"
                 placeholder="Administrator Name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -88,7 +88,7 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
                 type="email"
                 autoComplete="email"
                 required
-                className="relative block w-full border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                className="relative block w-full border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none sm:text-sm"
                 placeholder="Administrator Email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -104,7 +104,7 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
                 type="password"
                 autoComplete="new-password"
                 required
-                className="relative block w-full border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                className="relative block w-full border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none sm:text-sm"
                 placeholder="Password (minimum 6 characters)"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -120,7 +120,7 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
                 type="password"
                 autoComplete="new-password"
                 required
-                className="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                className="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none sm:text-sm"
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
@@ -134,7 +134,7 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? 'Creating...' : 'Create Administrator'}
             </button>

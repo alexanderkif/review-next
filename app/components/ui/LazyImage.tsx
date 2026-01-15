@@ -73,7 +73,7 @@ const LazyImage = ({
       >
         {fallback || (
           <div className="flex h-full w-full items-center justify-center">
-            <div className="text-center text-white/60">
+            <div className="text-center text-white/80">
               <svg className="mx-auto h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"

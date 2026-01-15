@@ -59,7 +59,7 @@ export default function LikeButton({ projectId, initialLiked, initialCount }: Li
         className={`flex !min-h-[44px] !min-w-[44px] items-center gap-2 px-4 py-2 transition-all ${
           optimisticLiked.liked
             ? '!text-red-400 hover:!text-red-300'
-            : '!text-white/70 hover:!text-white'
+            : '!text-white/90 hover:!text-white'
         } ${isPending ? 'opacity-70' : ''}`}
         aria-label={optimisticLiked.liked ? 'Remove like' : 'Add like'}
       >

@@ -28,15 +28,15 @@ export default function NameSection({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Current name</label>
+          <div className="mb-1 text-sm font-medium text-slate-700">Current name</div>
           <p className="rounded bg-slate-50 p-2 text-sm text-slate-600">
             {currentName || 'Not set'}
           </p>
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">New Name</label>
           <Input
+            label="New Name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}

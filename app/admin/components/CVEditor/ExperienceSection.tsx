@@ -38,24 +38,24 @@ export default function ExperienceSection({
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Position</label>
                 <Input
+                  label="Position"
                   value={exp.title || ''}
                   onChange={(e) => onUpdate(index, 'title', e.target.value)}
                   placeholder="Senior Frontend Developer"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Company</label>
                 <Input
+                  label="Company"
                   value={exp.company || ''}
                   onChange={(e) => onUpdate(index, 'company', e.target.value)}
                   placeholder="Tech Solutions Inc."
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Work Period</label>
                 <Input
+                  label="Work Period"
                   value={exp.period || ''}
                   onChange={(e) => onUpdate(index, 'period', e.target.value)}
                   placeholder={`2020 - ${new Date().getFullYear()}`}
@@ -67,7 +67,7 @@ export default function ExperienceSection({
                   id={`current-${exp.id}`}
                   checked={exp.is_current}
                   onChange={(e) => onUpdate(index, 'is_current', e.target.checked)}
-                  className="cursor-pointer rounded"
+                  className="cursor-pointer rounded focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                 />
                 <label
                   htmlFor={`current-${exp.id}`}
@@ -79,6 +79,7 @@ export default function ExperienceSection({
             </div>
             <div className="mt-4">
               <Textarea
+                label="Description"
                 value={exp.description || ''}
                 onChange={(e) => onUpdate(index, 'description', e.target.value)}
                 placeholder="Description of responsibilities and achievements..."

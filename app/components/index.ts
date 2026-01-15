@@ -5,6 +5,9 @@ export { Input, Textarea } from './ui/Input';
 export { default as Navigation } from './ui/Navigation';
 export { default as PrintControls } from './ui/PrintControls';
 
+// Accessibility Components
+export { default as SkipToMain } from './SkipToMain';
+
 // Feature Components
 export { default as ProjectCard } from './ProjectCard';
 export { default as ProjectImageCarousel } from './ProjectImageCarousel';

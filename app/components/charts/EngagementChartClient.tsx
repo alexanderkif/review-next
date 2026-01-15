@@ -107,13 +107,13 @@ export default function EngagementChartClient() {
               <XAxis
                 dataKey="date"
                 stroke="rgba(255,255,255,0.7)"
-                fontSize={10}
-                tick={{ fontSize: 10 }}
+                fontSize={11}
+                tick={{ fontSize: 11 }}
               />
               <YAxis
                 stroke="rgba(255,255,255,0.7)"
-                fontSize={10}
-                tick={{ fontSize: 10 }}
+                fontSize={11}
+                tick={{ fontSize: 11 }}
                 width={30}
                 allowDecimals={false}
               />
@@ -137,7 +137,7 @@ export default function EngagementChartClient() {
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-full items-center justify-center text-white/60">
+          <div className="flex h-full items-center justify-center text-white/80">
             <div className="animate-pulse">Loading chart...</div>
           </div>
         )}

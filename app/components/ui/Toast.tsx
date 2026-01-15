@@ -68,16 +68,21 @@ const Toast = ({ message, type = 'info', duration = 5000, onClose }: ToastProps)
 
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
       className={`w-full max-w-md transform transition-all duration-300 ease-out ${isVisible && !isExiting ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'} `}
     >
       <div className={`${getStyles()} flex items-start gap-3 rounded-xl p-4`}>
-        <div className="mt-0.5 flex-shrink-0">{getIcon()}</div>
+        <div className="mt-0.5 flex-shrink-0" aria-hidden="true">
+          {getIcon()}
+        </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium break-words text-slate-800">{message}</p>
         </div>
         <button
           onClick={handleClose}
-          className="flex-shrink-0 rounded text-slate-400 transition-colors hover:text-slate-600 focus:ring-2 focus:ring-slate-400 focus:outline-none"
+          className="flex-shrink-0 rounded text-slate-400 transition-colors hover:text-slate-600 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
           aria-label="Close notification"
         >
           <X size={18} />

@@ -120,7 +120,7 @@ export default function TechStackChartClient({ data }: TechStackChartClientProps
                   className="h-2 w-2 flex-shrink-0 rounded-full"
                   style={{ backgroundColor: item.color }}
                 ></div>
-                <span className="truncate text-[10px] text-white/80 md:text-xs">{item.name}</span>
+                <span className="truncate text-[11px] text-white/80 md:text-xs">{item.name}</span>
               </div>
             ))}
           </div>

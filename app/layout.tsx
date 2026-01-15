@@ -10,6 +10,7 @@ import { getCVData } from './lib/cv-service';
 import { Analytics } from '@vercel/analytics/next';
 import { headers } from 'next/headers';
 import ClientThemeSync from './components/ClientThemeSync';
+import SkipToMain from './components/SkipToMain';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -157,12 +158,13 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Portfolio" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased ${theme}`}>
+        <SkipToMain />
         <ClientThemeSync />
         <SessionProvider>
           <ToastProvider>
             <ConfirmProvider>
               <ConditionalNavigation />
-              <main>{children}</main>
+              <main id="main-content">{children}</main>
             </ConfirmProvider>
           </ToastProvider>
         </SessionProvider>

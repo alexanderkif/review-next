@@ -91,7 +91,7 @@ const NotFoundPage = () => {
         {/* Error code for developers */}
         <div className="mt-8 text-xs text-white/40">
           <details className="rounded-lg border border-white/10 bg-white/5 p-4 backdrop-blur-md">
-            <summary className="cursor-pointer transition-colors hover:text-white/60">
+            <summary className="cursor-pointer transition-colors hover:text-white/80 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none">
               Technical information
             </summary>
             <div className="mt-2 text-left font-mono">

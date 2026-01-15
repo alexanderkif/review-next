@@ -38,16 +38,19 @@ export default function EducationSection({
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Input
+                label="Degree"
                 value={edu.degree || ''}
                 onChange={(e) => onUpdate(index, 'degree', e.target.value)}
                 placeholder="Bachelor of Information Technology"
               />
               <Input
+                label="Institution"
                 value={edu.institution || ''}
                 onChange={(e) => onUpdate(index, 'institution', e.target.value)}
                 placeholder="Lomonosov Moscow State University"
               />
               <Input
+                label="Period"
                 value={edu.period || ''}
                 onChange={(e) => onUpdate(index, 'period', e.target.value)}
                 placeholder={`2015 - ${new Date().getFullYear()}`}
@@ -55,6 +58,7 @@ export default function EducationSection({
             </div>
             <div className="mt-4">
               <Textarea
+                label="Description"
                 value={edu.description || ''}
                 onChange={(e) => onUpdate(index, 'description', e.target.value)}
                 placeholder="Specialization, thesis, achievements..."

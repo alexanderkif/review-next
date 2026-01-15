@@ -57,10 +57,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] px-4 py-2.5 text-sm font-medium text-slate-800 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc] transition-colors duration-200 hover:text-emerald-600 hover:[background:linear-gradient(135deg,#edf2f7_0%,#e5ecf1_100%)]"
-              >
+              <Link href="/" className="btn btn-secondary">
                 <Eye size={16} />
                 <span className="md:hidden">Site</span>
                 <span className="hidden md:inline">View Site</span>
@@ -111,61 +108,64 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
         {/* Content */}
         <div className="space-y-6">
           {activeTab === 'overview' && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileText className="text-blue-600" size={20} />
-                    Resume
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col">
-                  <p className="mb-4 flex-1 text-sm text-slate-600">
-                    Manage resume data, work experience and skills
-                  </p>
-                  <Button onClick={() => setActiveTab('cv')} className="mt-auto w-full">
-                    <Edit3 size={16} className="mr-2" />
-                    Edit
-                  </Button>
-                </CardContent>
-              </Card>
+            <>
+              <h2 className="sr-only">Overview</h2>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <FileText className="text-blue-600" size={20} />
+                      Resume
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col">
+                    <p className="mb-4 flex-1 text-sm text-slate-600">
+                      Manage resume data, work experience and skills
+                    </p>
+                    <Button onClick={() => setActiveTab('cv')} className="mt-auto w-full">
+                      <Edit3 size={16} className="mr-2" />
+                      Edit
+                    </Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FolderOpen className="text-green-600" size={20} />
-                    Projects
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col">
-                  <p className="mb-4 flex-1 text-sm text-slate-600">
-                    Add and edit portfolio projects
-                  </p>
-                  <Button onClick={() => setActiveTab('projects')} className="mt-auto w-full">
-                    <FolderOpen size={16} className="mr-2" />
-                    Manage
-                  </Button>
-                </CardContent>
-              </Card>
+                <Card className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <FolderOpen className="text-green-600" size={20} />
+                      Projects
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col">
+                    <p className="mb-4 flex-1 text-sm text-slate-600">
+                      Add and edit portfolio projects
+                    </p>
+                    <Button onClick={() => setActiveTab('projects')} className="mt-auto w-full">
+                      <FolderOpen size={16} className="mr-2" />
+                      Manage
+                    </Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Settings className="text-purple-600" size={20} />
-                    Settings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col">
-                  <p className="mb-4 flex-1 text-sm text-slate-600">
-                    General site and account settings
-                  </p>
-                  <Button onClick={() => setActiveTab('settings')} className="mt-auto w-full">
-                    <Settings size={16} className="mr-2" />
-                    Configure
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+                <Card className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Settings className="text-purple-600" size={20} />
+                      Settings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col">
+                    <p className="mb-4 flex-1 text-sm text-slate-600">
+                      General site and account settings
+                    </p>
+                    <Button onClick={() => setActiveTab('settings')} className="mt-auto w-full">
+                      <Settings size={16} className="mr-2" />
+                      Configure
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
           )}
 
           {activeTab === 'cv' && (

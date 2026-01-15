@@ -3,10 +3,26 @@ import { BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { getProjects } from '../lib/db';
 import { ProjectCard } from '../components';
-import TechStackChart from '../components/charts/TechStackChart';
-import EngagementChart from '../components/charts/EngagementChart';
 import { getCVData } from '../lib/cv-service';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+
+// Lazy load charts to avoid loading Recharts on other pages
+const TechStackChart = dynamic(() => import('../components/charts/TechStackChart'), {
+  loading: () => (
+    <div className="flex h-48 items-center justify-center text-white/80">
+      <div className="animate-pulse">Loading chart...</div>
+    </div>
+  ),
+});
+
+const EngagementChart = dynamic(() => import('../components/charts/EngagementChart'), {
+  loading: () => (
+    <div className="flex h-48 items-center justify-center text-white/80">
+      <div className="animate-pulse">Loading chart...</div>
+    </div>
+  ),
+});
 
 export const revalidate = 1800; // Кэш на 30 минут
 
@@ -66,6 +82,12 @@ export default async function ProjectsPage() {
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
+        {/* Page Title - hidden visually but available for screen readers */}
+        <h1 className="sr-only">Projects Portfolio</h1>
+
+        {/* Section heading */}
+        <h2 className="sr-only">Project Statistics and Analytics</h2>
+
         {/* Top Row - 3 panels with adaptive sizing */}
         <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[auto_auto_1fr] lg:items-stretch">
           {/* First Panel - Statistics Cards (auto width) */}

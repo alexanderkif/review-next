@@ -32,7 +32,10 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
     >
       {/* Первое изображение проекта */}
       {project.image_urls && project.image_urls.length > 0 ? (
-        <Link href={`/projects/${project.id}`} className="block">
+        <Link
+          href={`/projects/${project.id}`}
+          className="block rounded-xl focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+        >
           <div className="relative h-48 overflow-hidden rounded-xl bg-white/10">
             <LazyImage
               src={project.image_urls[0]}
@@ -51,7 +54,10 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         </Link>
       ) : (
         /* Fallback для проектов без изображений */
-        <Link href={`/projects/${project.id}`} className="block">
+        <Link
+          href={`/projects/${project.id}`}
+          className="block rounded-xl focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+        >
           <div className="relative flex h-48 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-400 to-purple-600 transition-opacity">
             <div className="text-center text-white">
               <div className="text-2xl font-bold">{project.title}</div>
@@ -62,11 +68,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
       <CardHeader className="flex-shrink-0 pt-6">
         <div className="flex items-start justify-between">
-          <Link href={`/projects/${project.id}`}>
-            <CardTitle className="cursor-pointer text-white transition-colors hover:text-blue-300">
-              {project.title}
-            </CardTitle>
-          </Link>
+          <CardTitle className="text-white">{project.title}</CardTitle>
           {project.featured && <Star size={16} className="fill-yellow-400 text-yellow-400" />}
         </div>
       </CardHeader>
@@ -97,7 +99,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
           </div>
 
           {/* Год и статус */}
-          <div className="flex items-center gap-4 text-sm text-white/70">
+          <div className="flex items-center gap-4 text-sm text-white/90">
             <div className="flex items-center gap-1">
               <Calendar size={14} />
               <span>{project.year}</span>
@@ -115,7 +117,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
                   href={project.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2 text-[#bfc9d6] backdrop-blur-md transition-all hover:text-[#4078c0] hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-purple-500/80 focus:outline-none"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2 text-[#bfc9d6] backdrop-blur-md transition-all hover:text-[#4078c0] hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                   aria-label="View on GitHub"
                 >
                   <Github size={16} />
@@ -128,7 +130,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
                   href={project.demo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2 text-[#bfc9d6] backdrop-blur-md transition-all hover:text-blue-700 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-blue-500/80 focus:outline-none"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded rounded-xl border border-white/40 bg-gradient-to-br from-white/25 to-white/15 p-2 text-[#bfc9d6] backdrop-blur-md transition-all hover:text-blue-700 hover:[background:linear-gradient(135deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0.2)_100%)] focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                   aria-label="Open demo"
                 >
                   <ExternalLink size={16} />
@@ -146,16 +148,18 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
             <Tooltip content="View comments" position="top">
               <Link
-                href={`/projects/${project.id}`}
-                className={`flex cursor-pointer items-center gap-1 transition-colors ${
+                href={`/projects/${project.id}#comments`}
+                className={`flex items-center gap-1 rounded transition-colors focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
                   (project.comments_count || 0) > 0
                     ? 'text-lime-500 hover:text-lime-400'
                     : 'text-white/70 hover:text-lime-400'
                 }`}
+                aria-label={`View ${project.comments_count || 0} comment${(project.comments_count || 0) !== 1 ? 's' : ''} on ${project.title}`}
               >
                 <MessageCircle
                   size={16}
                   className={`${(project.comments_count || 0) > 0 ? 'fill-lime-500' : ''}`}
+                  aria-hidden="true"
                 />
                 <span className="text-sm">{project.comments_count || 0}</span>
               </Link>

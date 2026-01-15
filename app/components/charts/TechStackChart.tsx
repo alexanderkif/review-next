@@ -153,7 +153,7 @@ export default function TechStackChart({ projects }: TechStackChartProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex h-40 items-center justify-center text-white/60">No data</div>
+          <div className="flex h-40 items-center justify-center text-white/80">No data</div>
         </CardContent>
       </Card>
     );

@@ -156,7 +156,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
           {/* Иконка полноэкранного режима - дополнительный способ для desktop */}
           <Tooltip content="Fullscreen" position="left">
             <button
-              className="absolute top-4 right-4 z-20 cursor-pointer rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70 hover:text-white"
+              className="absolute top-4 right-4 z-20 cursor-pointer rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70 hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFullscreen();
@@ -172,7 +172,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
             <>
               <Tooltip content="Previous image" position="right">
                 <button
-                  className="absolute top-1/2 left-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70"
+                  className="absolute top-1/2 left-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70 focus:opacity-100 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                   onClick={(e) => {
                     e.stopPropagation();
                     prevImage();
@@ -185,7 +185,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
 
               <Tooltip content="Next image" position="left">
                 <button
-                  className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70"
+                  className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70 focus:opacity-100 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                   onClick={(e) => {
                     e.stopPropagation();
                     nextImage();
@@ -227,12 +227,13 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
                 <button
                   key={index}
                   onClick={() => goToImage(index)}
-                  className={`relative h-12 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg transition-all ${
+                  className={`relative h-12 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg transition-all focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none ${
                     index === currentIndex
-                      ? 'opacity-100 ring-2 ring-white/50'
+                      ? 'opacity-100 ring-2 ring-emerald-600'
                       : 'opacity-70 hover:opacity-100'
                   }`}
                   aria-label={`View image ${index + 1}`}
+                  aria-current={index === currentIndex ? 'true' : undefined}
                 >
                   {isValidUrl ? (
                     <Image
@@ -262,7 +263,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
             {/* Кнопка закрытия */}
             <Tooltip content="Close" position="left">
               <button
-                className="absolute top-4 right-4 z-[10000] cursor-pointer rounded-full bg-black/50 p-3 text-white transition-all hover:bg-black/70 hover:text-white"
+                className="absolute top-4 right-4 z-[10000] cursor-pointer rounded-full bg-black/50 p-3 text-white transition-all hover:bg-black/70 hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                 onClick={toggleFullscreen}
                 aria-label="Close fullscreen"
               >
@@ -285,7 +286,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
                 <>
                   <Tooltip content="Previous image" position="right">
                     <button
-                      className="absolute top-1/2 left-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70"
+                      className="absolute top-1/2 left-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                       onClick={(e) => {
                         e.stopPropagation();
                         prevImage();
@@ -298,7 +299,7 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
 
                   <Tooltip content="Next image" position="left">
                     <button
-                      className="absolute top-1/2 right-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70"
+                      className="absolute top-1/2 right-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                       onClick={(e) => {
                         e.stopPropagation();
                         nextImage();

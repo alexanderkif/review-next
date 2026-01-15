@@ -202,6 +202,16 @@ app/
 - **Loading states** - skeleton screens and progress indicators
 - **Micro-interactions** - subtle feedback on user actions
 
+### ♿ Accessibility Features
+- **WCAG 2.2 AAA Compliant** - highest accessibility standard
+- **Keyboard navigation** - full keyboard support with visible focus indicators (emerald-600 rings with rounded borders)
+- **Screen reader friendly** - proper ARIA labels and semantic HTML
+- **Reduced motion** - respects user preferences for animations
+- **High contrast** - 7:1 contrast ratio for all text
+- **Focus management** - smart focus traps in modals
+- **Skip navigation** - quick access to main content
+- See [ACCESSIBILITY.md](ACCESSIBILITY.md) for full details
+
 ## 🗃 Database Schema
 
 PostgreSQL database with **automatic initialization** - no manual setup required!

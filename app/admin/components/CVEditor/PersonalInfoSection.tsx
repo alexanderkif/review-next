@@ -47,24 +47,24 @@ export default function PersonalInfoSection({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Full Name</label>
             <Input
+              label="Full Name"
               value={cvData.cv.name || ''}
               onChange={(e) => onUpdateField('name', e.target.value)}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Position</label>
             <Input
+              label="Position"
               value={cvData.cv.title || ''}
               onChange={(e) => onUpdateField('title', e.target.value)}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
             <Input
+              label="Email"
               type="email"
               value={cvData.cv.email || ''}
               onChange={(e) => onUpdateField('email', e.target.value)}
@@ -72,40 +72,40 @@ export default function PersonalInfoSection({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Phone</label>
             <Input
+              label="Phone"
               value={cvData.cv.phone || ''}
               onChange={(e) => onUpdateField('phone', e.target.value)}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Location</label>
             <Input
+              label="Location"
               value={cvData.cv.location || ''}
               onChange={(e) => onUpdateField('location', e.target.value)}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Website</label>
             <Input
+              label="Website"
               value={cvData.cv.website || ''}
               onChange={(e) => onUpdateField('website', e.target.value)}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">GitHub URL</label>
             <Input
+              label="GitHub URL"
               value={cvData.cv.github_url || ''}
               onChange={(e) => onUpdateField('github_url', e.target.value)}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">LinkedIn URL</label>
             <Input
+              label="LinkedIn URL"
               value={cvData.cv.linkedin_url || ''}
               onChange={(e) => onUpdateField('linkedin_url', e.target.value)}
             />
@@ -114,12 +114,12 @@ export default function PersonalInfoSection({
 
         {/* Avatar Upload */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <div className="mb-2 text-sm font-medium text-slate-700">
             Profile Avatars
             <span className="mt-1 block text-xs text-slate-500">
               Upload multiple photos for avatar rotation (changes every 5 seconds)
             </span>
-          </label>
+          </div>
           <MultipleImageUpload
             entityType="avatar"
             entityId={cvData.cv.id.toString()}
@@ -141,8 +141,8 @@ export default function PersonalInfoSection({
 
         {/* Highlights */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">HIGHLIGHTS</label>
           <Textarea
+            label="HIGHLIGHTS"
             rows={8}
             value={cvData.cv.about || ''}
             onChange={(e) => onUpdateField('about', e.target.value)}

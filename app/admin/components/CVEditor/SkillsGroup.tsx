@@ -26,7 +26,7 @@ export default function SkillsGroup({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <label className="block text-sm font-medium text-slate-700">{label}</label>
+        <div className="text-sm font-medium text-slate-700">{label}</div>
         <Tooltip content={`Add ${label.toLowerCase()}`} position="top" variant="clay">
           <Button
             size="sm"
@@ -42,6 +42,7 @@ export default function SkillsGroup({
         {skills.map((skill, index) => (
           <div key={index} className="flex items-center gap-2">
             <Input
+              label={label}
               value={skill || ''}
               onChange={(e) => onUpdate(category, index, e.target.value)}
               placeholder={placeholder}

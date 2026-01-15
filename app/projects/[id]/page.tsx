@@ -106,13 +106,16 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="mx-auto max-w-4xl">
+        {/* Page heading */}
+        <h1 className="sr-only">{project.title}</h1>
+
         {/* Back navigation */}
         <div className="mb-8">
           <Link
             href="/projects"
-            className="inline-flex min-h-[44px] items-center gap-2 px-1 py-2 text-white/70 transition-colors hover:text-white"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded px-1 py-2 text-white/70 transition-colors hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={18} aria-hidden="true" />
             Back to Projects
           </Link>
         </div>
@@ -123,7 +126,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <div className="mb-2 flex flex-wrap items-center gap-3">
-                  <CardTitle className="text-3xl text-white">{project.title}</CardTitle>
+                  <h2 className="text-3xl font-semibold text-white">{project.title}</h2>
                   {project.featured && (
                     <Star size={20} className="fill-yellow-400 text-yellow-400" />
                   )}

@@ -114,23 +114,23 @@ export default async function Home() {
                 {/* Contact information */}
                 <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
                   <div className="flex items-center justify-center gap-2 md:justify-start">
-                    <Mail size={16} className="text-slate-600" />
+                    <Mail size={16} className="text-slate-600" aria-hidden="true" />
                     <a
                       href={`mailto:${cvData.personalInfo.email}`}
-                      className="text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline"
+                      className="rounded text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                     >
                       {cvData.personalInfo.email}
                     </a>
                   </div>
                   {cvData.personalInfo.phone && (
                     <div className="flex items-center justify-center gap-2 md:justify-start">
-                      <Phone size={16} className="text-slate-600" />
+                      <Phone size={16} className="text-slate-600" aria-hidden="true" />
                       {cvData.personalInfo.phone.match(/^https?:\/\//) ? (
                         <a
                           href={cvData.personalInfo.phone}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline"
+                          className="rounded text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                         >
                           {cvData.personalInfo.phone}
                         </a>
@@ -141,20 +141,20 @@ export default async function Home() {
                   )}
                   {cvData.personalInfo.location && (
                     <div className="flex items-center justify-center gap-2 md:justify-start">
-                      <MapPin size={16} className="text-slate-600" />
+                      <MapPin size={16} className="text-slate-600" aria-hidden="true" />
                       <span className="text-slate-800">{cvData.personalInfo.location}</span>
                     </div>
                   )}
                   {cvData.personalInfo.website && (
                     <div className="flex items-center justify-center gap-2 md:justify-start">
-                      <Globe size={16} className="text-slate-600" />
+                      <Globe size={16} className="text-slate-600" aria-hidden="true" />
                       <a
                         href={cvData.personalInfo.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline"
+                        className="rounded text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                       >
-                        {cvData.personalInfo.website}
+                        Website
                       </a>
                     </div>
                   )}
@@ -168,9 +168,13 @@ export default async function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn"
-                      aria-label="Visit GitHub profile"
+                      title="GitHub profile"
                     >
-                      <Github size={16} className="-translate-x-[1px] -translate-y-[1px]" />
+                      <Github
+                        size={16}
+                        className="-translate-x-[1px] -translate-y-[1px]"
+                        aria-hidden="true"
+                      />
                     </a>
                   )}
                   {cvData.personalInfo.linkedin && (
@@ -179,9 +183,13 @@ export default async function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn"
-                      aria-label="Visit LinkedIn profile"
+                      title="LinkedIn profile"
                     >
-                      <Linkedin size={16} className="-translate-x-[1px] -translate-y-[1px]" />
+                      <Linkedin
+                        size={16}
+                        className="-translate-x-[1px] -translate-y-[1px]"
+                        aria-hidden="true"
+                      />
                     </a>
                   )}
                 </div>
@@ -249,7 +257,7 @@ export default async function Home() {
                     <h4 className="font-semibold text-slate-800">{exp.title}</h4>
                     <p className="mb-1 text-sm text-slate-600">{exp.company}</p>
                     <p className="mb-2 flex items-center gap-1 text-xs text-slate-500">
-                      <Calendar size={12} />
+                      <Calendar size={12} aria-hidden="true" />
                       {exp.period}
                     </p>
                     <p className="text-sm text-slate-700">{exp.description}</p>
@@ -276,7 +284,7 @@ export default async function Home() {
                       <h4 className="font-semibold text-slate-800">{edu.degree}</h4>
                       <p className="text-sm text-slate-600">{edu.institution}</p>
                       <p className="flex items-center gap-1 text-xs text-slate-500">
-                        <Calendar size={12} />
+                        <Calendar size={12} aria-hidden="true" />
                         {edu.period}
                       </p>
                       {edu.description && (
@@ -291,7 +299,7 @@ export default async function Home() {
                                     href={part}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline"
+                                    className="rounded text-emerald-600 transition-colors duration-200 hover:text-emerald-700 hover:underline focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                                   >
                                     {part}
                                   </a>

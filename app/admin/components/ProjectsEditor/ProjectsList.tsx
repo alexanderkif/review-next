@@ -99,7 +99,8 @@ export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsLis
                       href={project.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-slate-500 hover:text-slate-700"
+                      aria-label={`View ${project.title} on GitHub`}
+                      className="rounded text-slate-500 hover:text-slate-700 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                     >
                       <Github size={14} />
                     </a>
@@ -109,7 +110,8 @@ export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsLis
                       href={project.demo_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-slate-500 hover:text-slate-700"
+                      aria-label={`View ${project.title} live demo`}
+                      className="rounded text-slate-500 hover:text-slate-700 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
                     >
                       <ExternalLink size={14} />
                     </a>
