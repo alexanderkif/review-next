@@ -95,13 +95,41 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
   const session = await auth();
   const userId = session?.user?.id;
 
-  const project = await getProjectById(projectId, userId);
+  let project: Awaited<ReturnType<typeof getProjectById>> = null;
+  let comments: Awaited<ReturnType<typeof getProjectComments>> = [];
+  let hasError = false;
 
+  try {
+    project = await getProjectById(projectId, userId);
+
+    if (!project) {
+      notFound();
+    }
+
+    comments = await getProjectComments(projectId);
+  } catch (error) {
+    console.error('Failed to fetch project:', error);
+    hasError = true;
+  }
+
+  // Show temporary error message for database connection issues
+  if (hasError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="mb-4 text-2xl font-bold text-red-600">Temporary Error</h1>
+          <p className="text-slate-600">
+            Unable to load project details. Please refresh the page in a moment.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // This should not happen as we check in try-catch, but adding for TypeScript
   if (!project) {
     notFound();
   }
-
-  const comments = await getProjectComments(projectId);
 
   return (
     <div className="min-h-screen p-4 md:p-8">

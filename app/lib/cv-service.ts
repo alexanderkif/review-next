@@ -147,15 +147,32 @@ async function fetchCVData(): Promise<CVData | null> {
   } catch (error: unknown) {
     console.error('Error fetching CV data:', error);
 
-    // For any database errors, return null to show proper "no data" state
-    console.warn('Database error, returning null');
+    // Check if error is a database connection/query error
+    // These should NOT be cached - they are temporary issues
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const isTemporaryError =
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('ECONNREFUSED') ||
+      errorMessage.includes('ENOTFOUND') ||
+      errorMessage.includes('connection') ||
+      errorMessage.includes('ETIMEDOUT') ||
+      errorMessage.includes('network');
+
+    if (isTemporaryError) {
+      console.error('Temporary database error detected - throwing to prevent caching');
+      // Re-throw so Next.js doesn't cache this error state
+      throw error;
+    }
+
+    // For permanent errors (table doesn't exist, etc.), return null
+    console.warn('Permanent database issue, returning null');
     return null;
   }
 }
 
 // Cached version of the function
 export const getCVData = unstable_cache(fetchCVData, ['cv-data'], {
-  revalidate: 3600, // 1 hour
+  revalidate: 1800, // 30 minutes (reduced from 1 hour for faster recovery)
   tags: ['cv'],
 });
 

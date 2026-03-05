@@ -53,7 +53,7 @@ export async function POST(): Promise<NextResponse<ResetDatabaseResponse | ApiEr
     const { revalidatePath, revalidateTag } = await import('next/cache');
     revalidatePath('/', 'layout');
     revalidatePath('/');
-    revalidateTag('cv', 'max');
+    revalidateTag('cv', 'default');
 
     return NextResponse.json({
       message: 'Database reset and seeded successfully',

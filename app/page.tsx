@@ -18,10 +18,17 @@ import { getCVData } from './lib/cv-service';
 import Bullet from './components/ui/Bullet';
 import type { Metadata } from 'next';
 
-export const revalidate = 3600; // Cache for 1 hour
+export const revalidate = 1800; // Cache for 30 minutes (reduced for faster recovery)
 
 export async function generateMetadata(): Promise<Metadata> {
-  const cvData = await getCVData();
+  let cvData;
+
+  try {
+    cvData = await getCVData();
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    cvData = null;
+  }
 
   if (!cvData) {
     return {
@@ -64,8 +71,31 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const cvData = await getCVData();
+  let cvData;
+  let hasError = false;
 
+  try {
+    cvData = await getCVData();
+  } catch (error) {
+    console.error('Failed to fetch CV data:', error);
+    hasError = true;
+  }
+
+  // Show temporary error message for database connection issues
+  if (hasError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="mb-4 text-2xl font-bold text-red-600">Temporary Error</h1>
+          <p className="text-slate-600">
+            Unable to connect to the database. Please refresh the page in a moment.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show "no data" message when CV is not set up
   if (!cvData) {
     return (
       <div className="flex min-h-screen items-center justify-center">

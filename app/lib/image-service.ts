@@ -50,12 +50,12 @@ export async function createImagesTable() {
 
     // Create indexes for better performance
     await sql`
-      CREATE INDEX idx_images_entity 
+      CREATE INDEX idx_images_entity
       ON images(entity_type, entity_id)
     `;
 
     await sql`
-      CREATE INDEX idx_images_created_at 
+      CREATE INDEX idx_images_created_at
       ON images(created_at DESC)
     `;
 
@@ -87,7 +87,7 @@ export async function saveImage(
 
     const result = await sql`
       INSERT INTO images (
-        entity_type, entity_id, image_data, mime_type, 
+        entity_type, entity_id, image_data, mime_type,
         size_bytes, width, height, updated_at
       ) VALUES (
         ${entityType}, ${entityId}, ${imageData}, ${mimeType},
@@ -124,7 +124,7 @@ export async function getImagesForEntity(
   try {
     const result = await sql`
       SELECT id, entity_type, entity_id, mime_type, size_bytes, width, height
-      FROM images 
+      FROM images
       WHERE entity_type = ${entityType} AND entity_id = ${entityId}
       ORDER BY created_at DESC
     `;
@@ -140,7 +140,7 @@ const getAvatarForCV = async (cvId: string): Promise<ImageMetadata | null> => {
   try {
     const result = await sql`
       SELECT id, entity_type, entity_id, mime_type, size_bytes, width, height
-      FROM images 
+      FROM images
       WHERE entity_type = 'avatar' AND entity_id = ${cvId}
       ORDER BY created_at DESC
       LIMIT 1
@@ -148,13 +148,29 @@ const getAvatarForCV = async (cvId: string): Promise<ImageMetadata | null> => {
     return (result[0] as ImageMetadata) || null;
   } catch (error) {
     console.error('Error fetching avatar:', error);
+
+    // Check if error is temporary (connection/timeout issues)
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const isTemporaryError =
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('ECONNREFUSED') ||
+      errorMessage.includes('ENOTFOUND') ||
+      errorMessage.includes('connection') ||
+      errorMessage.includes('ETIMEDOUT') ||
+      errorMessage.includes('network');
+
+    if (isTemporaryError) {
+      console.error('Temporary database error - throwing to prevent caching');
+      throw error; // Don't cache temporary errors
+    }
+
     return null;
   }
 };
 
 // Cached version for better performance
 export const getCVAvatar = unstable_cache(getAvatarForCV, ['cv-avatar'], {
-  revalidate: 3600, // 1 hour
+  revalidate: 1800, // 30 minutes (reduced for faster recovery)
   tags: ['images', 'cv'],
 });
 
@@ -165,7 +181,7 @@ export async function deleteImagesForEntity(
 ): Promise<boolean> {
   try {
     await sql`
-      DELETE FROM images 
+      DELETE FROM images
       WHERE entity_type = ${entityType} AND entity_id = ${entityId}
     `;
     return true;
@@ -192,14 +208,14 @@ export async function createImageFromUrl(
     // Remove existing images for this entity if avatar
     if (entityType === 'avatar') {
       await sql`
-        DELETE FROM images 
+        DELETE FROM images
         WHERE entity_type = ${entityType} AND entity_id = ${entityId}
       `;
     }
 
     const result = await sql`
       INSERT INTO images (
-        entity_type, entity_id, image_data, mime_type, 
+        entity_type, entity_id, image_data, mime_type,
         size_bytes, updated_at
       ) VALUES (
         ${entityType}, ${entityId}, ${base64Data}, ${contentType},
@@ -223,7 +239,7 @@ export async function getImagesByEntity(
   try {
     const result = await sql`
       SELECT id, entity_type, entity_id, mime_type, size_bytes, width, height
-      FROM images 
+      FROM images
       WHERE entity_type = ${entityType} AND entity_id = ${entityId}
       ORDER BY created_at ASC
     `;

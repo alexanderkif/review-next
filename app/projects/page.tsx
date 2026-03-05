@@ -76,8 +76,31 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProjectsPage() {
   const session = await auth();
   const userId = session?.user?.id;
-  const projects = await getProjects(userId);
-  // Данные активности теперь загружаются динамически в компоненте
+
+  let projects: Awaited<ReturnType<typeof getProjects>> = [];
+  let hasError = false;
+
+  try {
+    projects = await getProjects(userId);
+  } catch (error) {
+    console.error('Failed to fetch projects:', error);
+    hasError = true;
+    projects = [];
+  }
+
+  // Show temporary error message for database connection issues
+  if (hasError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="mb-4 text-2xl font-bold text-red-600">Temporary Error</h1>
+          <p className="text-slate-600">
+            Unable to load projects. Please refresh the page in a moment.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-4 md:p-8">
