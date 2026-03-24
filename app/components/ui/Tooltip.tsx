@@ -8,7 +8,7 @@ interface TooltipProps {
   children: ReactNode;
   position?: 'top' | 'bottom' | 'left' | 'right';
   delay?: number;
-  variant?: 'glass' | 'clay';
+  variant?: 'glass' | 'clay' | 'dark';
 }
 
 export default function Tooltip({
@@ -103,11 +103,13 @@ export default function Tooltip({
             }}
           >
             <div
-              className={` ${
-                variant === 'glass'
-                  ? 'border border-white/30 bg-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-md'
-                  : 'bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] text-slate-700 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc]'
-              } rounded-lg px-3 py-1.5 ${variant === 'glass' ? 'text-white' : 'text-slate-700'} animate-in fade-in zoom-in-95 text-xs font-medium whitespace-nowrap duration-200`}
+              className={`${
+                variant === 'dark'
+                  ? 'bg-black/50 text-white backdrop-blur-sm'
+                  : variant === 'glass'
+                    ? 'border border-white/30 bg-white/10 text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-md'
+                    : 'bg-gradient-to-br from-[#e8edf2] to-[#dfe7ed] text-slate-700 shadow-[3px_3px_6px_#c5c5c5,_-1.5px_-1.5px_6px_#ffffff,_inset_-2px_-2px_1px_#8a8a8acc]'
+              } animate-in fade-in zoom-in-95 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap duration-200`}
             >
               {content}
             </div>

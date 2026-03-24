@@ -1,8 +1,7 @@
 ﻿import 'server-only';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { unstable_cache } from 'next/cache';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+import { cache } from 'react';
 import { CVData } from './types/cv';
 
 async function fetchCVData(): Promise<CVData | null> {
@@ -170,11 +169,13 @@ async function fetchCVData(): Promise<CVData | null> {
   }
 }
 
-// Cached version of the function
-export const getCVData = unstable_cache(fetchCVData, ['cv-data'], {
+// Cached version of the function (unstable_cache for cross-request caching,
+// React.cache for per-request deduplication so multiple calls in one render hit DB only once)
+const _getCVDataCached = unstable_cache(fetchCVData, ['cv-data'], {
   revalidate: 1800, // 30 minutes (reduced from 1 hour for faster recovery)
   tags: ['cv'],
 });
+export const getCVData = cache(_getCVDataCached);
 
 // Function to invalidate CV cache (for admin panel)
 export async function revalidateCVData() {

@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../lib/admin-auth';
 import { auth } from '../../../../auth';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -44,7 +42,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Update the comment
     const updatedComment = await sql`
-      UPDATE project_comments 
+      UPDATE project_comments
       SET comment = ${content.trim()}, updated_at = NOW()
       WHERE id = ${commentId}
       RETURNING id, comment as content, created_at, updated_at

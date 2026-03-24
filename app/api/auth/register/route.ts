@@ -1,10 +1,8 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/email-service';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 const registerSchema = z.object({
   name: z.string().min(1, 'Имя обязательно для заполнения').max(255),
@@ -41,25 +39,25 @@ export async function POST(request: NextRequest) {
     // Create new user (not yet verified)
     const result = await sql`
       INSERT INTO users (
-        name, 
-        email, 
-        password_hash, 
-        role, 
+        name,
+        email,
+        password_hash,
+        role,
         email_verified,
         email_verification_token,
         email_verification_expires,
-        created_at, 
+        created_at,
         updated_at
       )
       VALUES (
-        ${name}, 
-        ${email}, 
-        ${hashedPassword}, 
-        'user', 
+        ${name},
+        ${email},
+        ${hashedPassword},
+        'user',
         false,
         ${verificationToken},
         ${verificationExpires},
-        NOW(), 
+        NOW(),
         NOW()
       )
       RETURNING id, email, name, role, created_at

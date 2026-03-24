@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import ConditionalNavigation from './components/ConditionalNavigation';
+import ChatWidget from './components/ChatWidget';
 import SessionProvider from './components/SessionProvider';
 import { ToastProvider } from './components/ui/ToastContainer';
 import { ConfirmProvider } from './components/ui/ConfirmProvider';
@@ -91,6 +92,18 @@ export default async function RootLayout({
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '/';
 
+  // CV data for Navigation logo — reuse cached result, no extra DB call
+  const cvData = await getCVData();
+  const navCvData = cvData
+    ? {
+        name: cvData.personalInfo.name,
+        title: cvData.personalInfo.title,
+        avatar: Array.isArray(cvData.personalInfo.avatar)
+          ? cvData.personalInfo.avatar[0] || ''
+          : cvData.personalInfo.avatar || '',
+      }
+    : null;
+
   // Determine theme based on pathname
   const isGlassTheme =
     pathname.startsWith('/projects') ||
@@ -100,7 +113,7 @@ export default async function RootLayout({
   const theme = isGlassTheme ? 'theme-glass' : 'theme-clay';
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         {/* Favicons */}
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -157,18 +170,19 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Portfolio" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased ${theme}`}>
+      <body className={`antialiased ${theme}`}>
         <SkipToMain />
         <ClientThemeSync />
         <SessionProvider>
           <ToastProvider>
             <ConfirmProvider>
-              <ConditionalNavigation />
+              <ConditionalNavigation cvData={navCvData} />
               <main id="main-content">{children}</main>
             </ConfirmProvider>
           </ToastProvider>
         </SessionProvider>
         <Analytics />
+        <ChatWidget />
       </body>
     </html>
   );

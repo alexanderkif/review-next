@@ -11,10 +11,12 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md,mjs}\""
   },
   "dependencies": {
+    "@google/genai": "^1.46.0",
     "@types/nodemailer": "^7.0.3",
     "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
+    "groq-sdk": "^1.1.1",
     "jose": "^6.1.0",
     "lucide-react": "^0.548.0",
     "next": "^16.0.7",

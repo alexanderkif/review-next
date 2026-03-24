@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../lib/admin-auth';
 import { seedDatabase } from '../../../lib/seed-data';
 import type { ResetDatabaseResponse, ApiError } from '../../../types/api';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function POST(): Promise<NextResponse<ResetDatabaseResponse | ApiError>> {
   try {

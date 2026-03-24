@@ -13,6 +13,7 @@
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card';
 import PrintControls from './components/ui/PrintControls';
+import Tooltip from './components/ui/Tooltip';
 import LazyAvatar from './components/ui/LazyAvatar';
 import { getCVData } from './lib/cv-service';
 import Bullet from './components/ui/Bullet';
@@ -193,34 +194,38 @@ export default async function Home() {
                 {/* Social networks */}
                 <div className="mt-4 flex justify-center gap-4 md:justify-start">
                   {cvData.personalInfo.github && (
-                    <a
-                      href={cvData.personalInfo.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn"
-                      title="GitHub profile"
-                    >
-                      <Github
-                        size={16}
-                        className="-translate-x-[1px] -translate-y-[1px]"
-                        aria-hidden="true"
-                      />
-                    </a>
+                    <Tooltip content="GitHub profile" position="top" variant="clay">
+                      <a
+                        href={cvData.personalInfo.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn"
+                        aria-label="GitHub profile"
+                      >
+                        <Github
+                          size={16}
+                          className="-translate-x-[1px] -translate-y-[1px]"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </Tooltip>
                   )}
                   {cvData.personalInfo.linkedin && (
-                    <a
-                      href={cvData.personalInfo.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn"
-                      title="LinkedIn profile"
-                    >
-                      <Linkedin
-                        size={16}
-                        className="-translate-x-[1px] -translate-y-[1px]"
-                        aria-hidden="true"
-                      />
-                    </a>
+                    <Tooltip content="LinkedIn profile" position="top" variant="clay">
+                      <a
+                        href={cvData.personalInfo.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn"
+                        aria-label="LinkedIn profile"
+                      >
+                        <Linkedin
+                          size={16}
+                          className="-translate-x-[1px] -translate-y-[1px]"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </Tooltip>
                   )}
                 </div>
               </div>

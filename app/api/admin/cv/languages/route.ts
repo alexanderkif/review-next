@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../../lib/admin-auth';
 import { revalidateCVData } from '../../../../lib/cv-service';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function PUT(request: NextRequest) {
   const { isAdmin } = await verifyAdminAuth();
@@ -17,9 +15,9 @@ export async function PUT(request: NextRequest) {
 
     // Получаем CV ID
     const cvResult = await sql`
-      SELECT id FROM cv_data 
-      WHERE is_active = true 
-      ORDER BY created_at DESC 
+      SELECT id FROM cv_data
+      WHERE is_active = true
+      ORDER BY created_at DESC
       LIMIT 1
     `;
 

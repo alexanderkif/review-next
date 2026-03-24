@@ -1,16 +1,14 @@
 import { NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import type { CVData, ApiError } from '../../types/api';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function GET(): Promise<NextResponse<CVData | ApiError>> {
   try {
     // Получаем данные CV
     const cvData = await sql`
-      SELECT * FROM cv_data 
-      WHERE is_active = true 
-      ORDER BY created_at DESC 
+      SELECT * FROM cv_data
+      WHERE is_active = true
+      ORDER BY created_at DESC
       LIMIT 1
     `;
 
@@ -22,30 +20,30 @@ export async function GET(): Promise<NextResponse<CVData | ApiError>> {
 
     // Получаем опыт работы
     const experience = await sql`
-      SELECT * FROM cv_experience 
-      WHERE cv_id = ${cv.id} 
+      SELECT * FROM cv_experience
+      WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC, created_at DESC
     `;
 
     // Получаем образование
     const education = await sql`
-      SELECT * FROM cv_education 
-      WHERE cv_id = ${cv.id} 
+      SELECT * FROM cv_education
+      WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC, created_at DESC
     `;
 
     // Получаем языки
     const languages = await sql`
-      SELECT * FROM cv_languages 
-      WHERE cv_id = ${cv.id} 
+      SELECT * FROM cv_languages
+      WHERE cv_id = ${cv.id}
       ORDER BY sort_order ASC, id DESC
     `;
 
     // Получаем проекты (все featured проекты)
     const projects = await sql`
       SELECT id, title, short_description, github_url, demo_url, year, status
-      FROM projects 
-      WHERE featured = true 
+      FROM projects
+      WHERE featured = true
       ORDER BY year DESC, created_at DESC
     `;
 

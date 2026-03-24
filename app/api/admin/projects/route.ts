@@ -1,9 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../lib/admin-auth';
 import type { Project, ProjectCreateRequest, ApiError } from '../../../types/api';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 // GET - get all projects
 export async function GET(): Promise<NextResponse<Project[] | ApiError>> {
@@ -15,7 +13,7 @@ export async function GET(): Promise<NextResponse<Project[] | ApiError>> {
 
   try {
     const projects = await sql`
-      SELECT 
+      SELECT
         p.*,
         COUNT(DISTINCT pl.id) as likes_count,
         COUNT(DISTINCT pc.id) as comments_count

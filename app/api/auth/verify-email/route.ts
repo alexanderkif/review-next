@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { sendWelcomeEmail } from '@/lib/email-service';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +14,7 @@ export async function GET(request: NextRequest) {
     // Find user with given token
     const users = await sql`
       SELECT id, name, email, email_verification_expires, email_verified
-      FROM users 
+      FROM users
       WHERE email_verification_token = ${token}
     `;
 
@@ -44,8 +42,8 @@ export async function GET(request: NextRequest) {
 
     // Подтверждаем email
     await sql`
-      UPDATE users 
-      SET 
+      UPDATE users
+      SET
         email_verified = true,
         email_verification_token = null,
         email_verification_expires = null,

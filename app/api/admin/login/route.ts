@@ -1,10 +1,8 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.NEXTAUTH_SECRET || 'your-super-secret-key-change-this-in-production',
@@ -22,8 +20,8 @@ export async function POST(request: NextRequest) {
 
     // Найти пользователя в базе данных
     const userResult = await sql`
-      SELECT id, email, name, password_hash, role 
-      FROM users 
+      SELECT id, email, name, password_hash, role
+      FROM users
       WHERE email = ${email} AND role = 'admin'
     `;
 

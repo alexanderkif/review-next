@@ -1,9 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/email-service';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 const resendSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -17,7 +15,7 @@ export async function POST(request: NextRequest) {
     // Ищем пользователя
     const users = await sql`
       SELECT id, name, email, email_verified, created_at
-      FROM users 
+      FROM users
       WHERE email = ${email}
     `;
 
@@ -34,9 +32,9 @@ export async function POST(request: NextRequest) {
 
     // Check if emails are not sent too frequently (no more than once per 5 minutes)
     const recentEmails = await sql`
-      SELECT updated_at 
-      FROM users 
-      WHERE id = ${user.id} 
+      SELECT updated_at
+      FROM users
+      WHERE id = ${user.id}
       AND updated_at > NOW() - INTERVAL '5 minutes'
     `;
 
@@ -53,8 +51,8 @@ export async function POST(request: NextRequest) {
 
     // Update token in database
     await sql`
-      UPDATE users 
-      SET 
+      UPDATE users
+      SET
         email_verification_token = ${verificationToken},
         email_verification_expires = ${verificationExpires},
         updated_at = NOW()

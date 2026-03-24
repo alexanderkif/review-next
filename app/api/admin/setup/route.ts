@@ -1,9 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 const setupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters long'),
@@ -15,8 +13,8 @@ export async function GET() {
   try {
     // Check if admin users exist
     const adminUsers = await sql`
-      SELECT COUNT(*) as count 
-      FROM users 
+      SELECT COUNT(*) as count
+      FROM users
       WHERE role = 'admin'
     `;
 
@@ -40,8 +38,8 @@ export async function POST(request: NextRequest) {
     // Сначала проверим, не инициализирована ли уже база
     try {
       const existingUsers = await sql`
-        SELECT COUNT(*) as count 
-        FROM users 
+        SELECT COUNT(*) as count
+        FROM users
         WHERE role = 'admin'
       `;
 
@@ -205,12 +203,12 @@ export async function POST(request: NextRequest) {
 
     // Create indexes for images table
     await sql`
-      CREATE INDEX IF NOT EXISTS idx_images_entity 
+      CREATE INDEX IF NOT EXISTS idx_images_entity
       ON images(entity_type, entity_id)
     `;
 
     await sql`
-      CREATE INDEX IF NOT EXISTS idx_images_created_at 
+      CREATE INDEX IF NOT EXISTS idx_images_created_at
       ON images(created_at DESC)
     `;
 

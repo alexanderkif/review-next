@@ -154,53 +154,59 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
           {renderImageContent()}
 
           {/* Иконка полноэкранного режима - дополнительный способ для desktop */}
-          <Tooltip content="Fullscreen" position="left">
-            <button
-              className="absolute top-4 right-4 z-20 cursor-pointer rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70 hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFullscreen();
-              }}
-              aria-label="Fullscreen"
-            >
-              <Maximize2 size={20} />
-            </button>
-          </Tooltip>
+          <div className="absolute top-4 right-4 z-20">
+            <Tooltip variant="dark" content="Fullscreen" position="left">
+              <button
+                className="cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70 focus:opacity-100 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFullscreen();
+                }}
+                aria-label="Fullscreen"
+              >
+                <Maximize2 size={20} />
+              </button>
+            </Tooltip>
+          </div>
 
           {/* Навигационные стрелки */}
           {images.length > 1 && (
             <>
-              <Tooltip content="Previous image" position="right">
-                <button
-                  className="absolute top-1/2 left-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70 focus:opacity-100 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    prevImage();
-                  }}
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-              </Tooltip>
+              <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2">
+                <Tooltip variant="dark" content="Previous image" position="right">
+                  <button
+                    className="cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70 focus:opacity-100 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      prevImage();
+                    }}
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                </Tooltip>
+              </div>
 
-              <Tooltip content="Next image" position="left">
-                <button
-                  className="absolute top-1/2 right-4 z-10 -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70 focus:opacity-100 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextImage();
-                  }}
-                  aria-label="Next image"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </Tooltip>
+              <div className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
+                <Tooltip variant="dark" content="Next image" position="left">
+                  <button
+                    className="cursor-pointer rounded-full bg-black/50 p-2 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-black/70 focus:opacity-100 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextImage();
+                    }}
+                    aria-label="Next image"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </Tooltip>
+              </div>
             </>
           )}
 
           {/* Индикатор количества изображений */}
           {images.length > 1 && (
-            <div className="pointer-events-none absolute top-4 right-4 rounded-full bg-black/50 px-3 py-1 text-sm text-white backdrop-blur-sm">
+            <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-sm text-white opacity-0 backdrop-blur-sm transition-all group-hover:opacity-100">
               {currentIndex + 1} / {images.length}
             </div>
           )}
@@ -261,15 +267,17 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
         createPortal(
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-sm">
             {/* Кнопка закрытия */}
-            <Tooltip content="Close" position="left">
-              <button
-                className="absolute top-4 right-4 z-[10000] cursor-pointer rounded-full bg-black/50 p-3 text-white transition-all hover:bg-black/70 hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-                onClick={toggleFullscreen}
-                aria-label="Close fullscreen"
-              >
-                <X size={24} />
-              </button>
-            </Tooltip>
+            <div className="absolute top-4 right-4 z-[10000]">
+              <Tooltip variant="dark" content="Close" position="left">
+                <button
+                  className="cursor-pointer rounded-full bg-black/50 p-3 text-white transition-all hover:bg-black/70 hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                  onClick={toggleFullscreen}
+                  aria-label="Close fullscreen"
+                >
+                  <X size={24} />
+                </button>
+              </Tooltip>
+            </div>
 
             {/* Изображение в полноэкранном режиме */}
             <div
@@ -284,31 +292,35 @@ export default function ProjectImageCarousel({ images, title }: ProjectImageCaro
               {/* Навигационные стрелки в полноэкранном режиме */}
               {images.length > 1 && (
                 <>
-                  <Tooltip content="Previous image" position="right">
-                    <button
-                      className="absolute top-1/2 left-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        prevImage();
-                      }}
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft size={28} />
-                    </button>
-                  </Tooltip>
+                  <div className="absolute top-1/2 left-4 z-[10000] -translate-y-1/2">
+                    <Tooltip variant="dark" content="Previous image" position="right">
+                      <button
+                        className="cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          prevImage();
+                        }}
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft size={28} />
+                      </button>
+                    </Tooltip>
+                  </div>
 
-                  <Tooltip content="Next image" position="left">
-                    <button
-                      className="absolute top-1/2 right-4 z-[10000] -translate-y-1/2 cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        nextImage();
-                      }}
-                      aria-label="Next image"
-                    >
-                      <ChevronRight size={28} />
-                    </button>
-                  </Tooltip>
+                  <div className="absolute top-1/2 right-4 z-[10000] -translate-y-1/2">
+                    <Tooltip variant="dark" content="Next image" position="left">
+                      <button
+                        className="cursor-pointer rounded-full bg-black/50 p-3 text-white transition-colors hover:bg-black/70 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          nextImage();
+                        }}
+                        aria-label="Next image"
+                      >
+                        <ChevronRight size={28} />
+                      </button>
+                    </Tooltip>
+                  </div>
                 </>
               )}
 

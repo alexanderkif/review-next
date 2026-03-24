@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../lib/admin-auth';
 import { saveImage, revalidateImageCache, getImagesByEntity } from '../../../lib/image-service';
 import type {
@@ -64,8 +65,6 @@ export async function POST(
     }
 
     // Use transaction to ensure data consistency
-    const postgres = (await import('postgres')).default;
-    const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
     let imageId: string | null = null;
     let updatedImageIds: string[] = [];
@@ -81,9 +80,9 @@ export async function POST(
       // Add image ID to appropriate array in parent entity
       if (entityType === 'project' && entityId !== 'new') {
         await sql`
-          UPDATE projects 
+          UPDATE projects
           SET image_urls = array_append(
-            COALESCE(image_urls, ARRAY[]::text[]), 
+            COALESCE(image_urls, ARRAY[]::text[]),
             ${imageId}
           )
           WHERE id = ${entityId}
@@ -91,7 +90,7 @@ export async function POST(
 
         // Get updated list of image IDs for this project
         const images = await sql`
-          SELECT id FROM images 
+          SELECT id FROM images
           WHERE entity_type = 'project' AND entity_id = ${entityId}
           ORDER BY created_at ASC
         `;
@@ -122,7 +121,7 @@ export async function POST(
           avatarArray.push(imageId);
 
           await sql`
-            UPDATE cv_data 
+            UPDATE cv_data
             SET avatar_url = ${JSON.stringify(avatarArray)}
             WHERE id = ${entityId}
           `;

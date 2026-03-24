@@ -1,7 +1,6 @@
-import postgres from 'postgres';
+import 'server-only';
+import { sql } from './db';
 import { unstable_cache } from 'next/cache';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export interface ImageRecord {
   id: string;

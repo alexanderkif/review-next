@@ -1,6 +1,4 @@
-import postgres from 'postgres';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+import { sql } from '@/lib/db';
 
 export async function seedDatabase() {
   try {
@@ -45,7 +43,7 @@ export async function seedDatabase() {
     // 2. Add work experience
     await sql`
       INSERT INTO cv_experience (cv_id, title, company, period, description, is_current, sort_order)
-      VALUES 
+      VALUES
         (${cvId}, 'Software Developer', 'EPAM Systems • Novi Sad, Serbia', 'Jun 2021 - Present', 'In my current role, I focus on UI/UX development using Angular 19. I am contributing to a Storybook based on the Kendo UI library and integrating custom components into a data-collection portal for a large multinational corporation in the energy sector. In my previous project, I resolved accessibility issues flagged by an audit and implemented two custom widgets using Recharts'' BarChart for a new ReactJS-based dashboard. I also developed a reusable custom BarChart as a Storybook component. Prior to that, I worked on a large-scale enterprise application for a global leader in the Scheduling & HR domain. My responsibilities involved close collaboration with three teams, including daily communication with the core team in Canada. The project was a highly complex solution with a large codebase and intricate deployment infrastructure. In another project, I contributed to an application used by an oil company, where I implemented significant functional extensions, ensuring high code quality standards and enhancing the user experience.', true, 1),
         (${cvId}, 'Front-end Developer', 'S.K.A.T. • Krasnodar, Russian Federation', 'Oct 2019 - Jun 2021', 'Working on a project for a municipal public service center. Activities included creating a functionality for managing tickets for people to see specialists. That also includes collecting statistics and creating sophisticated visual reports. An existing old platform was converted into a modern web-based application. Again, collaboration and maintaining high quality coding standards was the key to our success.', false, 2),
         (${cvId}, 'Network Infrastructure Engineer', 'CJSC Greenatom • Glazov, Russian Federation', 'Feb 2018 - Jun 2021', 'Installation, configuration, and maintenance of Cisco switches in the internal, technological and Internet networks of a large enterprise, numbering about 200 switches. Troubleshoot network issues and outages. Work with other engineers to design and implement network changes. Support and troubleshooting of computers, printers, and other network equipment for local network users.', false, 3)
@@ -54,7 +52,7 @@ export async function seedDatabase() {
     // 3. Add education
     await sql`
       INSERT INTO cv_education (cv_id, degree, institution, period, description, sort_order)
-      VALUES 
+      VALUES
         (${cvId}, 'Informatics and Computer Engineering', 'Izhevsk State Technical University (ISTU) • Izhevsk, Russian Federation', 'Sep 2017 - Feb 2022', 'WES: https://www.credly.com/badges/2a767133-aed4-42c9-8c55-ac1950e58eb2/public_url', 1),
         (${cvId}, 'Multi-channel Telecommunication Systems Technician', 'Technical University of Communications and Informatics (MTUCI) • Moscow, Russian Federation', 'Sep 1997 - May 2000', '', 2)
     `;
@@ -62,7 +60,7 @@ export async function seedDatabase() {
     // 4. Add languages
     await sql`
       INSERT INTO cv_languages (cv_id, language, level, sort_order)
-      VALUES 
+      VALUES
         (${cvId}, 'English', 'Intermediate', 1),
         (${cvId}, 'Russian', 'Native', 2)
     `;

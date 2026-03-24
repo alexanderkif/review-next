@@ -2,7 +2,20 @@ import 'server-only';
 import postgres from 'postgres';
 import { connection } from 'next/server';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+// Global guard prevents creating multiple pool instances during dev hot-reload.
+// In production each serverless function has its own process so this is a no-op there.
+declare global {
+  var _pgSql: postgres.Sql | undefined;
+}
+
+const sql: postgres.Sql =
+  globalThis._pgSql ?? postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalThis._pgSql = sql;
+}
+
+export { sql };
 
 // Типы данных
 export interface User {

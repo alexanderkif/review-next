@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../../lib/admin-auth';
 import type { ImageReassignRequest, ImageReassignResponse, ApiError } from '../../../../types/api';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function POST(
   request: NextRequest,

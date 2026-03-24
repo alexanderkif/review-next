@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../../lib/admin-auth';
 import type { ImageDeleteResponse, ApiError } from '../../../../types/api';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function DELETE(
   request: NextRequest,
@@ -29,8 +27,8 @@ export async function DELETE(
     await sql.begin(async (sql) => {
       // First, get image info before deleting
       const imageInfo = await sql`
-        SELECT id, entity_type, entity_id 
-        FROM images 
+        SELECT id, entity_type, entity_id
+        FROM images
         WHERE id = ${imageId}
       `;
 
@@ -48,14 +46,14 @@ export async function DELETE(
       // If it's a project image, also remove ID from project's image_urls array
       if (image.entity_type === 'project' && image.entity_id) {
         await sql`
-          UPDATE projects 
+          UPDATE projects
           SET image_urls = array_remove(image_urls, ${imageId})
           WHERE id = ${image.entity_id}
         `;
 
         // Get updated list of image IDs for this project
         const images = await sql`
-          SELECT id FROM images 
+          SELECT id FROM images
           WHERE entity_type = 'project' AND entity_id = ${image.entity_id}
           ORDER BY created_at ASC
         `;
@@ -89,7 +87,7 @@ export async function DELETE(
           const updatedArray = avatarArray.filter((id: string) => id !== imageId);
 
           await sql`
-            UPDATE cv_data 
+            UPDATE cv_data
             SET avatar_url = ${JSON.stringify(updatedArray)}
             WHERE id = ${image.entity_id}
           `;

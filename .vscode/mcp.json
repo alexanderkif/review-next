@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "${env:POSTGRES_URL}"]
+    },
+    "docfork": {
+      "command": "npx",
+      "args": ["-y", "docfork@latest"]
+    }
+  }
+}

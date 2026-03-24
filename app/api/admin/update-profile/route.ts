@@ -1,9 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { verifyAdminAuth } from '../../../lib/admin-auth';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function PUT(request: NextRequest) {
   const { isAdmin, user } = await verifyAdminAuth();
@@ -20,7 +18,7 @@ export async function PUT(request: NextRequest) {
     // Check current password for any action (except name updates)
     if (action !== 'update_name') {
       const userResult = await sql`
-        SELECT password_hash FROM users 
+        SELECT password_hash FROM users
         WHERE id = ${userId} AND role = 'admin'
       `;
 
@@ -41,7 +39,7 @@ export async function PUT(request: NextRequest) {
     if (action === 'update_name') {
       // Update name without password verification
       await sql`
-        UPDATE users 
+        UPDATE users
         SET name = ${name}, updated_at = NOW()
         WHERE id = ${user.id}
       `;
@@ -50,7 +48,7 @@ export async function PUT(request: NextRequest) {
     } else if (action === 'update_email') {
       // Check if new email is taken
       const emailExists = await sql`
-        SELECT id FROM users 
+        SELECT id FROM users
         WHERE email = ${email} AND id != ${user.id}
       `;
 
@@ -60,7 +58,7 @@ export async function PUT(request: NextRequest) {
 
       // Update email
       await sql`
-        UPDATE users 
+        UPDATE users
         SET email = ${email}, updated_at = NOW()
         WHERE id = ${user.id}
       `;
@@ -72,7 +70,7 @@ export async function PUT(request: NextRequest) {
 
       // Update password
       await sql`
-        UPDATE users 
+        UPDATE users
         SET password_hash = ${hashedNewPassword}, updated_at = NOW()
         WHERE id = ${user.id}
       `;

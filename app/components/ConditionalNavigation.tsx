@@ -4,7 +4,17 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Navigation from './ui/Navigation';
 
-export default function ConditionalNavigation() {
+interface CVPersonalInfo {
+  name: string;
+  title: string;
+  avatar: string;
+}
+
+interface ConditionalNavigationProps {
+  cvData: CVPersonalInfo | null;
+}
+
+export default function ConditionalNavigation({ cvData }: ConditionalNavigationProps) {
   const pathname = usePathname();
   const [is404, setIs404] = useState(false);
 
@@ -26,5 +36,5 @@ export default function ConditionalNavigation() {
     return null;
   }
 
-  return <Navigation />;
+  return <Navigation initialCvData={cvData} />;
 }

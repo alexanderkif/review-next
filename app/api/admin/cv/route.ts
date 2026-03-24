@@ -1,10 +1,8 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '../../../lib/admin-auth';
 import { revalidateCVData } from '../../../lib/cv-service';
 import type { Experience, Education, Language, ApiError } from '../../../types/api';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 // GET - get CV data
 export async function GET(): Promise<

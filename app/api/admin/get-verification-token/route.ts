@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import postgres from 'postgres';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+import { sql } from '@/lib/db';
+import { verifyAdminAuth } from '../../../lib/admin-auth';
 
 export async function GET(request: NextRequest) {
+  const { isAdmin } = await verifyAdminAuth();
+  if (!isAdmin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const email = searchParams.get('email');
 
@@ -13,14 +17,14 @@ export async function GET(request: NextRequest) {
 
   try {
     const user = await sql`
-      SELECT 
+      SELECT
         id,
         name,
         email,
         email_verification_token,
         email_verification_expires,
         email_verified
-      FROM users 
+      FROM users
       WHERE email = ${email}
     `;
 

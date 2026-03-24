@@ -6,7 +6,7 @@ A professional developer portfolio website with **admin panel** and stunning **c
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.0-06B6D4)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Vercel-336791)
-![NextAuth.js](https://img.shields.io/badge/NextAuth.js-5.0-orange)
+![NextAuth.js](https://img.shields.io/badge/NextAuth.js-4.0-orange)
 
 ## ✨ Features
 
@@ -32,14 +32,16 @@ A professional developer portfolio website with **admin panel** and stunning **c
 - **Database Management** - PostgreSQL with automatic setup and migrations
 - **Image Handling** - upload, organize, and optimize images
 - **Email System** - automated notifications and confirmations
+- **AI Chatbot** - portfolio assistant powered by Groq (Llama) with Gemini fallback
 
 ### 🛠 Tech Stack
-- **Framework**: Next.js 16 with Turbopack, React 19, TypeScript
+- **Framework**: Next.js 16.2 with Turbopack, React 19, TypeScript
 - **Styling**: Tailwind CSS 4.0, Custom CSS animations
 - **Code Quality**: ESLint 9, Prettier 3.7 with Tailwind plugin
 - **Database**: PostgreSQL with SSL (Vercel/Supabase compatible)
-- **Authentication**: NextAuth.js 5.0 with JWT sessions
+- **Authentication**: NextAuth.js v4 with JWT sessions
 - **Email**: Nodemailer with SMTP/Gmail App Password support
+- **AI Chatbot**: Groq SDK (Llama 3.3 70B) + Google GenAI SDK (Gemini 3.1 Flash Lite) as fallback
 - **Security**: bcryptjs hashing, CSRF protection, SQL injection prevention, server-only module protection
 - **Icons**: Lucide React icon library
 - **Image Processing**: Base64 encoding with size optimization
@@ -68,6 +70,10 @@ NEXTAUTH_SECRET="your-32-character-random-secret-key-here"
 # Email (for registration)
 EMAIL_USER="your-email@gmail.com"
 EMAIL_PASS="your-gmail-app-password"
+
+# AI Chatbot
+GROQ_API_KEY="gsk_..."         # Primary: get from console.groq.com (free)
+GEMINI_API_KEY="..."           # Fallback: get from aistudio.google.com (free)
 ```
 
 ⚠️ **Generate secure secret**:
@@ -261,7 +267,7 @@ npm run db:status
 ## 🔒 Security Features
 
 ### Enterprise-Grade Authentication
-- **NextAuth.js 5.0** - industry-standard authentication
+- **NextAuth.js v4** - industry-standard authentication
 - **bcryptjs hashing** - secure password storage with salt
 - **JWT sessions** - stateless, scalable authentication
 - **Role-based access** - admin/user permission system

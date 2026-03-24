@@ -1,13 +1,11 @@
 ﻿'use server';
 
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { auth } from '../../auth';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 // Схемы валидации
 const LoginSchema = z.object({
