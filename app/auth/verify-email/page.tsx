@@ -3,10 +3,10 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import { CheckCircle, XCircle, Mail, ArrowLeft, RefreshCw } from 'lucide-react';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 interface VerificationState {
   status: 'loading' | 'success' | 'error' | 'already-verified';

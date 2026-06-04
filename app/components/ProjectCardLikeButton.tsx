@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Heart } from 'lucide-react';
-import { logger } from '../lib/logger';
-import { toggleProjectLike } from '../lib/actions';
+import { logger } from '@/lib/logger';
+import { toggleProjectLike } from '@/lib/actions';
 import Tooltip from './ui/Tooltip';
 
 interface ProjectCardLikeButtonProps {

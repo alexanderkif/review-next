@@ -4,12 +4,12 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { ArrowLeft, Shield, User } from 'lucide-react';
 import DatabaseSetup from '../components/DatabaseSetup';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 function AdminLoginForm() {
   const router = useRouter();

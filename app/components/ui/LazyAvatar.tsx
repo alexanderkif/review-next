@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import LazyImage from './LazyImage';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 const FallbackAvatar = ({
   sizeClass,

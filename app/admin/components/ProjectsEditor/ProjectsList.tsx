@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import Tooltip from '../../../components/ui/Tooltip';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import Tooltip from '@/components/ui/Tooltip';
 import {
   Edit3,
   Trash2,

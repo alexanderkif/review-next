@@ -1,17 +1,18 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import ConditionalNavigation from './components/ConditionalNavigation';
-import ChatWidget from './components/ChatWidget';
-import SessionProvider from './components/SessionProvider';
-import { ToastProvider } from './components/ui/ToastContainer';
-import { ConfirmProvider } from './components/ui/ConfirmProvider';
-import { validateEnvironment } from './lib/env-check';
-import { getCVData } from './lib/cv-service';
+import ConditionalNavigation from '@/components/ConditionalNavigation';
+import ChatWidget from '@/components/ChatWidget';
+import SessionProvider from '@/components/SessionProvider';
+import { ToastProvider } from '@/components/ui/ToastContainer';
+import { ConfirmProvider } from '@/components/ui/ConfirmProvider';
+import { validateEnvironment } from '@/lib/env-check';
+import { getCVData } from '@/lib/cv-service';
 import { Analytics } from '@vercel/analytics/next';
 import { headers } from 'next/headers';
-import ClientThemeSync from './components/ClientThemeSync';
-import SkipToMain from './components/SkipToMain';
+import ClientThemeSync from '@/components/ClientThemeSync';
+import SkipToMain from '@/components/SkipToMain';
+import AdminLink from '@/components/ui/AdminLink';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -176,7 +177,9 @@ export default async function RootLayout({
         <SessionProvider>
           <ToastProvider>
             <ConfirmProvider>
-              <ConditionalNavigation cvData={navCvData} />
+              <ConditionalNavigation cvData={navCvData}>
+                <AdminLink />
+              </ConditionalNavigation>
               <main id="main-content">{children}</main>
             </ConfirmProvider>
           </ToastProvider>

@@ -1,6 +1,6 @@
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
-import Tooltip from '../../../components/ui/Tooltip';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import Tooltip from '@/components/ui/Tooltip';
 import { Plus, Trash2 } from 'lucide-react';
 import { SkillCategory } from './types';
 

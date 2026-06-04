@@ -1,7 +1,7 @@
 'use client';
 
 import { Github, ExternalLink } from 'lucide-react';
-import Tooltip from '../../../components/ui/Tooltip';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface ProjectActionButtonsProps {
   githubUrl?: string;

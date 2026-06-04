@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getActivityData } from '../../lib/db';
+import { getActivityData } from '@/lib/db';
 import type { ActivityResponse, ApiError } from '../../types/api';
 
 export async function GET(

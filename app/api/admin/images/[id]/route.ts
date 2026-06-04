@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { verifyAdminAuth } from '../../../../lib/admin-auth';
+import { verifyAdminAuth } from '@/lib/admin-auth';
 import type { ImageDeleteResponse, ApiError } from '../../../../types/api';
 
 export async function DELETE(

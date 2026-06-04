@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Input, Textarea } from '../../../components/ui/Input';
-import MultipleImageUpload from '../../../components/ui/MultipleImageUpload';
-import Tooltip from '../../../components/ui/Tooltip';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input, Textarea } from '@/components/ui/Input';
+import MultipleImageUpload from '@/components/ui/MultipleImageUpload';
+import Tooltip from '@/components/ui/Tooltip';
 import { Save, X, Plus, Trash2 } from 'lucide-react';
 import { Project } from './types';
 

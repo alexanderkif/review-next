@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getImageById } from '../../../lib/image-service';
+import { getImageById } from '@/lib/image-service';
 import sharp from 'sharp';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

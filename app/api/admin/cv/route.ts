@@ -1,7 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { verifyAdminAuth } from '../../../lib/admin-auth';
-import { revalidateCVData } from '../../../lib/cv-service';
+import { verifyAdminAuth } from '@/lib/admin-auth';
+import { revalidateCVData } from '@/lib/cv-service';
 import type { Experience, Education, Language, ApiError } from '../../../types/api';
 
 // GET - get CV data

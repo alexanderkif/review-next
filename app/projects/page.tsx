@@ -1,14 +1,14 @@
-import { auth } from '../../auth';
+import { auth } from '@/lib/auth';
 import { BarChart3 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { getProjects } from '../lib/db';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { getProjects } from '@/lib/db';
 import { ProjectCard } from '../components';
-import { getCVData } from '../lib/cv-service';
+import { getCVData } from '@/lib/cv-service';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 
 // Lazy load charts to avoid loading Recharts on other pages
-const TechStackChart = dynamic(() => import('../components/charts/TechStackChart'), {
+const TechStackChart = dynamic(() => import('@/components/charts/TechStackChart'), {
   loading: () => (
     <div className="flex h-48 items-center justify-center text-white/80">
       <div className="animate-pulse">Loading chart...</div>
@@ -16,7 +16,7 @@ const TechStackChart = dynamic(() => import('../components/charts/TechStackChart
   ),
 });
 
-const EngagementChart = dynamic(() => import('../components/charts/EngagementChart'), {
+const EngagementChart = dynamic(() => import('@/components/charts/EngagementChart'), {
   loading: () => (
     <div className="flex h-48 items-center justify-center text-white/80">
       <div className="animate-pulse">Loading chart...</div>

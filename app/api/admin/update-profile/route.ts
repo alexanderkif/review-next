@@ -1,7 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import { verifyAdminAuth } from '../../../lib/admin-auth';
+import { verifyAdminAuth } from '@/lib/admin-auth';
 
 export async function PUT(request: NextRequest) {
   const { isAdmin, user } = await verifyAdminAuth();

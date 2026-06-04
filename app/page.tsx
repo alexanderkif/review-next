@@ -11,12 +11,12 @@
   Briefcase,
   Settings,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card';
-import PrintControls from './components/ui/PrintControls';
-import Tooltip from './components/ui/Tooltip';
-import LazyAvatar from './components/ui/LazyAvatar';
-import { getCVData } from './lib/cv-service';
-import Bullet from './components/ui/Bullet';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import PrintControls from '@/components/ui/PrintControls';
+import Tooltip from '@/components/ui/Tooltip';
+import LazyAvatar from '@/components/ui/LazyAvatar';
+import { getCVData } from '@/lib/cv-service';
+import Bullet from '@/components/ui/Bullet';
 import type { Metadata } from 'next';
 
 export const revalidate = 1800; // Cache for 30 minutes (reduced for faster recovery)

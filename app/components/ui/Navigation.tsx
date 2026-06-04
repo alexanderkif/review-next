@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import LazyAvatar from './LazyAvatar';
-import { User, Settings, LogOut } from 'lucide-react';
-import { logger } from '../../lib/logger';
+import { User, LogOut } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface CVPersonalInfo {
   id?: string;
@@ -20,7 +20,10 @@ interface NavigationProps {
   initialCvData?: CVPersonalInfo | null;
 }
 
-const Navigation = ({ initialCvData = null }: NavigationProps) => {
+const Navigation = ({
+  initialCvData = null,
+  children: adminLink,
+}: NavigationProps & { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const [cvData, setCvData] = useState<CVPersonalInfo | null>(initialCvData);
@@ -171,7 +174,7 @@ const Navigation = ({ initialCvData = null }: NavigationProps) => {
           </ul>
 
           {/* Col 3: Auth — flex-1 justify-end, mirrors logo column width */}
-          <div className="flex flex-1 items-center justify-end space-x-1 border-slate-400/60 md:space-x-2 md:border-l md:pl-6">
+          <div className="flex flex-1 items-center justify-end space-x-1 border-slate-400/60 md:space-x-2 md:pl-6">
             {status === 'loading' ? (
               <div
                 className="invisible flex items-center space-x-1 md:space-x-2"
@@ -182,17 +185,8 @@ const Navigation = ({ initialCvData = null }: NavigationProps) => {
               </div>
             ) : session?.user ? (
               <>
-                {/* Show Admin panel only for Admins */}
-                {session.user.role === 'admin' && (
-                  <Link
-                    href="/admin"
-                    className={buttonStyles('secondary')}
-                    aria-label="Admin panel"
-                  >
-                    <Settings size={16} aria-hidden="true" />
-                    <span className="hidden md:inline">Admin</span>
-                  </Link>
-                )}
+                {/* Show Admin Link only for Admins */}
+                {adminLink}
 
                 {/* User information */}
                 <div

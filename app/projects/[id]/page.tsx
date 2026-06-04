@@ -1,13 +1,13 @@
 import { notFound } from 'next/navigation';
-import { auth } from '../../../auth';
+import { auth } from '@/lib/auth';
 import { Calendar, Star, ArrowLeft, User } from 'lucide-react';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { getProjectById, getProjectComments } from '../../lib/db';
-import { ProjectImageCarousel, LikeButton } from '../../components';
-import LazyProjectComments from '../../components/LazyProjectComments';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { getProjectById, getProjectComments } from '@/lib/db';
+import { ProjectImageCarousel, LikeButton } from '@/components';
+import LazyProjectComments from '@/components/LazyProjectComments';
 import ProjectActionButtons from './components/ProjectActionButtons';
-import { getCVData } from '../../lib/cv-service';
+import { getCVData } from '@/lib/cv-service';
 import type { Metadata } from 'next';
 
 const getStatusLabel = (status: string) => {

@@ -1,5 +1,5 @@
-import { getProjects, type Project } from './lib/db';
-import { serverLogger } from './lib/logger';
+import { getProjects, type Project } from '@/lib/db';
+import { serverLogger } from '@/lib/logger';
 
 export default async function sitemap() {
   const baseUrl = 'https://aleksandr-nikiforov-cv.vercel.app';

@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { logger } from '../../lib/logger';
-import OAuthButtons from '../../components/ui/OAuthButtons';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { logger } from '@/lib/logger';
+import OAuthButtons from '@/components/ui/OAuthButtons';
 
 function LoginForm() {
   const router = useRouter();

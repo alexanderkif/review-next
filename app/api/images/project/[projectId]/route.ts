@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getImagesForEntity } from '../../../../lib/image-service';
+import { getImagesForEntity } from '@/lib/image-service';
 
 export async function GET(
   request: NextRequest,

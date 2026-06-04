@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Input';
 import Tooltip from './ui/Tooltip';
-import { addProjectComment, updateComment, deleteComment } from '../lib/actions';
-import { logger } from '../lib/logger';
+import { addProjectComment, updateComment, deleteComment } from '@/lib/actions';
+import { logger } from '@/lib/logger';
 import { useConfirm } from './ui/ConfirmProvider';
 
 interface Comment {

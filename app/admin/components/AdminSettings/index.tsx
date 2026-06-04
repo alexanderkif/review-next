@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { logger } from '../../../lib/logger';
-import { useToast } from '../../../components/ui/ToastContainer';
-import { useConfirm } from '../../../components/ui/ConfirmProvider';
+import { logger } from '@/lib/logger';
+import { useToast } from '@/components/ui/ToastContainer';
+import { useConfirm } from '@/components/ui/ConfirmProvider';
 import { AdminSettingsProps } from './types';
 import NameSection from './NameSection';
 import EmailSection from './EmailSection';

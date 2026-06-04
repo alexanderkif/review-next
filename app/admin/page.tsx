@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
-import AdminAuthCheck from './components/AdminAuthCheck';
 
 // Динамический импорт тяжелого AdminDashboard
 const AdminDashboard = dynamic(() => import('./components/AdminDashboard'), {
@@ -17,9 +16,5 @@ const AdminDashboard = dynamic(() => import('./components/AdminDashboard'), {
 export default function AdminPage() {
   const { data: session } = useSession();
 
-  return (
-    <AdminAuthCheck>
-      <AdminDashboard user={session?.user || null} />
-    </AdminAuthCheck>
-  );
+  return <AdminDashboard user={session?.user || null} />;
 }

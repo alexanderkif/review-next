@@ -6,8 +6,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Heart } from 'lucide-react';
 import { Button } from './ui/Button';
 import Tooltip from './ui/Tooltip';
-import { toggleProjectLike } from '../lib/actions';
-import { logger } from '../lib/logger';
+import { toggleProjectLike } from '@/lib/actions';
+import { logger } from '@/lib/logger';
 
 interface LikeButtonProps {
   projectId: number;

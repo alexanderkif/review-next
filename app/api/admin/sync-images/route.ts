@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { verifyAdminAuth } from '../../../lib/admin-auth';
+import { verifyAdminAuth } from '@/lib/admin-auth';
 import type { SyncImagesResponse, ApiError } from '../../../types/api';
 
 /**

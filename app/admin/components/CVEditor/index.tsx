@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent } from '../../../components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { User, Briefcase, GraduationCap, Languages } from 'lucide-react';
-import { logger } from '../../../lib/logger';
-import { useToast } from '../../../components/ui/ToastContainer';
+import { logger } from '@/lib/logger';
+import { useToast } from '@/components/ui/ToastContainer';
 import { CVData, SkillCategory } from './types';
 import PersonalInfoSection from './PersonalInfoSection';
 import ExperienceSection from './ExperienceSection';

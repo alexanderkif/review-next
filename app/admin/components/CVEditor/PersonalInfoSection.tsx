@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Input, Textarea } from '../../../components/ui/Input';
-import MultipleImageUpload from '../../../components/ui/MultipleImageUpload';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input, Textarea } from '@/components/ui/Input';
+import MultipleImageUpload from '@/components/ui/MultipleImageUpload';
 import { Save, User } from 'lucide-react';
 import { CVData, SkillCategory } from './types';
 import SkillsGroup from './SkillsGroup';

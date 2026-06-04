@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Input, Textarea } from '../../../components/ui/Input';
-import Tooltip from '../../../components/ui/Tooltip';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input, Textarea } from '@/components/ui/Input';
+import Tooltip from '@/components/ui/Tooltip';
 import { Save, Plus, Trash2, GraduationCap } from 'lucide-react';
 import { Education } from './types';
 

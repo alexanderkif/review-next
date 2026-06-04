@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { auth } from '../../auth';
+import { auth } from './auth';
 
 // Схемы валидации
 const LoginSchema = z.object({

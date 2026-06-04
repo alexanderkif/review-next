@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { verifyAdminAuth } from '../../../lib/admin-auth';
-import { logger } from '../../../lib/logger';
+import { verifyAdminAuth } from '@/lib/admin-auth';
+import { logger } from '@/lib/logger';
 import type { CleanUnusedImagesResponse, ApiError } from '../../../types/api';
 
 /**

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import LazyImage from './ui/LazyImage';
 import ProjectCardLikeButton from './ProjectCardLikeButton';
 import Tooltip from './ui/Tooltip';
-import type { Project } from '../lib/db';
+import type { Project } from '@/lib/db';
 
 const getStatusLabel = (status: string) => {
   switch (status) {

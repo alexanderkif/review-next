@@ -14,7 +14,10 @@ interface ConditionalNavigationProps {
   cvData: CVPersonalInfo | null;
 }
 
-export default function ConditionalNavigation({ cvData }: ConditionalNavigationProps) {
+export default function ConditionalNavigation({
+  cvData,
+  children: adminLink,
+}: ConditionalNavigationProps & { children: React.ReactNode }) {
   const pathname = usePathname();
   const [is404, setIs404] = useState(false);
 
@@ -36,5 +39,5 @@ export default function ConditionalNavigation({ cvData }: ConditionalNavigationP
     return null;
   }
 
-  return <Navigation initialCvData={cvData} />;
+  return <Navigation initialCvData={cvData}>{adminLink}</Navigation>;
 }

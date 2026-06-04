@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
-import { logger } from '../../../lib/logger';
-import { useToast } from '../../../components/ui/ToastContainer';
-import { useConfirm } from '../../../components/ui/ConfirmProvider';
+import { logger } from '@/lib/logger';
+import { useToast } from '@/components/ui/ToastContainer';
+import { useConfirm } from '@/components/ui/ConfirmProvider';
 import { Project, createEmptyProject } from './types';
 import ProjectsList from './ProjectsList';
 import ProjectForm from './ProjectForm';

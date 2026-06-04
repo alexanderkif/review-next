@@ -3,7 +3,7 @@
 import { useCallback, useState, useRef, DragEvent, ChangeEvent } from 'react';
 import { X, Image as ImageIcon } from 'lucide-react';
 import { Button } from './Button';
-import { processImageFile } from '../../lib/image-utils';
+import { processImageFile } from '@/lib/image-utils';
 
 interface NewImageUploadProps {
   entityType: 'avatar' | 'project' | 'user';

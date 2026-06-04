@@ -3,12 +3,12 @@
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { User, Mail, ArrowLeft, Eye, EyeOff, CheckCircle, RefreshCw } from 'lucide-react';
-import { logger } from '../../lib/logger';
-import OAuthButtons from '../../components/ui/OAuthButtons';
+import { logger } from '@/lib/logger';
+import OAuthButtons from '@/components/ui/OAuthButtons';
 
 function RegisterForm() {
   const router = useRouter();

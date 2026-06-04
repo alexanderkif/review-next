@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { verifyAdminAuth } from '../../../lib/admin-auth';
-import { seedDatabase } from '../../../lib/seed-data';
+import { verifyAdminAuth } from '@/lib/admin-auth';
+import { seedDatabase } from '@/lib/seed-data';
 import type { ResetDatabaseResponse, ApiError } from '../../../types/api';
 
 export async function POST(): Promise<NextResponse<ResetDatabaseResponse | ApiError>> {

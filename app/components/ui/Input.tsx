@@ -2,7 +2,7 @@
 
 import { forwardRef, InputHTMLAttributes, TextareaHTMLAttributes, useId, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'clay' | 'glass';

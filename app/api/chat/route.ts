@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import Groq from 'groq-sdk';
-import { MY_CONTEXT } from '../../lib/chat-context';
+import { MY_CONTEXT } from '@/lib/chat-context';
 
 export const maxDuration = 60; // Vercel: allow up to 60s for Gemini API calls
 

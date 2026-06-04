@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
-import Tooltip from '../../../components/ui/Tooltip';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import Tooltip from '@/components/ui/Tooltip';
 import { Save, Plus, Trash2, Languages as LanguagesIcon } from 'lucide-react';
 import { Language } from './types';
 

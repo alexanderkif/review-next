@@ -2,7 +2,7 @@
 
 import { useCallback, useState, useRef, DragEvent, ChangeEvent } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { processImageFile } from '../../lib/image-utils';
+import { processImageFile } from '@/lib/image-utils';
 
 interface MultipleImageUploadProps {
   entityType: 'avatar' | 'project' | 'user';

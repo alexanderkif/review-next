@@ -1,8 +1,9 @@
-﻿import Credentials from 'next-auth/providers/credentials';
+﻿import 'server-only';
+import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import { z } from 'zod';
-import type { User as DBUser } from './app/lib/definitions';
+import type { User as DBUser } from './definitions';
 import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 import type { User, Account, Profile, Session } from 'next-auth';
@@ -111,7 +112,7 @@ export const nextAuthConfig = {
       },
       async authorize(credentials) {
         const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(6) })
+          .object({ email: z.email(), password: z.string().min(6) })
           .safeParse(credentials);
 
         if (parsedCredentials.success) {

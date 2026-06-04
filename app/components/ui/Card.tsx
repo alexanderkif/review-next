@@ -1,5 +1,5 @@
 import { ReactNode, CSSProperties } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface CardProps {
   children: ReactNode;

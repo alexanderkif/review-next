@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { User, FileText, FolderOpen, Settings, LogOut, Home, Edit3, Eye } from 'lucide-react';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import CVEditor from './CVEditor';
 import ProjectsEditor from './ProjectsEditor';
 import AdminSettings from './AdminSettings';

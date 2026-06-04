@@ -1,5 +1,5 @@
 import 'server-only';
-import { auth } from '../../auth';
+import { auth } from './auth';
 
 export async function verifyAdminAuth() {
   try {

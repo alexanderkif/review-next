@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { verifyAdminAuth } from '../../../lib/admin-auth';
-import { saveImage, revalidateImageCache, getImagesByEntity } from '../../../lib/image-service';
+import { verifyAdminAuth } from '@/lib/admin-auth';
+import { saveImage, revalidateImageCache, getImagesByEntity } from '@/lib/image-service';
 import type {
   ImageMetadata,
   ImageUploadRequest,
@@ -167,7 +167,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Missing entityType or entityId' }, { status: 400 });
     }
 
-    const { deleteImagesForEntity } = await import('../../../lib/image-service');
+    const { deleteImagesForEntity } = await import('@/lib/image-service');
     const success = await deleteImagesForEntity(
       entityType as 'avatar' | 'project' | 'user',
       entityId,

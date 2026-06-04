@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCVAvatar } from '../../../../lib/image-service';
+import { getCVAvatar } from '@/lib/image-service';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ cvId: string }> }) {
   try {
