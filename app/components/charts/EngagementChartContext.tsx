@@ -129,7 +129,7 @@ export function EngagementChartProvider({
   projects,
   initialData,
 }: EngagementChartProviderProps) {
-  const [period, setPeriod] = useState<'month' | 'year'>('month');
+  const [period, setPeriod] = useState<'month' | 'year'>('year');
   const [data, setData] = useState<EngagementData[]>(initialData);
 
   useEffect(() => {
