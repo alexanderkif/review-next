@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
 
   async function tryGroq(): Promise<string> {
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile', // free tier, fast, high quality
+      model: 'qwen/qwen3-32b', // free tier, fast, high quality
       messages: groqMessages,
       max_tokens: 400,
       temperature: 0.7,
