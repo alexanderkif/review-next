@@ -11,6 +11,10 @@
     "docfork": {
       "command": "npx",
       "args": ["-y", "docfork@latest"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
     }
   }
 }

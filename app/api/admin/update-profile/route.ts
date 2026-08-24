@@ -2,6 +2,10 @@
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { verifyAdminAuth } from '@/lib/admin-auth';
+import {
+  ProfileUpdateSchema,
+  validate,
+} from '@/types/schemas';
 
 export async function PUT(request: NextRequest) {
   const { isAdmin, user } = await verifyAdminAuth();
@@ -13,7 +17,15 @@ export async function PUT(request: NextRequest) {
   const userId: string = user.id; // Type assertion - guaranteed to be defined after check
 
   try {
-    const { action, email, currentPassword, newPassword, name } = await request.json();
+    const body = await request.json();
+
+    // Validate based on action type using centralized Zod schemas
+    const result = validate(ProfileUpdateSchema, body);
+    if (!result.success) {
+      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+    }
+
+    const { action, email, currentPassword, newPassword, name } = body;
 
     // Check current password for any action (except name updates)
     if (action !== 'update_name') {

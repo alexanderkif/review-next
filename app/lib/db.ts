@@ -200,7 +200,7 @@ export async function getProjectComments(projectId: number): Promise<ProjectComm
       ORDER BY pc.created_at DESC
     `;
 
-    return data as unknown as ProjectComment[];
+    return (data as unknown as ProjectComment[]) || [];
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch project comments.');
@@ -329,7 +329,7 @@ export async function getActivityData(
         `;
       }
     } catch {
-      console.log('project_likes table not available');
+      // Table may not exist yet; activity data is optional
     }
 
     // Безопасно получаем данные комментариев с названиями проектов
@@ -360,7 +360,7 @@ export async function getActivityData(
         `;
       }
     } catch {
-      console.log('project_comments table not available');
+      // Table may not exist yet; comments data is optional
     }
 
     // Объединяем данные по датам

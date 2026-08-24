@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
 import { auth } from '@/lib/auth';
+import { validate } from '@/types/schemas';
+import { CommentUpdateRequestSchema } from '@/types/schemas';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -17,11 +19,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { content } = await request.json();
+    const rawData = await request.json();
+    const validatedData = validate(CommentUpdateRequestSchema, rawData);
 
-    if (!content || !content.trim()) {
-      return NextResponse.json({ error: 'Comment content is required' }, { status: 400 });
+    if (!validatedData.success) {
+      return NextResponse.json(
+        { error: 'Invalid comment data', details: validatedData.error.issues },
+        { status: 400 }
+      );
     }
+
+    const { content } = validatedData.data;
 
     // Get the comment to check ownership
     const existingComment = await sql`

@@ -4,36 +4,23 @@ import { sql } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
-import { z } from 'zod';
 import { auth } from './auth';
-
-// Схемы валидации
-const LoginSchema = z.object({
-  email: z.string().email('Enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-});
-
-const RegisterSchema = z.object({
-  name: z.string().min(2, 'Имя должно содержать минимум 2 символа'),
-  email: z.string().email('Enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-});
-
-const CommentSchema = z.object({
-  projectId: z.number(),
-  comment: z.string().min(1, 'Comment cannot be empty').max(1000, 'Comment is too long'),
-});
+import {
+  LoginSchema,
+  RegisterSchema,
+  CommentSchema,
+  validateFormData,
+  getValidationErrors,
+  validate,
+} from '@/types/schemas';
 
 // Аутентификация
 export async function loginUser(prevState: unknown, formData: FormData) {
-  const validatedFields = LoginSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });
+  const validatedFields = validateFormData(LoginSchema, formData);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: getValidationErrors(validatedFields.error),
       message: 'Проверьте правильность заполнения полей.',
     };
   }
@@ -78,15 +65,11 @@ export async function loginUser(prevState: unknown, formData: FormData) {
 }
 
 export async function registerUser(prevState: unknown, formData: FormData) {
-  const validatedFields = RegisterSchema.safeParse({
-    name: formData.get('name'),
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });
+  const validatedFields = validateFormData(RegisterSchema, formData);
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: getValidationErrors(validatedFields.error),
       message: 'Проверьте правильность заполнения полей.',
     };
   }
@@ -174,7 +157,7 @@ export async function addProjectComment(projectId: number, comment: string) {
 
     const userId = session.user.id;
 
-    const validatedFields = CommentSchema.safeParse({
+    const validatedFields = validate(CommentSchema, {
       projectId,
       comment,
     });
@@ -208,14 +191,14 @@ export async function addProjectCommentAction(prevState: unknown, formData: Form
 
     const userId = session.user.id;
 
-    const validatedFields = CommentSchema.safeParse({
+    const validatedFields = validate(CommentSchema, {
       projectId: parseInt(formData.get('projectId') as string),
       comment: formData.get('comment'),
     });
 
     if (!validatedFields.success) {
       return {
-        errors: validatedFields.error.flatten().fieldErrors,
+        errors: getValidationErrors(validatedFields.error),
         message: 'Проверьте правильность заполнения полей.',
       };
     }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
-import type { Project, ProjectUpdateRequest, ApiError } from '../../../../types/api';
+import type { Project, ApiError, ProjectUpdateRequest } from '@/types/api';
 
 // GET - получить конкретный проект
 export async function GET(
@@ -25,7 +25,7 @@ export async function GET(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
-    return NextResponse.json(project[0] as unknown as Project);
+    return NextResponse.json(project[0] as Project);
   } catch (error) {
     console.error('Error fetching project:', error);
     return NextResponse.json({ error: 'Failed to fetch project' }, { status: 500 });
@@ -97,7 +97,6 @@ export async function PUT(
           AND entity_type = 'project'
           AND entity_id = ${projectId.toString()}
         `;
-        console.log(`Cleaned up ${unusedImageIds.length} unused project images`);
       } catch (cleanupError) {
         console.warn('Failed to cleanup unused project images:', cleanupError);
       }
@@ -146,7 +145,6 @@ export async function DELETE(
           AND entity_type = 'project'
           AND entity_id = ${projectId.toString()}
         `;
-        console.log(`Cleaned up ${imageUrls.length} project images`);
       } catch (cleanupError) {
         console.warn('Failed to cleanup project images:', cleanupError);
       }

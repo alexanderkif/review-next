@@ -54,19 +54,13 @@ export async function POST(
         SET image_urls = ${imageIds}
         WHERE id = ${newEntityId}
       `;
-      console.log(`Updated projects.image_urls for project ${newEntityId}`);
     } else if (entityType === 'avatar') {
       await sql`
         UPDATE cv_data
         SET avatar_url = ${JSON.stringify(imageIds)}
         WHERE id = ${newEntityId}
       `;
-      console.log(`Updated cv_data.avatar_url for cv ${newEntityId}`);
     }
-
-    console.log(
-      `Reassigned ${result.count} images from ${entityType}:${oldEntityId} to ${entityType}:${newEntityId}`,
-    );
 
     return NextResponse.json({
       success: true,

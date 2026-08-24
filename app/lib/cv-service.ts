@@ -6,7 +6,6 @@ import { CVData } from './types/cv';
 
 async function fetchCVData(): Promise<CVData | null> {
   try {
-    console.log('Fetching CV data...');
     // Check for environment variable
     if (!process.env.POSTGRES_URL) {
       console.warn('POSTGRES_URL not found, no data available');
@@ -22,7 +21,6 @@ async function fetchCVData(): Promise<CVData | null> {
     `;
 
     if (!tableExists[0].exists) {
-      console.log('cv_data table does not exist');
       return null;
     }
 
@@ -33,8 +31,6 @@ async function fetchCVData(): Promise<CVData | null> {
       ORDER BY created_at DESC
       LIMIT 1
     `;
-
-    console.log('CV data query result:', cvResult.length, 'rows');
 
     if (cvResult.length === 0) {
       return null;

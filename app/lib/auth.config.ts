@@ -122,7 +122,6 @@ export const nextAuthConfig = {
 
           // Check email verification (admins can login without verification)
           if (!user.email_verified && user.role !== 'admin') {
-            console.log('Email not verified for user:', email);
             throw new Error('EMAIL_NOT_VERIFIED');
           }
 
@@ -140,7 +139,6 @@ export const nextAuthConfig = {
           }
         }
 
-        console.log('Invalid credentials');
         return null;
       },
     }),
@@ -165,9 +163,7 @@ export const nextAuthConfig = {
                                 'user'
                             )
                         `;
-            console.log('OAuth user created successfully:', user.email);
           } else {
-            console.log('OAuth user already exists:', user.email);
             // Update avatar and verify email for OAuth users
             const avatarUrl =
               'image' in user ? user.image || existingUser.avatar_url : existingUser.avatar_url;
@@ -177,7 +173,6 @@ export const nextAuthConfig = {
                             SET email_verified = true, avatar_url = ${avatarUrl ?? null}
                             WHERE email = ${userEmail}
                         `;
-            console.log('OAuth user updated:', user.email);
           }
           return true;
         } catch (error) {

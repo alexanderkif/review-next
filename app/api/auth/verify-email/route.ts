@@ -54,8 +54,6 @@ export async function GET(request: NextRequest) {
     // Отправляем приветственное письмо
     await sendWelcomeEmail(user.email, user.name);
 
-    console.log(`Email verified for user: ${user.email}`);
-
     return NextResponse.json(
       {
         message: 'Email successfully verified! You can now log into the system.',

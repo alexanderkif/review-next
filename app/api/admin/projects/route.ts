@@ -1,7 +1,9 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
-import type { Project, ProjectCreateRequest, ApiError } from '../../../types/api';
+import { validate } from '@/types/schemas';
+import { ProjectCreateSchema } from '@/types/schemas';
+import type { Project, ApiError } from '@/types/api';
 
 // GET - get all projects
 export async function GET(): Promise<NextResponse<Project[] | ApiError>> {
@@ -32,7 +34,7 @@ export async function GET(): Promise<NextResponse<Project[] | ApiError>> {
 }
 
 // POST - create new project
-export async function POST(request: NextRequest): Promise<NextResponse<Project | ApiError>> {
+export async function POST(request: NextRequest) {
   const { isAdmin } = await verifyAdminAuth();
 
   if (!isAdmin) {
@@ -40,20 +42,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<Project |
   }
 
   try {
-    const data: ProjectCreateRequest = await request.json();
+    const rawData = await request.json();
+    const validatedData = validate(ProjectCreateSchema, rawData);
 
-    const {
-      title,
-      description,
-      short_description,
-      technologies,
-      github_url,
-      demo_url,
-      image_urls,
-      year,
-      featured,
-      status,
-    } = data;
+    if (!validatedData.success) {
+      return NextResponse.json(
+        { error: 'Invalid project data', details: validatedData.error.issues },
+        { status: 400 }
+      );
+    }
+
+    const { title, description, short_description, technologies, github_url, demo_url, image_urls, year, featured, status } = validatedData.data;
 
     const result = await sql`
       INSERT INTO projects (

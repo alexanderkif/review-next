@@ -2,18 +2,18 @@
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
 import { revalidateCVData } from '@/lib/cv-service';
-import type { Experience, Education, Language, ApiError } from '../../../types/api';
+import { ExperienceSchema, EducationSchema, LanguageSchema } from '@/types/schemas';
+import type { ExperienceData, EducationData, LanguageData } from '@/types/schemas';
 
-// GET - get CV data
 export async function GET(): Promise<
   NextResponse<
     | {
         cv: Record<string, unknown>;
-        experience: Experience[];
-        education: Education[];
-        languages: Language[];
+        experience: ExperienceData[];
+        education: EducationData[];
+        languages: LanguageData[];
       }
-    | ApiError
+    | { error: string }
   >
 > {
   const { isAdmin } = await verifyAdminAuth();
@@ -57,11 +57,16 @@ export async function GET(): Promise<
       ORDER BY sort_order ASC
     `;
 
+    // Validate and transform database results using Zod schemas
+    const validatedExperience = experience.map((exp) => ExperienceSchema.parse(exp));
+    const validatedEducation = education.map((edu) => EducationSchema.parse(edu));
+    const validatedLanguages = languages.map((lang) => LanguageSchema.parse(lang));
+
     return NextResponse.json({
-      cv: cv as unknown as Record<string, unknown>,
-      experience: experience as unknown as Experience[],
-      education: education as unknown as Education[],
-      languages: languages as unknown as Language[],
+      cv: cv,
+      experience: validatedExperience,
+      education: validatedEducation,
+      languages: validatedLanguages,
     });
   } catch (error) {
     console.error('Error fetching CV data:', error);
@@ -80,21 +85,28 @@ export async function PUT(request: NextRequest) {
   try {
     const data = await request.json();
 
-    const {
-      name,
-      title,
-      email,
-      phone,
-      location,
-      website,
-      avatar_url,
-      github_url,
-      linkedin_url,
-      about,
-      skills_frontend,
-      skills_tools,
-      skills_backend,
-    } = data;
+    // Parse the incoming JSON — client sends full cvData.cv object with all CV fields
+    // We accept any subset of these fields (partial update) and skip undefined values
+    const parsed: Record<string, unknown> = typeof data === 'string' ? JSON.parse(data) : data;
+
+    if (!parsed.id) {
+      return NextResponse.json({ error: 'id is required' }, { status: 400 });
+    }
+
+    // Only pick fields that are actually present (not undefined)
+    const name = parsed.name !== undefined ? String(parsed.name) : null;
+    const title = parsed.title !== undefined ? String(parsed.title) : null;
+    const email = parsed.email !== undefined ? String(parsed.email) : null;
+    const phone = parsed.phone !== undefined ? String(parsed.phone) : null;
+    const location = parsed.location !== undefined ? String(parsed.location) : null;
+    const website = parsed.website !== undefined ? String(parsed.website) : null;
+    const avatar_url = parsed.avatar_url !== undefined ? String(parsed.avatar_url) : null;
+    const github_url = parsed.github_url !== undefined ? String(parsed.github_url) : null;
+    const linkedin_url = parsed.linkedin_url !== undefined ? String(parsed.linkedin_url) : null;
+    const about = parsed.about !== undefined ? String(parsed.about) : null;
+    const skills_frontend: string | null = parsed.skills_frontend !== undefined ? JSON.stringify(parsed.skills_frontend) : null;
+    const skills_tools: string | null = parsed.skills_tools !== undefined ? JSON.stringify(parsed.skills_tools) : null;
+    const skills_backend: string | null = parsed.skills_backend !== undefined ? JSON.stringify(parsed.skills_backend) : null;
 
     // Находим активное CV
     const currentCV = await sql`
@@ -119,33 +131,26 @@ export async function PUT(request: NextRequest) {
       oldCV.length > 0
         ? (() => {
             const avatarUrl = oldCV[0].avatar_url;
-            if (!avatarUrl || avatarUrl === '[]') return [];
+            if (!avatarUrl || String(avatarUrl) === '[]') return [];
             try {
-              return Array.isArray(avatarUrl) ? avatarUrl : JSON.parse(avatarUrl);
+              return Array.isArray(avatarUrl) ? avatarUrl : JSON.parse(String(avatarUrl));
             } catch {
-              return avatarUrl ? [avatarUrl] : [];
+              return avatarUrl ? [String(avatarUrl)] : [];
             }
           })()
         : [];
 
     const newAvatarUrls = (() => {
-      if (!avatar_url || avatar_url === '[]') return [];
+      if (!avatar_url || String(avatar_url) === '[]') return [];
       try {
-        return Array.isArray(avatar_url) ? avatar_url : JSON.parse(avatar_url);
+        return Array.isArray(avatar_url) ? avatar_url : JSON.parse(String(avatar_url));
       } catch {
-        return avatar_url ? [avatar_url] : [];
+        return avatar_url ? [String(avatar_url)] : [];
       }
     })();
 
     // Find unused avatar image IDs
     const unusedAvatarIds = oldAvatarUrls.filter((id: string) => !newAvatarUrls.includes(id));
-
-    console.log('Avatar cleanup debug:', {
-      oldAvatarUrls,
-      newAvatarUrls,
-      unusedAvatarIds,
-      cvId,
-    });
 
     // Update data
     await sql`
@@ -170,23 +175,12 @@ export async function PUT(request: NextRequest) {
     // Clean up unused avatar images
     if (unusedAvatarIds.length > 0) {
       try {
-        console.log(
-          `Attempting to cleanup ${unusedAvatarIds.length} unused avatar images:`,
-          unusedAvatarIds,
-        );
-
-        const deletedImages = await sql`
+        await sql`
           DELETE FROM images
           WHERE id = ANY(${unusedAvatarIds})
           AND entity_type = 'avatar'
           AND entity_id = ${cvId.toString()}
-          RETURNING id
         `;
-
-        console.log(
-          `Successfully cleaned up ${deletedImages.length} unused avatar images:`,
-          deletedImages.map((img) => img.id),
-        );
       } catch (cleanupError) {
         console.warn('Failed to cleanup unused avatar images:', cleanupError);
       }

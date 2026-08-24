@@ -42,7 +42,6 @@ export default function SkillsGroup({
         {skills.map((skill, index) => (
           <div key={index} className="flex items-center gap-2">
             <Input
-              label={label}
               value={skill || ''}
               onChange={(e) => onUpdate(category, index, e.target.value)}
               placeholder={placeholder}

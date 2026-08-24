@@ -16,8 +16,6 @@ export async function POST(): Promise<NextResponse<SyncImagesResponse | ApiError
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log('Starting image synchronization...');
-
     // Get all projects
     const projects = await sql`
       SELECT id, image_urls FROM projects
@@ -58,8 +56,6 @@ export async function POST(): Promise<NextResponse<SyncImagesResponse | ApiError
             oldImageUrls: currentImageUrls,
             newImageUrls: imageIds,
           });
-
-          console.log(`Updated project ${project.id}: ${imageIds.length} images synced`);
         }
       }
     }

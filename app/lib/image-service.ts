@@ -58,7 +58,6 @@ export async function createImagesTable() {
       ON images(created_at DESC)
     `;
 
-    console.log('Images table created successfully with VARCHAR entity_id');
     return true;
   } catch (error) {
     console.error('Error creating images table:', error);
@@ -127,7 +126,7 @@ export async function getImagesForEntity(
       WHERE entity_type = ${entityType} AND entity_id = ${entityId}
       ORDER BY created_at DESC
     `;
-    return result as unknown as ImageMetadata[];
+    return (result as unknown as ImageMetadata[]) || [];
   } catch (error) {
     console.error('Error fetching images for entity:', error);
     return [];
@@ -243,7 +242,7 @@ export async function getImagesByEntity(
       ORDER BY created_at ASC
     `;
 
-    return result as unknown as ImageMetadata[];
+    return (result as unknown as ImageMetadata[]) || [];
   } catch (error) {
     console.error('Error fetching images by entity:', error);
     return [];
