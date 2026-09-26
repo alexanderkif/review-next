@@ -91,7 +91,7 @@ const glassTheme: Theme = {
     WebkitBackdropFilter: 'blur(10px)',
   },
   textarea:
-    'border-white/20 bg-white/10 text-white placeholder-white/30 focus:border-white/40 focus:ring-white/20',
+    'border-slate-300/70 bg-white/85 text-slate-800 placeholder-slate-500/70 focus:border-emerald-500/60 focus:ring-emerald-500/40',
   footer_note: 'text-white/30',
 };
 
@@ -161,10 +161,11 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showBadge, setShowBadge] = useState(true);
+  const [showBadge, setShowBadge] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isOpenRef = useRef(false);
 
   // Detect mobile sheet mode on mount and resize
   useEffect(() => {
@@ -175,6 +176,22 @@ export default function ChatWidget() {
   }, []);
 
   useEffect(() => {
+    const welcomeAt = Date.now() + 6000;
+    let welcomeTimer: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
+
+    const scheduleWelcome = (info: CVInfo) => {
+      if (cancelled) return;
+      setCvInfo(info);
+      welcomeTimer = setTimeout(
+        () => {
+          setMessages([buildWelcome(info.name)]);
+          if (!isOpenRef.current) setShowBadge(true);
+        },
+        Math.max(0, welcomeAt - Date.now()),
+      );
+    };
+
     fetch('/api/cv-data')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
@@ -184,14 +201,17 @@ export default function ChatWidget() {
           title: data.personalInfo?.title ?? 'Software Engineer',
           avatar: data.personalInfo?.avatar ?? '',
         };
-        setCvInfo(info);
-        setMessages([buildWelcome(info.name)]);
+        scheduleWelcome(info);
       })
       .catch(() => {
         const fallback: CVInfo = { name: 'Aleksandr', title: 'Software Engineer', avatar: '' };
-        setCvInfo(fallback);
-        setMessages([buildWelcome(fallback.name)]);
+        scheduleWelcome(fallback);
       });
+
+    return () => {
+      cancelled = true;
+      if (welcomeTimer) clearTimeout(welcomeTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -212,6 +232,7 @@ export default function ChatWidget() {
 
   const handleOpen = () => {
     setShowBadge(false);
+    isOpenRef.current = true;
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     setShowPanel(true);
     setIsOpen(true);
@@ -220,6 +241,7 @@ export default function ChatWidget() {
   };
 
   const handleClose = () => {
+    isOpenRef.current = false;
     setIsAnimated(false);
     setIsOpen(false);
     closeTimerRef.current = setTimeout(() => setShowPanel(false), 260);

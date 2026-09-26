@@ -148,18 +148,18 @@ export async function POST(req: NextRequest) {
 
   async function tryGroq(): Promise<string> {
     const completion = await groq.chat.completions.create({
-      model: 'qwen/qwen3-32b', // free tier, fast, high quality
+      model: 'openai/gpt-oss-20b',
       messages: groqMessages,
       max_tokens: 400,
-      temperature: 0.7,
+      temperature: 0.5,
     });
     return completion.choices[0]?.message?.content ?? '';
   }
 
   async function tryGemini(): Promise<string> {
     const chat = gemini.chats.create({
-      model: 'gemini-3.1-flash-lite-preview',
-      config: { systemInstruction: MY_CONTEXT, maxOutputTokens: 400, temperature: 0.7 },
+      model: 'gemini-3.5-flash-lite',
+      config: { systemInstruction: MY_CONTEXT, maxOutputTokens: 400, temperature: 0.5 },
       history,
     });
     const response = await chat.sendMessage({ message: lastUserText });
@@ -169,32 +169,56 @@ export async function POST(req: NextRequest) {
   try {
     let responseText: string;
 
-    if (process.env.GROQ_API_KEY) {
-      // Groq is primary — fast, generous free limits
+    if (process.env.GEMINI_API_KEY) {
+      // Gemini is primary — use it first, then fall back to Groq if it fails
+      const now = Date.now();
+      if (now < geminiDegradedUntil) {
+        if (!process.env.GROQ_API_KEY) {
+          throw new Error('Both providers unavailable');
+        }
+        try {
+          responseText = await tryGroq();
+        } catch (err: unknown) {
+          const e = err as { status?: number };
+          console.error('[chat/route] Groq fallback failed:', e?.status);
+          throw err;
+        }
+      } else {
+        try {
+          responseText = await tryGemini();
+          geminiDegradedUntil = 0;
+        } catch (err: unknown) {
+          const e = err as { status?: number; httpErrorCode?: number };
+          const httpStatus = e?.status ?? e?.httpErrorCode;
+          if (httpStatus === 503) geminiDegradedUntil = Date.now() + 5 * 60_000;
+
+          if (process.env.GROQ_API_KEY) {
+            try {
+              responseText = await tryGroq();
+            } catch (groqErr: unknown) {
+              const groqError = groqErr as { status?: number };
+              console.error(
+                '[chat/route] Gemini failed and Groq fallback failed:',
+                groqError?.status,
+              );
+              throw groqErr;
+            }
+          } else {
+            throw err;
+          }
+        }
+      }
+    } else if (process.env.GROQ_API_KEY) {
+      // No Gemini key — use Groq only
       try {
         responseText = await tryGroq();
       } catch (err: unknown) {
         const e = err as { status?: number };
-        // Fall back to Gemini on any Groq error
-        console.error('[chat/route] Groq error, falling back to Gemini:', e?.status);
-        responseText = await tryGemini();
-        geminiDegradedUntil = 0;
-      }
-    } else {
-      // No Groq key — use Gemini with degraded-state tracking
-      const now = Date.now();
-      if (now < geminiDegradedUntil) {
-        throw new Error('Both providers unavailable');
-      }
-      try {
-        responseText = await tryGemini();
-        geminiDegradedUntil = 0;
-      } catch (err: unknown) {
-        const e = err as { status?: number; httpErrorCode?: number };
-        const httpStatus = e?.status ?? e?.httpErrorCode;
-        if (httpStatus === 503) geminiDegradedUntil = Date.now() + 5 * 60_000;
+        console.error('[chat/route] Groq error:', e?.status);
         throw err;
       }
+    } else {
+      throw new Error('Both providers unavailable');
     }
 
     return NextResponse.json({ reply: responseText });
