@@ -3,6 +3,7 @@ import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
+import { LoginSchema, validateFormData } from '@/types/schemas';
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.NEXTAUTH_SECRET || 'your-super-secret-key-change-this-in-production',
@@ -11,12 +12,15 @@ const JWT_SECRET = new TextEncoder().encode(
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    const validationResult = validateFormData(LoginSchema, formData);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: validationResult.error.issues[0]?.message ?? 'Invalid login data' },
+        { status: 400 },
+      );
     }
+
+    const { email, password } = validationResult.data;
 
     // Найти пользователя в базе данных
     const userResult = await sql`

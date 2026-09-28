@@ -1,13 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import { z } from 'zod';
-
-const setupSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters long'),
-  email: z.string().email('Invalid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-});
+import { SetupSchema, validate } from '@/types/schemas';
 
 export async function GET() {
   try {
@@ -53,7 +47,7 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
 
     // Validate data
-    const validationResult = setupSchema.safeParse(data);
+    const validationResult = validate(SetupSchema, data);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid data', details: validationResult.error.issues },

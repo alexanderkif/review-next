@@ -1,5 +1,6 @@
 // Zod validation schemas for the entire application
 import { z } from 'zod';
+import { IMAGE_SIZE_LIMITS, SUPPORTED_FORMATS, validateBase64Image } from '@/lib/image-utils';
 
 // ==================== Auth Schemas ====================
 
@@ -17,6 +18,16 @@ export const RegisterSchema = z.object({
 });
 
 export type RegisterData = z.infer<typeof RegisterSchema>;
+
+export const RegisterRequestSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(255),
+  email: z.string().email('Enter a valid email').max(255),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+});
+
+export const ResendVerificationRequestSchema = z.object({
+  email: z.string().email('Enter a valid email'),
+});
 
 // ==================== Comment Schemas ====================
 
@@ -50,6 +61,35 @@ export const ProjectUpdateSchema = ProjectCreateSchema.partial().merge(
 
 export type ProjectUpdateData = z.infer<typeof ProjectUpdateSchema>;
 
+export const NumericIdParamsSchema = z.object({ id: z.coerce.number().int().positive() });
+export const ProjectImageParamsSchema = z.object({
+  projectId: z.coerce.number().int().positive(),
+});
+export const CVImageParamsSchema = z.object({ cvId: z.coerce.number().int().positive() });
+export const StringIdParamsSchema = z.object({ id: z.string().min(1) });
+
+export const ActivityQuerySchema = z.object({
+  period: z.enum(['month', 'year']).default('month'),
+});
+
+export const EmailQuerySchema = z.object({
+  email: z.string().email('Enter a valid email'),
+});
+
+export const VerificationTokenQuerySchema = z.object({
+  token: z.string().min(1).max(512),
+});
+
+export const AdminImagesQuerySchema = z.object({
+  entityType: z.enum(['avatar', 'project', 'user']),
+  entityId: z.string().min(1),
+});
+
+export const ImageOptimizationQuerySchema = z.object({
+  w: z.coerce.number().int().positive().max(4096).optional(),
+  q: z.coerce.number().int().min(1).max(100).default(80),
+});
+
 // ==================== CV Schemas ====================
 
 export const PersonalInfoSchema = z.object({
@@ -71,7 +111,7 @@ export const ExperienceSchema = z.object({
   company: z.string().min(1, 'Company is required'),
   period: z.string().min(1, 'Period is required'),
   description: z.string().min(1, 'Description is required'),
-  current: z.boolean().default(false),
+  is_current: z.boolean().default(false),
 });
 
 export type ExperienceData = z.infer<typeof ExperienceSchema>;
@@ -97,25 +137,99 @@ export type LanguageData = z.infer<typeof LanguageSchema>;
 export const CVUpdateSchema = z.object({
   personalInfo: PersonalInfoSchema.optional(),
   about: z.string().optional(),
-  skills: z.object({
-    frontend: z.array(z.string()).optional(),
-    backend: z.array(z.string()).optional(),
-    tools: z.array(z.string()).optional(),
-  }).optional(),
+  skills: z
+    .object({
+      frontend: z.array(z.string()).optional(),
+      backend: z.array(z.string()).optional(),
+      tools: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 export type CVUpdateData = z.infer<typeof CVUpdateSchema>;
 
+const AdminCVTextSchema = z.string().nullable().optional();
+
+export const AdminCVUpdateSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  name: AdminCVTextSchema,
+  title: AdminCVTextSchema,
+  email: z
+    .union([z.string().email(), z.literal('')])
+    .nullable()
+    .optional(),
+  phone: AdminCVTextSchema,
+  location: AdminCVTextSchema,
+  website: AdminCVTextSchema,
+  avatar_url: z
+    .union([z.string(), z.array(z.string())])
+    .nullable()
+    .optional()
+    .transform((value) => (Array.isArray(value) ? JSON.stringify(value) : value)),
+  github_url: AdminCVTextSchema,
+  linkedin_url: AdminCVTextSchema,
+  about: AdminCVTextSchema,
+  skills_frontend: z.array(z.string()).nullable().optional(),
+  skills_tools: z.array(z.string()).nullable().optional(),
+  skills_backend: z.array(z.string()).nullable().optional(),
+});
+
+export const AdminCVExperienceRequestSchema = z.object({
+  experience: z.array(
+    z.object({
+      title: z.string(),
+      company: z.string(),
+      period: z.string().default(''),
+      description: z.string().default(''),
+      is_current: z.boolean().default(false),
+    }),
+  ),
+});
+
+export const AdminCVEducationRequestSchema = z.object({
+  education: z.array(
+    z.object({
+      degree: z.string(),
+      institution: z.string(),
+      period: z.string().default(''),
+      description: z.string().default(''),
+    }),
+  ),
+});
+
+export const AdminCVLanguagesRequestSchema = z.object({
+  languages: z.array(
+    z.object({
+      language: z.string(),
+      level: z.string(),
+    }),
+  ),
+});
+
 // ==================== Image Schemas ====================
 
-export const ImageUploadSchema = z.object({
-  entityType: z.enum(['avatar', 'project', 'user']),
-  entityId: z.string().min(1, 'Entity ID is required'),
-  imageData: z.string().min(1, 'Image data is required'),
-  mimeType: z.string().min(1, 'MIME type is required'),
-  width: z.number().optional(),
-  height: z.number().optional(),
-});
+export const ImageUploadSchema = z
+  .object({
+    entityType: z.enum(['avatar', 'project', 'user']),
+    entityId: z.string().min(1, 'Entity ID is required'),
+    imageData: z.string().min(1, 'Image data is required'),
+    mimeType: z.enum(SUPPORTED_FORMATS),
+    width: z.number().int().positive().optional(),
+    height: z.number().int().positive().optional(),
+  })
+  .superRefine(({ entityType, imageData }, context) => {
+    const maxSizeMB =
+      entityType === 'avatar'
+        ? IMAGE_SIZE_LIMITS.AVATAR
+        : entityType === 'project'
+          ? IMAGE_SIZE_LIMITS.PROJECT
+          : IMAGE_SIZE_LIMITS.GENERAL;
+    const imageError = validateBase64Image(imageData, maxSizeMB);
+
+    if (imageError) {
+      context.addIssue({ code: 'custom', path: ['imageData'], message: imageError });
+    }
+  });
 
 export type ImageUploadData = z.infer<typeof ImageUploadSchema>;
 
@@ -140,10 +254,25 @@ export const ImageReassignSchema = z.object({
   entityType: z.enum(['avatar', 'project', 'user']),
   oldEntityId: z.string().min(1, 'Old entity ID is required'),
   newEntityId: z.string().min(1, 'New entity ID is required'),
-  imageIds: z.array(z.string()).min(1, 'At least one image ID is required'),
+  imageIds: z.array(z.string().min(1)),
 });
 
 export type ImageReassignData = z.infer<typeof ImageReassignSchema>;
+
+export const ChatRequestSchema = z.object({
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'model']),
+        content: z
+          .string()
+          .trim()
+          .min(1)
+          .transform((content) => content.slice(0, 600)),
+      }),
+    )
+    .min(1),
+});
 
 // ==================== Setup Schemas ====================
 
@@ -200,12 +329,9 @@ export function validate<T extends z.ZodType>(schema: T, data: unknown) {
 /**
  * Валидирует данные FormData (для server actions)
  */
-export function validateFormData<T extends z.ZodType>(
-  schema: T,
-  formData: FormData,
-) {
+export function validateFormData<T extends z.ZodType>(schema: T, formData: FormData) {
   const data: Record<string, unknown> = {};
-  
+
   for (const [key, value] of formData.entries()) {
     if (typeof value === 'string') {
       // Пытаемся парсить числа и boolean
@@ -215,7 +341,7 @@ export function validateFormData<T extends z.ZodType>(
       else data[key] = value;
     }
   }
-  
+
   return schema.safeParse(data);
 }
 
@@ -235,11 +361,11 @@ export function formatValidationError(
   data: unknown,
 ): { success: false; errors: Record<string, string[]>; message?: string } {
   const result = validate(schema, data);
-  
+
   if (result.success) {
     throw new Error('Expected validation to fail but it succeeded');
   }
-  
+
   return {
     success: false,
     errors: getValidationErrors(result.error),
@@ -257,11 +383,11 @@ export async function parseJsonWithSchema<T extends z.ZodType>(
   try {
     const json = await response.json();
     const result = schema.safeParse(json);
-    
+
     if (result.success) {
       return { success: true, data: result.data };
     }
-    
+
     return {
       success: false,
       error: 'Invalid response format',

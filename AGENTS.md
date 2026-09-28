@@ -1,6 +1,6 @@
 # Agents & Skills
 
-This file defines the specialized agents and skills available for the `review-next` project. Use these to guide the AI in performing specific tasks or adhering to project-specific standards.
+This file defines project-specific guidance for agents working in `review-next`. Keep durable conventions here and in the linked documentation; do not treat completed migration plans as active instructions.
 
 ## 🤖 Project Agents
 
@@ -11,16 +11,18 @@ The primary agent for general coding, refactoring, and feature implementation.
     - Use Server Components by default.
     - Use `sql` from `@/lib/db` for all database operations.
     - Follow the theme-aware styling (Claymorphism & Glassmorphism).
-    - Ensure Zod validation at all API boundaries.
+    - Validate untrusted API bodies, query parameters, and route parameters with centralized Zod schemas before side effects.
+    - Follow [docs/validation.md](docs/validation.md) for schema and validation patterns.
 
 ### 🎨 UI/UX & Accessibility Agent
 Specialized in creating accessible, high-quality user interfaces.
-- **Focus**: WCAG 2.2 AAA compliance, Tailwind CSS 4, Framer Motion (if applicable), and responsive design.
+- **Focus**: WCAG 2.2 guidance, Tailwind CSS 4, Framer Motion (if applicable), and responsive design.
 - **Key Guidelines**:
     - Ensure all form inputs have proper `<label>` and `aria` attributes.
     - Implement focus traps for modals and skip-to-main links.
-    - Maintain a 7:1 contrast ratio for normal text.
+    - Check contrast against the target WCAG level; do not claim full conformance without auditing the affected experience.
     - Respect `prefers-reduced-motion` preferences.
+    - Consult [docs/accessibility.md](docs/accessibility.md) for current implementation notes and manual checks.
 
 ### 🛡 Security & Audit Agent
 Specialized in security reviews and pre-deployment audits.
@@ -31,6 +33,11 @@ Specialized in security reviews and pre-deployment audits.
     - Audit for `dangerouslySetInnerHTML` and raw `console.log` calls.
 
 ## 🛠 Skills
+
+### Validation and Checks
+- Validation guidance: `docs/validation.md`.
+- No automated test runner is configured; do not claim tests passed unless a test suite is added and run.
+- For code changes, run `npx tsc --noEmit`, `npm run lint`, and `npm run format:check` when applicable.
 
 ### `pre-deploy`
 **Description**: Pre-deployment audit for the review-next portfolio.

@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getImagesForEntity } from '@/lib/image-service';
+import { ProjectImageParamsSchema } from '@/types/schemas';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ projectId: string }> },
 ) {
   try {
-    const { projectId } = await params;
-
-    if (!projectId) {
+    const parsedParams = ProjectImageParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
       return new NextResponse('Project ID is required', { status: 400 });
     }
+    const { projectId } = parsedParams.data;
 
-    const images = await getImagesForEntity('project', projectId);
+    const images = await getImagesForEntity('project', projectId.toString());
 
     return NextResponse.json({
       count: images.length,

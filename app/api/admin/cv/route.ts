@@ -2,7 +2,13 @@
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
 import { revalidateCVData } from '@/lib/cv-service';
-import { ExperienceSchema, EducationSchema, LanguageSchema } from '@/types/schemas';
+import {
+  AdminCVUpdateSchema,
+  ExperienceSchema,
+  EducationSchema,
+  LanguageSchema,
+  validate,
+} from '@/types/schemas';
 import type { ExperienceData, EducationData, LanguageData } from '@/types/schemas';
 
 export async function GET(): Promise<
@@ -83,30 +89,30 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const data = await request.json();
-
-    // Parse the incoming JSON — client sends full cvData.cv object with all CV fields
-    // We accept any subset of these fields (partial update) and skip undefined values
-    const parsed: Record<string, unknown> = typeof data === 'string' ? JSON.parse(data) : data;
-
-    if (!parsed.id) {
-      return NextResponse.json({ error: 'id is required' }, { status: 400 });
+    const validationResult = validate(AdminCVUpdateSchema, await request.json());
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid CV data', details: validationResult.error.issues[0]?.message },
+        { status: 400 },
+      );
     }
 
+    const parsed = validationResult.data;
+
     // Only pick fields that are actually present (not undefined)
-    const name = parsed.name !== undefined ? String(parsed.name) : null;
-    const title = parsed.title !== undefined ? String(parsed.title) : null;
-    const email = parsed.email !== undefined ? String(parsed.email) : null;
-    const phone = parsed.phone !== undefined ? String(parsed.phone) : null;
-    const location = parsed.location !== undefined ? String(parsed.location) : null;
-    const website = parsed.website !== undefined ? String(parsed.website) : null;
-    const avatar_url = parsed.avatar_url !== undefined ? String(parsed.avatar_url) : null;
-    const github_url = parsed.github_url !== undefined ? String(parsed.github_url) : null;
-    const linkedin_url = parsed.linkedin_url !== undefined ? String(parsed.linkedin_url) : null;
-    const about = parsed.about !== undefined ? String(parsed.about) : null;
-    const skills_frontend: string | null = parsed.skills_frontend !== undefined ? JSON.stringify(parsed.skills_frontend) : null;
-    const skills_tools: string | null = parsed.skills_tools !== undefined ? JSON.stringify(parsed.skills_tools) : null;
-    const skills_backend: string | null = parsed.skills_backend !== undefined ? JSON.stringify(parsed.skills_backend) : null;
+    const name = parsed.name ?? null;
+    const title = parsed.title ?? null;
+    const email = parsed.email ?? null;
+    const phone = parsed.phone ?? null;
+    const location = parsed.location ?? null;
+    const website = parsed.website ?? null;
+    const avatar_url = parsed.avatar_url ?? null;
+    const github_url = parsed.github_url ?? null;
+    const linkedin_url = parsed.linkedin_url ?? null;
+    const about = parsed.about ?? null;
+    const skills_frontend = parsed.skills_frontend ? JSON.stringify(parsed.skills_frontend) : null;
+    const skills_tools = parsed.skills_tools ? JSON.stringify(parsed.skills_tools) : null;
+    const skills_backend = parsed.skills_backend ? JSON.stringify(parsed.skills_backend) : null;
 
     // Находим активное CV
     const currentCV = await sql`

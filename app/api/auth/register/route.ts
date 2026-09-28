@@ -1,21 +1,21 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { sql } from '@/lib/db';
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/email-service';
-
-const registerSchema = z.object({
-  name: z.string().min(1, 'Имя обязательно для заполнения').max(255),
-  email: z.string().email('Enter a valid email').max(255),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-});
+import { RegisterRequestSchema, validate } from '@/types/schemas';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const validatedData = registerSchema.parse(body);
+    const validationResult = validate(RegisterRequestSchema, await request.json());
+    if (!validationResult.success) {
+      const firstError = validationResult.error.issues[0];
+      return NextResponse.json(
+        { message: firstError.message, field: firstError.path[0] },
+        { status: 400 },
+      );
+    }
 
-    const { name, email, password } = validatedData;
+    const { name, email, password } = validationResult.data;
 
     // Check if user with this email exists
     const existingUser = await sql`
@@ -98,15 +98,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Registration error:', error);
-
-    if (error instanceof z.ZodError) {
-      const firstError = error.issues[0];
-      return NextResponse.json(
-        { message: firstError.message, field: firstError.path[0] },
-        { status: 400 },
-      );
-    }
-
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

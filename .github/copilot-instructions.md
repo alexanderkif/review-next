@@ -8,7 +8,7 @@ Portfolio website built with Next.js App Router (16.x), React 19, TypeScript, Po
 - **Database**: `postgres` npm package (raw SQL, no ORM) — always import `sql` from `@/lib/db`, never create new `postgres()` instances
 - **Auth**: NextAuth v4 with JWT strategy — roles: `'user'` | `'admin'`
 - **Styles**: Tailwind CSS v4 (PostCSS) — utility classes only, no CSS modules
-- **Validation**: Zod at API boundaries
+- **Validation**: Centralized Zod schemas at API boundaries; see `docs/validation.md`
 - **Icons**: lucide-react
 - **Charts**: recharts
 
@@ -31,7 +31,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 ### API Routes
 - Return `NextResponse.json(...)` with explicit TypeScript return types
-- Validate body with Zod before using
+- Validate bodies, query parameters, and route parameters with centralized Zod schemas before using them
 - Check auth with `verifyAdminAuth()` from `@/lib/admin-auth` for admin routes
 
 ### Caching

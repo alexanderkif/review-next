@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getActivityData } from '@/lib/db';
+import { ActivityQuerySchema } from '@/types/schemas';
 import type { ActivityResponse, ApiError } from '../../types/api';
 
 export async function GET(
@@ -7,7 +8,17 @@ export async function GET(
 ): Promise<NextResponse<ActivityResponse | ApiError>> {
   try {
     const { searchParams } = new URL(request.url);
-    const period = (searchParams.get('period') as 'month' | 'year') || 'month';
+    const validationResult = ActivityQuerySchema.safeParse({
+      period: searchParams.get('period') ?? undefined,
+    });
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid period', details: validationResult.error.issues[0]?.message },
+        { status: 400 },
+      );
+    }
+
+    const { period } = validationResult.data;
 
     // Get locale from Accept-Language header
     const acceptLanguage = request.headers.get('accept-language');

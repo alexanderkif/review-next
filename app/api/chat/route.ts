@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import Groq from 'groq-sdk';
 import { MY_CONTEXT } from '@/lib/chat-context';
+import { ChatRequestSchema } from '@/types/schemas';
 
 export const maxDuration = 60; // Vercel: allow up to 60s for Gemini API calls
 
@@ -71,10 +72,6 @@ function isGlobalDailyLimitReached(): boolean {
   return false;
 }
 
-interface RawMessage {
-  role: unknown;
-  content: unknown;
-}
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
 
@@ -99,32 +96,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { messages?: unknown };
+  let body: unknown;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
 
-  if (!Array.isArray(body?.messages) || body.messages.length === 0) {
-    return NextResponse.json({ error: 'No messages provided.' }, { status: 400 });
+  const validationResult = ChatRequestSchema.safeParse(body);
+  if (!validationResult.success) {
+    return NextResponse.json({ error: 'No valid messages provided.' }, { status: 400 });
   }
 
-  // Validate and sanitise messages — keep last 10, max 600 chars each (reduce token usage)
-  const validMessages = (body.messages as RawMessage[])
-    .filter(
-      (m): m is { role: 'user' | 'model'; content: string } =>
-        m !== null &&
-        typeof m === 'object' &&
-        (m.role === 'user' || m.role === 'model') &&
-        typeof m.content === 'string' &&
-        m.content.trim().length > 0,
-    )
-    .slice(-10)
-    .map((m) => ({
-      role: m.role === 'user' ? ('user' as const) : ('model' as const),
-      parts: [{ text: m.content.slice(0, 600) }],
-    }));
+  // Keep only the latest messages to limit prompt size.
+  const validMessages = validationResult.data.messages.slice(-10).map((m) => ({
+    role: m.role === 'user' ? ('user' as const) : ('model' as const),
+    parts: [{ text: m.content.slice(0, 600) }],
+  }));
 
   if (validMessages.length === 0) {
     return NextResponse.json({ error: 'No valid messages.' }, { status: 400 });

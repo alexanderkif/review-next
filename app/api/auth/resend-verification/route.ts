@@ -1,16 +1,19 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { sql } from '@/lib/db';
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/email-service';
-
-const resendSchema = z.object({
-  email: z.string().email('Enter a valid email'),
-});
+import { ResendVerificationRequestSchema, validate } from '@/types/schemas';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email } = resendSchema.parse(body);
+    const validationResult = validate(ResendVerificationRequestSchema, await request.json());
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: validationResult.error.issues[0].message },
+        { status: 400 },
+      );
+    }
+
+    const { email } = validationResult.data;
 
     // Ищем пользователя
     const users = await sql`
@@ -75,12 +78,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Resend verification error:', error);
-
-    if (error instanceof z.ZodError) {
-      const firstError = error.issues[0];
-      return NextResponse.json({ error: firstError.message }, { status: 400 });
-    }
-
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

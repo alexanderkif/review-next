@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
+import { StringIdParamsSchema } from '@/types/schemas';
 import type { ImageDeleteResponse, ApiError } from '../../../../types/api';
 
 export async function DELETE(
@@ -15,11 +16,11 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id: imageId } = await params;
-
-    if (!imageId) {
+    const parsedParams = StringIdParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
       return NextResponse.json({ error: 'Image ID is required' }, { status: 400 });
     }
+    const imageId = parsedParams.data.id;
 
     // Start transaction to ensure data consistency
     let updatedImageIds: string[] = [];

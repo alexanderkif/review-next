@@ -1,19 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getImageById } from '@/lib/image-service';
+import { ImageOptimizationQuerySchema, StringIdParamsSchema } from '@/types/schemas';
 import sharp from 'sharp';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id: imageId } = await params;
-
-    if (!imageId) {
+    const parsedParams = StringIdParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
       return new NextResponse('Image ID is required', { status: 400 });
     }
+    const imageId = parsedParams.data.id;
 
     // Get query parameters for image optimization
     const { searchParams } = new URL(request.url);
-    const width = searchParams.get('w') ? parseInt(searchParams.get('w')!) : undefined;
-    const quality = searchParams.get('q') ? parseInt(searchParams.get('q')!) : 80;
+    const queryResult = ImageOptimizationQuerySchema.safeParse({
+      w: searchParams.get('w') ?? undefined,
+      q: searchParams.get('q') ?? undefined,
+    });
+    if (!queryResult.success) {
+      return new NextResponse('Invalid image optimization parameters', { status: 400 });
+    }
+    const { w: width, q: quality } = queryResult.data;
 
     const image = await getImageById(imageId);
 

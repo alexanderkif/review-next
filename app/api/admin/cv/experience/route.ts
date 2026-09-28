@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
 import { revalidateCVData } from '@/lib/cv-service';
+import { AdminCVExperienceRequestSchema, validate } from '@/types/schemas';
 
 export async function PUT(request: NextRequest) {
   const { isAdmin } = await verifyAdminAuth();
@@ -11,7 +12,15 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { experience } = await request.json();
+    const validationResult = validate(AdminCVExperienceRequestSchema, await request.json());
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid experience data', details: validationResult.error.issues },
+        { status: 400 },
+      );
+    }
+
+    const { experience } = validationResult.data;
 
     // Получаем CV ID
     const cvResult = await sql`

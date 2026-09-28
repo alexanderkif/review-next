@@ -2,17 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
 import { auth } from '@/lib/auth';
-import { validate } from '@/types/schemas';
-import { CommentUpdateRequestSchema } from '@/types/schemas';
+import { CommentUpdateRequestSchema, NumericIdParamsSchema, validate } from '@/types/schemas';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params;
-    const commentId = parseInt(id);
-
-    if (isNaN(commentId)) {
+    const parsedParams = NumericIdParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
       return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
     }
+    const { id: commentId } = parsedParams.data;
 
     const session = await auth();
     if (!session?.user?.id) {
@@ -25,7 +23,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (!validatedData.success) {
       return NextResponse.json(
         { error: 'Invalid comment data', details: validatedData.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -71,12 +69,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await params;
-    const commentId = parseInt(id);
-
-    if (isNaN(commentId)) {
+    const parsedParams = NumericIdParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
       return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
     }
+    const { id: commentId } = parsedParams.data;
 
     const session = await auth();
     if (!session?.user?.id) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
+import { EmailQuerySchema } from '@/types/schemas';
 
 export async function GET(request: NextRequest) {
   const { isAdmin } = await verifyAdminAuth();
@@ -9,11 +10,12 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const email = searchParams.get('email');
-
-  if (!email) {
-    return NextResponse.json({ error: 'Email parameter required' }, { status: 400 });
+  const validationResult = EmailQuerySchema.safeParse({ email: searchParams.get('email') });
+  if (!validationResult.success) {
+    return NextResponse.json({ error: 'Invalid email parameter' }, { status: 400 });
   }
+
+  const { email } = validationResult.data;
 
   try {
     const user = await sql`

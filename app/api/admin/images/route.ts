@@ -2,12 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
 import { saveImage, revalidateImageCache, getImagesByEntity } from '@/lib/image-service';
-import type {
-  ImageMetadata,
-  ImageUploadRequest,
-  ImageUploadResponse,
-  ApiError,
-} from '../../../types/api';
+import { AdminImagesQuerySchema, ImageUploadSchema, validate } from '@/types/schemas';
+import type { ImageMetadata, ImageUploadResponse, ApiError } from '../../../types/api';
 
 export async function GET(request: NextRequest): Promise<NextResponse<ImageMetadata[] | ApiError>> {
   try {
@@ -19,19 +15,16 @@ export async function GET(request: NextRequest): Promise<NextResponse<ImageMetad
     }
 
     const { searchParams } = new URL(request.url);
-    const entityType = searchParams.get('entityType');
-    const entityId = searchParams.get('entityId');
-
-    if (!entityType || !entityId) {
-      return NextResponse.json({ error: 'Missing entityType or entityId' }, { status: 400 });
+    const validationResult = AdminImagesQuerySchema.safeParse({
+      entityType: searchParams.get('entityType'),
+      entityId: searchParams.get('entityId'),
+    });
+    if (!validationResult.success) {
+      return NextResponse.json({ error: 'Invalid image query parameters' }, { status: 400 });
     }
 
-    // Validate entity type
-    if (!['avatar', 'project', 'user'].includes(entityType)) {
-      return NextResponse.json({ error: 'Invalid entity type' }, { status: 400 });
-    }
-
-    const images = await getImagesByEntity(entityType as 'avatar' | 'project' | 'user', entityId);
+    const { entityType, entityId } = validationResult.data;
+    const images = await getImagesByEntity(entityType, entityId);
 
     return NextResponse.json(images);
   } catch (error) {
@@ -51,18 +44,12 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body: ImageUploadRequest = await request.json();
-    const { entityType, entityId, imageData, mimeType, width, height } = body;
-
-    // Validate required fields
-    if (!entityType || !entityId || !imageData || !mimeType) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    const validationResult = validate(ImageUploadSchema, await request.json());
+    if (!validationResult.success) {
+      return NextResponse.json({ error: 'Invalid image data' }, { status: 400 });
     }
 
-    // Validate entity type
-    if (!['avatar', 'project', 'user'].includes(entityType)) {
-      return NextResponse.json({ error: 'Invalid entity type' }, { status: 400 });
-    }
+    const { entityType, entityId, imageData, mimeType, width, height } = validationResult.data;
 
     // Use transaction to ensure data consistency
 
@@ -160,18 +147,18 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const entityType = searchParams.get('entityType');
-    const entityId = searchParams.get('entityId');
+    const validationResult = AdminImagesQuerySchema.safeParse({
+      entityType: searchParams.get('entityType'),
+      entityId: searchParams.get('entityId'),
+    });
 
-    if (!entityType || !entityId) {
-      return NextResponse.json({ error: 'Missing entityType or entityId' }, { status: 400 });
+    if (!validationResult.success) {
+      return NextResponse.json({ error: 'Invalid image query parameters' }, { status: 400 });
     }
 
+    const { entityType, entityId } = validationResult.data;
     const { deleteImagesForEntity } = await import('@/lib/image-service');
-    const success = await deleteImagesForEntity(
-      entityType as 'avatar' | 'project' | 'user',
-      entityId,
-    );
+    const success = await deleteImagesForEntity(entityType, entityId);
 
     if (!success) {
       return NextResponse.json({ error: 'Failed to delete images' }, { status: 500 });

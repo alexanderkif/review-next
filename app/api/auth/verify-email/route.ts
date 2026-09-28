@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { sendWelcomeEmail } from '@/lib/email-service';
+import { VerificationTokenQuerySchema } from '@/types/schemas';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const token = searchParams.get('token');
-
-    if (!token) {
-      return NextResponse.json({ error: 'Verification token not found' }, { status: 400 });
+    const validationResult = VerificationTokenQuerySchema.safeParse({
+      token: searchParams.get('token'),
+    });
+    if (!validationResult.success) {
+      return NextResponse.json({ error: 'Invalid verification token' }, { status: 400 });
     }
+
+    const { token } = validationResult.data;
 
     // Find user with given token
     const users = await sql`

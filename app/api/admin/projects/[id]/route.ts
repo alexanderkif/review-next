@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
-import type { Project, ApiError, ProjectUpdateRequest } from '@/types/api';
+import { NumericIdParamsSchema, ProjectUpdateSchema, validate } from '@/types/schemas';
+import type { Project, ApiError } from '@/types/api';
 
 // GET - получить конкретный проект
 export async function GET(
@@ -15,8 +16,12 @@ export async function GET(
   }
 
   try {
-    const { id } = await params;
-    const projectId = parseInt(id);
+    const parsedParams = NumericIdParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
+      return NextResponse.json({ error: 'Invalid project ID' }, { status: 400 });
+    }
+
+    const projectId = parsedParams.data.id;
     const project = await sql`
       SELECT * FROM projects WHERE id = ${projectId}
     `;
@@ -44,9 +49,24 @@ export async function PUT(
   }
 
   try {
-    const { id } = await params;
-    const projectId = parseInt(id);
-    const data: ProjectUpdateRequest = await request.json();
+    const parsedParams = NumericIdParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
+      return NextResponse.json({ error: 'Invalid project ID' }, { status: 400 });
+    }
+
+    const projectId = parsedParams.data.id;
+    const validationResult = validate(ProjectUpdateSchema, await request.json());
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid project data', details: validationResult.error.issues[0]?.message },
+        { status: 400 },
+      );
+    }
+
+    const data = validationResult.data;
+    if (data.id !== projectId) {
+      return NextResponse.json({ error: 'Project ID does not match route' }, { status: 400 });
+    }
 
     const {
       title,
@@ -121,8 +141,12 @@ export async function DELETE(
   }
 
   try {
-    const { id } = await params;
-    const projectId = parseInt(id);
+    const parsedParams = NumericIdParamsSchema.safeParse(await params);
+    if (!parsedParams.success) {
+      return NextResponse.json({ error: 'Invalid project ID' }, { status: 400 });
+    }
+
+    const projectId = parsedParams.data.id;
 
     // Get project images for cleanup
     const project = await sql`
