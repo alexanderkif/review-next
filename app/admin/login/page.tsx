@@ -79,12 +79,8 @@ function AdminLoginForm() {
 
       if (result?.error) {
         setErrors({ general: 'Invalid email or password' });
-      } else if (result?.url) {
-        // Используем window.location для гарантированного редиректа
-        window.location.href = '/admin';
       } else {
-        router.push('/admin');
-        router.refresh();
+        router.replace('/admin');
       }
     } catch (error) {
       logger.error('Admin login error:', error);

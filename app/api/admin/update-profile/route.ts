@@ -2,10 +2,7 @@
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { verifyAdminAuth } from '@/lib/admin-auth';
-import {
-  ProfileUpdateSchema,
-  validate,
-} from '@/types/schemas';
+import { ProfileUpdateSchema, validate } from '@/types/schemas';
 
 export async function PUT(request: NextRequest) {
   const { isAdmin, user } = await verifyAdminAuth();

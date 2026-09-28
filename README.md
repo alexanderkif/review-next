@@ -30,6 +30,7 @@ A portfolio website with a public CV, project pages, an admin area, email verifi
    POSTGRES_URL="postgresql://user:password@host:5432/database"
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="a-long-random-secret"
+   ADMIN_SETUP_TOKEN="a-separate-random-secret-at-least-32-characters"
    ```
 
    Generate a secret with:
@@ -38,8 +39,10 @@ A portfolio website with a public CV, project pages, an admin area, email verifi
    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    ```
 
+   Generate a separate value for `ADMIN_SETUP_TOKEN` before initializing the first administrator in production. It is optional in local development. Remove it from the production environment after bootstrap.
+
    Optional integrations:
-   - Email verification needs `EMAIL_USER` and `EMAIL_PASS`, or the `SMTP_*` settings. Set `EMAIL_FROM` as needed.
+   - Email verification uses one SMTP config in all environments: `SMTP_HOST` (defaults to `smtp.gmail.com`), `SMTP_PORT` (defaults to `587`), `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, and `EMAIL_FROM`. `EMAIL_USER` / `EMAIL_PASS` are read as a fallback for the user/password when the `SMTP_*` names are not set.
    - OAuth sign-in uses `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GITHUB_ID`, and `GITHUB_SECRET`.
    - The chat assistant needs `GEMINI_API_KEY` or `GROQ_API_KEY`. Gemini is tried first when configured; Groq is the fallback.
 

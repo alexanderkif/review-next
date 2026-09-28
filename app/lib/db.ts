@@ -8,8 +8,16 @@ declare global {
   var _pgSql: postgres.Sql | undefined;
 }
 
-const sql: postgres.Sql =
-  globalThis._pgSql ?? postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+function createSqlClient(): postgres.Sql {
+  const connectionString = process.env.POSTGRES_URL;
+  if (!connectionString) {
+    throw new Error('POSTGRES_URL is required to initialize the database connection.');
+  }
+
+  return postgres(connectionString, { ssl: 'require' });
+}
+
+const sql: postgres.Sql = globalThis._pgSql ?? createSqlClient();
 
 if (process.env.NODE_ENV !== 'production') {
   globalThis._pgSql = sql;

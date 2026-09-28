@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/logger';
 import { useToast } from '@/components/ui/ToastContainer';
 import { useConfirm } from '@/components/ui/ConfirmProvider';
@@ -11,6 +12,7 @@ import PasswordSection from './PasswordSection';
 import DangerZone from './DangerZone';
 
 export default function AdminSettings({ user }: AdminSettingsProps) {
+  const router = useRouter();
   const { showToast } = useToast();
   const { confirm } = useConfirm();
   const [name, setName] = useState(user.name || '');
@@ -51,7 +53,7 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
       if (response.ok) {
         showToast('Name updated successfully!', 'success');
         setTimeout(() => {
-          window.location.reload();
+          router.refresh();
         }, 500);
       } else {
         showToast(data.error || 'Error updating name', 'error');
@@ -96,7 +98,7 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
       if (response.ok) {
         showToast('Email successfully updated! You need to log in again.', 'success');
         await fetch('/api/admin/logout', { method: 'POST' });
-        window.location.href = '/admin/login';
+        router.replace('/admin/login');
       } else {
         showToast(data.error || 'Error updating email', 'error');
       }
@@ -246,7 +248,7 @@ export default function AdminSettings({ user }: AdminSettingsProps) {
         }
         showToast(message, 'success', 10000);
         setTimeout(() => {
-          window.location.reload();
+          router.refresh();
         }, 2000);
       } else {
         showToast(data.error || 'Error clearing database', 'error');

@@ -83,6 +83,7 @@ function RegisterForm() {
     setLoading(true);
 
     try {
+      console.log('fetch /api/auth/register');
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {

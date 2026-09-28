@@ -284,6 +284,10 @@ export const SetupSchema = z.object({
 
 export type SetupData = z.infer<typeof SetupSchema>;
 
+export const AdminSetupRequestSchema = SetupSchema.extend({
+  setupToken: z.string().max(512).optional(),
+});
+
 // ==================== Profile Update Schemas ====================
 
 export const UpdateProfileNameSchema = z.object({

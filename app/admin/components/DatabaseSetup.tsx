@@ -8,6 +8,7 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
     email: '',
     password: '',
     confirmPassword: '',
+    setupToken: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -33,6 +34,7 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          setupToken: formData.setupToken,
         }),
       });
 
@@ -124,6 +126,21 @@ export default function DatabaseSetup({ onComplete }: { onComplete: () => void }
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              />
+            </div>
+            <div>
+              <label htmlFor="setupToken" className="sr-only">
+                Initial setup token
+              </label>
+              <input
+                id="setupToken"
+                name="setupToken"
+                type="password"
+                autoComplete="off"
+                className="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none sm:text-sm"
+                placeholder="Initial setup token (required in production)"
+                value={formData.setupToken}
+                onChange={(e) => setFormData({ ...formData, setupToken: e.target.value })}
               />
             </div>
           </div>

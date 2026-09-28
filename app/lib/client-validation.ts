@@ -9,20 +9,20 @@ export function validateClient<T extends z.ZodType>(
   data: Record<string, unknown>,
 ): { success: boolean; errors?: Record<string, string[]>; data?: z.infer<T> } {
   const result = schema.safeParse(data);
-  
+
   if (result.success) {
     return { success: true, data: result.data };
   }
-  
+
   const flattened = result.error.flatten();
   const fieldErrors: Record<string, string[]> = {};
-  
+
   for (const [field, errors] of Object.entries(flattened.fieldErrors)) {
     if (errors && Array.isArray(errors) && errors.length > 0) {
       fieldErrors[field] = errors as string[];
     }
   }
-  
+
   return { success: false, errors: fieldErrors };
 }
 
@@ -35,11 +35,11 @@ export function validateField<T extends z.ZodType>(
   value: unknown,
 ): { success: boolean; error?: string } {
   const result = schema.safeParse({ [fieldName]: value });
-  
+
   if (result.success) {
     return { success: true };
   }
-  
+
   const fieldErrors = result.error.flatten().fieldErrors;
   const fieldError = fieldErrors[fieldName as keyof typeof fieldErrors];
   return {
@@ -55,11 +55,11 @@ export function useFormValidation<T extends z.ZodType>(schema: T) {
   const validateForm = (data: Record<string, unknown>) => {
     return validateClient(schema, data);
   };
-  
+
   const getFieldError = (fieldName: string, value: unknown) => {
     return validateField(schema, fieldName, value);
   };
-  
+
   return {
     validateForm,
     getFieldError,
@@ -69,18 +69,16 @@ export function useFormValidation<T extends z.ZodType>(schema: T) {
 /**
  * Formats validation errors for display in UI components
  */
-export function formatErrorsForDisplay(
-  errors: Record<string, string[]>,
-): Record<string, string> {
+export function formatErrorsForDisplay(errors: Record<string, string[]>): Record<string, string> {
   const formatted: Record<string, string> = {};
-  
+
   for (const [field, messages] of Object.entries(errors)) {
     if (messages && messages.length > 0) {
       // Use the first error message for each field
       formatted[field] = messages[0];
     }
   }
-  
+
   return formatted;
 }
 
@@ -101,11 +99,11 @@ export async function parseApiResponse<T extends z.ZodType>(
   try {
     const json = await response.json();
     const result = schema.safeParse(json);
-    
+
     if (result.success) {
       return { success: true, data: result.data };
     }
-    
+
     return {
       success: false,
       error: 'Invalid response format',
@@ -121,12 +119,9 @@ export async function parseApiResponse<T extends z.ZodType>(
 /**
  * Creates a debounced validation function for real-time feedback
  */
-export function createDebouncedValidation<T extends z.ZodType>(
-  schema: T,
-  delay: number = 300,
-) {
+export function createDebouncedValidation<T extends z.ZodType>(schema: T, delay: number = 300) {
   let timeoutId: ReturnType<typeof setTimeout>;
-  
+
   return (data: Record<string, unknown>) => {
     return new Promise<{ success: boolean; errors?: Record<string, string[]> }>((resolve) => {
       clearTimeout(timeoutId);

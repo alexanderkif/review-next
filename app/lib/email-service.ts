@@ -1,32 +1,60 @@
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import { serverLogger } from '@/lib/logger';
+
+function getMailErrorDetails(error: unknown) {
+  const properties =
+    typeof error === 'object' && error !== null ? (error as Record<string, unknown>) : {};
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof properties.message === 'string'
+        ? properties.message
+        : String(error);
+
+  return {
+    name: error instanceof Error ? error.name : properties.name,
+    code: properties.code,
+    command: properties.command,
+    responseCode: properties.responseCode,
+    syscall: properties.syscall,
+    message: message.replace(/[\w.+-]+@[\w.-]+\.[A-Z]{2,}/gi, '[redacted-email]'),
+  };
+}
+
+type MailConfig = {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string | undefined;
+  pass: string | undefined;
+  from: string | undefined;
+};
+
+// Single source of truth for SMTP settings in every environment.
+// Prefers SMTP_* and falls back to the legacy EMAIL_USER / EMAIL_PASS names,
+// so one set of variables works for both local development and production.
+function getMailConfig(): MailConfig {
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = Number.parseInt(process.env.SMTP_PORT || '587', 10);
+  const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : port === 465;
+  const user = process.env.SMTP_USER || process.env.EMAIL_USER;
+  const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+
+  return { host, port, secure, user, pass, from: process.env.EMAIL_FROM || user };
+}
 
 // Create email transport
-const createTransporter = () => {
-  // For development use Ethereal Email (test SMTP)
-  // For production need to configure real SMTP server
-  if (process.env.NODE_ENV === 'development') {
-    // Use Gmail SMTP for testing (need to configure App Password)
-    return nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // your Gmail
-        pass: process.env.EMAIL_PASS, // App Password from Gmail
-      },
-    });
-  } else {
-    // For production - configure your SMTP server
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  }
-};
+const createTransporter = (config: MailConfig) =>
+  nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
 
 // Generate verification token
 export function generateVerificationToken(): string {
@@ -39,13 +67,25 @@ export async function sendVerificationEmail(
   name: string,
   token: string,
 ): Promise<boolean> {
+  const config = getMailConfig();
+
+  serverLogger.info('[email] verification send started', {
+    transport: 'smtp',
+    smtpHost: config.host,
+    smtpPort: config.port,
+    smtpSecure: config.secure,
+    authConfigured: Boolean(config.user && config.pass),
+    senderSource: process.env.EMAIL_FROM ? 'EMAIL_FROM' : config.user ? 'user' : 'missing',
+    nextAuthUrlConfigured: Boolean(process.env.NEXTAUTH_URL),
+  });
+
   try {
-    const transporter = createTransporter();
+    const transporter = createTransporter(config);
 
     const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`;
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: config.from,
       to: email,
       subject: 'Email Verification - Portfolio Site',
       html: `
@@ -109,21 +149,27 @@ export async function sendVerificationEmail(
       `,
     };
 
-    await transporter.sendMail(mailOptions);
+    const result = await transporter.sendMail(mailOptions);
+    serverLogger.info('[email] verification send succeeded', {
+      acceptedCount: result.accepted.length,
+      rejectedCount: result.rejected.length,
+    });
     return true;
   } catch (error) {
-    console.error('Error sending verification email:', error);
+    serverLogger.error('[email] verification send failed', getMailErrorDetails(error));
     return false;
   }
 }
 
 // Send successful verification notification
 export async function sendWelcomeEmail(email: string, name: string): Promise<boolean> {
+  const config = getMailConfig();
+
   try {
-    const transporter = createTransporter();
+    const transporter = createTransporter(config);
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: config.from,
       to: email,
       subject: '✅ Email Verified - Welcome!',
       html: `
@@ -183,7 +229,7 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<boo
     await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
-    console.error('Error sending welcome email:', error);
+    serverLogger.error('[email] welcome send failed', getMailErrorDetails(error));
     return false;
   }
 }

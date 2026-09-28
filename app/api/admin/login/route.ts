@@ -4,13 +4,23 @@ import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
 import { LoginSchema, validateFormData } from '@/types/schemas';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || 'your-super-secret-key-change-this-in-production',
-);
+import { consumeRateLimit, getRateLimitIdentifier } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    const ipLimit = await consumeRateLimit(
+      'legacy-admin-login-ip',
+      getRateLimitIdentifier(request.headers),
+      5,
+      15 * 60,
+    );
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many login attempts. Try again later.' },
+        { status: 429, headers: { 'Retry-After': String(ipLimit.retryAfterSeconds) } },
+      );
+    }
+
     const formData = await request.formData();
     const validationResult = validateFormData(LoginSchema, formData);
     if (!validationResult.success) {
@@ -21,6 +31,10 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password } = validationResult.data;
+    const secret = process.env.NEXTAUTH_SECRET;
+    if (!secret) {
+      return NextResponse.json({ error: 'Authentication is not configured' }, { status: 500 });
+    }
 
     // Найти пользователя в базе данных
     const userResult = await sql`
@@ -50,7 +64,7 @@ export async function POST(request: NextRequest) {
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('24h')
-      .sign(JWT_SECRET);
+      .sign(new TextEncoder().encode(secret));
 
     // Set cookie with token
     const cookieStore = await cookies();

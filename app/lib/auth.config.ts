@@ -5,11 +5,15 @@ import GitHubProvider from 'next-auth/providers/github';
 import { z } from 'zod';
 import type { User as DBUser } from './definitions';
 import bcrypt from 'bcryptjs';
-import postgres from 'postgres';
+import { sql } from '@/lib/db';
+import { consumeRateLimit, getRateLimitIdentifier } from '@/lib/rate-limit';
 import type { User, Account, Profile, Session } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const githubClientId = process.env.GITHUB_ID;
+const githubClientSecret = process.env.GITHUB_SECRET;
 
 async function getUser(email: string): Promise<DBUser | undefined> {
   try {
@@ -90,33 +94,47 @@ export const authConfig = {
 export const nextAuthConfig = {
   ...authConfig,
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: 'consent',
-          access_type: 'offline',
-          response_type: 'code',
-        },
-      },
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
+    ...(googleClientId && googleClientSecret
+      ? [
+          GoogleProvider({
+            clientId: googleClientId,
+            clientSecret: googleClientSecret,
+            authorization: {
+              params: {
+                prompt: 'consent',
+                access_type: 'offline',
+                response_type: 'code',
+              },
+            },
+          }),
+        ]
+      : []),
+    ...(githubClientId && githubClientSecret
+      ? [GitHubProvider({ clientId: githubClientId, clientSecret: githubClientSecret })]
+      : []),
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
+        const ipLimit = await consumeRateLimit(
+          'credentials-ip',
+          getRateLimitIdentifier(new Headers(request.headers ?? {})),
+          10,
+          15 * 60,
+        );
+        if (!ipLimit.allowed) return null;
+
         const parsedCredentials = z
           .object({ email: z.email(), password: z.string().min(6) })
           .safeParse(credentials);
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
+          const emailLimit = await consumeRateLimit('credentials-email', email, 10, 15 * 60);
+          if (!emailLimit.allowed) return null;
+
           const user = await getUser(email);
           if (!user) return null;
 

@@ -1,7 +1,9 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'node:crypto';
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import { SetupSchema, validate } from '@/types/schemas';
+import { AdminSetupRequestSchema, validate } from '@/types/schemas';
+import { consumeRateLimit, getRateLimitIdentifier } from '@/lib/rate-limit';
 
 export async function GET() {
   try {
@@ -29,6 +31,19 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const ipLimit = await consumeRateLimit(
+      'admin-setup-ip',
+      getRateLimitIdentifier(request.headers),
+      3,
+      60 * 60,
+    );
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many setup attempts. Try again later.' },
+        { status: 429, headers: { 'Retry-After': String(ipLimit.retryAfterSeconds) } },
+      );
+    }
+
     // Сначала проверим, не инициализирована ли уже база
     try {
       const existingUsers = await sql`
@@ -44,10 +59,24 @@ export async function POST(request: NextRequest) {
       // Если таблицы не существуют, продолжаем инициализацию
     }
 
-    const data = await request.json();
+    const configuredSetupToken = process.env.ADMIN_SETUP_TOKEN;
+    if (
+      process.env.NODE_ENV === 'production' &&
+      (!configuredSetupToken || configuredSetupToken.length < 32)
+    ) {
+      return NextResponse.json(
+        { error: 'Initial administrator setup is not configured' },
+        { status: 503 },
+      );
+    }
+    if (configuredSetupToken && configuredSetupToken.length < 32) {
+      return NextResponse.json(
+        { error: 'ADMIN_SETUP_TOKEN must be at least 32 characters' },
+        { status: 503 },
+      );
+    }
 
-    // Validate data
-    const validationResult = validate(SetupSchema, data);
+    const validationResult = validate(AdminSetupRequestSchema, await request.json());
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid data', details: validationResult.error.issues },
@@ -55,7 +84,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, password } = validationResult.data;
+    const { name, email, password, setupToken } = validationResult.data;
+    if (configuredSetupToken) {
+      const configuredTokenBuffer = Buffer.from(configuredSetupToken);
+      const providedTokenBuffer = Buffer.from(setupToken ?? '');
+      if (
+        configuredTokenBuffer.length !== providedTokenBuffer.length ||
+        !timingSafeEqual(configuredTokenBuffer, providedTokenBuffer)
+      ) {
+        return NextResponse.json({ error: 'Invalid setup token' }, { status: 401 });
+      }
+    }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -206,11 +245,25 @@ export async function POST(request: NextRequest) {
       ON images(created_at DESC)
     `;
 
-    // Create administrator
-    await sql`
-      INSERT INTO users (name, email, password_hash, role)
-      VALUES (${name}, ${email}, ${hashedPassword}, 'admin')
-    `;
+    // Serialize first-admin creation so concurrent public setup requests cannot both succeed.
+    const adminCreated = await sql.begin(async (transaction) => {
+      await transaction`SELECT pg_advisory_xact_lock(2026092801::bigint)`;
+
+      const existingAdmins = await transaction`
+        SELECT COUNT(*) AS count FROM users WHERE role = 'admin'
+      `;
+      if (Number(existingAdmins[0].count) > 0) return false;
+
+      await transaction`
+        INSERT INTO users (name, email, password_hash, role)
+        VALUES (${name}, ${email}, ${hashedPassword}, 'admin')
+      `;
+      return true;
+    });
+
+    if (!adminCreated) {
+      return NextResponse.json({ error: 'Database is already initialized' }, { status: 400 });
+    }
 
     return NextResponse.json({
       success: true,

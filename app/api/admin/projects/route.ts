@@ -48,11 +48,22 @@ export async function POST(request: NextRequest) {
     if (!validatedData.success) {
       return NextResponse.json(
         { error: 'Invalid project data', details: validatedData.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { title, description, short_description, technologies, github_url, demo_url, image_urls, year, featured, status } = validatedData.data;
+    const {
+      title,
+      description,
+      short_description,
+      technologies,
+      github_url,
+      demo_url,
+      image_urls,
+      year,
+      featured,
+      status,
+    } = validatedData.data;
 
     const result = await sql`
       INSERT INTO projects (

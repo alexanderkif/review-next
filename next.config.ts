@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   },
   compiler: {
     // Remove console logs in production
-    removeConsole: process.env.NODE_ENV === 'production',
+    // removeConsole: process.env.NODE_ENV === 'production',
   },
   // Disable source maps in production to reduce bundle size
   productionBrowserSourceMaps: false,

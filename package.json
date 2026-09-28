@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@google/genai": "^1.46.0",
-    "@types/nodemailer": "^7.0.3",
     "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
@@ -21,14 +20,14 @@
     "lucide-react": "^0.548.0",
     "next": "^16.0.7",
     "next-auth": "^4.24.12",
-    "nodemailer": "^7.0.10",
+    "nodemailer": "^10.0.12",
     "pdf-lib": "^1.17.1",
     "postgres": "^3.4.7",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "recharts": "^3.3.0",
     "server-only": "^0.0.1",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.5",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.12"
   },
@@ -38,11 +37,16 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9",
-    "eslint-config-next": "16.0.0",
+    "eslint-config-next": "^16.3.6",
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "next-auth": {
+      "nodemailer": "$nodemailer"
+    }
   },
   "browserslist": [
     "Chrome >= 92",

@@ -103,10 +103,10 @@ function VerifyEmailContent() {
               </div>
             )}
             <div className="space-y-3">
-              <Button className="w-full" onClick={() => router.push('/auth/login')}>
+              <Button className="btn-primary w-full" onClick={() => router.push('/auth/login')}>
                 Login to Account
               </Button>
-              <Button className="w-full" onClick={() => router.push('/')}>
+              <Button className="btn-primary w-full" onClick={() => router.push('/')}>
                 Home
               </Button>
             </div>
@@ -120,7 +120,7 @@ function VerifyEmailContent() {
             <h2 className="mb-4 text-2xl font-bold text-blue-700">Email Already Verified</h2>
             <p className="mb-6 text-slate-700">{state.message}</p>
             <div className="space-y-3">
-              <Button className="w-full" onClick={() => router.push('/auth/login')}>
+              <Button className="btn-primary w-full" onClick={() => router.push('/auth/login')}>
                 Login to Account
               </Button>
             </div>
@@ -134,10 +134,10 @@ function VerifyEmailContent() {
             <h2 className="mb-4 text-2xl font-bold text-red-700">Verification Error</h2>
             <p className="mb-6 text-slate-700">{state.message}</p>
             <div className="space-y-3">
-              <Button className="w-full" onClick={() => router.push('/auth/register')}>
+              <Button className="btn-primary w-full" onClick={() => router.push('/auth/register')}>
                 Retry Registration
               </Button>
-              <Button className="w-full" onClick={() => router.push('/')}>
+              <Button className="btn-primary w-full" onClick={() => router.push('/')}>
                 Home
               </Button>
             </div>

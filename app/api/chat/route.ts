@@ -3,11 +3,14 @@ import { GoogleGenAI } from '@google/genai';
 import Groq from 'groq-sdk';
 import { MY_CONTEXT } from '@/lib/chat-context';
 import { ChatRequestSchema } from '@/types/schemas';
+import { consumeRateLimit, getRateLimitIdentifier } from '@/lib/rate-limit';
 
 export const maxDuration = 60; // Vercel: allow up to 60s for Gemini API calls
 
-const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const geminiApiKey = process.env.GEMINI_API_KEY;
+const groqApiKey = process.env.GROQ_API_KEY;
+const gemini = geminiApiKey ? new GoogleGenAI({ apiKey: geminiApiKey }) : null;
+const groq = groqApiKey ? new Groq({ apiKey: groqApiKey }) : null;
 
 // Track Gemini degraded state — if it returned 503, skip it for 5 minutes
 // (module-level: persists within a warm serverless instance, resets on cold start)
@@ -16,83 +19,33 @@ let geminiDegradedUntil = 0;
 // Groq is the default provider (faster, higher free limits).
 // Gemini is used as fallback when Groq fails.
 
-// Rate limiter: global per-minute (hard Gemini project limit) + per-IP per-hour + global per-day
-interface RateBucket {
-  count: number;
-  resetTime: number;
-}
-const perHourMap = new Map<string, RateBucket>();
-
-// Global RPM — Gemini allows 15 RPM per project across ALL users
-let globalMinCount = 0;
-let globalMinReset = Date.now() + 60_000;
-const GLOBAL_RPM_LIMIT = 13; // leave 2 as buffer under Gemini's 15 RPM
-
-// Per-IP hourly cap — prevents a single user from burning the daily budget
+const GLOBAL_RPM_LIMIT = 13;
 const RPH_LIMIT = 20;
-
-// Global RPD — Gemini allows 500 RPD per project
 const RPD_LIMIT = 450;
-const ONE_DAY_MS = 86_400_000;
-let globalDailyCount = 0;
-let globalDailyReset = Date.now() + ONE_DAY_MS;
-
-function isRateLimited(ip: string): '429-minute' | '429-hour' | null {
-  const now = Date.now();
-
-  // Global per-minute check (protects against concurrent users hitting Gemini limit)
-  if (now > globalMinReset) {
-    globalMinCount = 0;
-    globalMinReset = now + 60_000;
-  }
-  if (globalMinCount >= GLOBAL_RPM_LIMIT) return '429-minute';
-  globalMinCount++;
-
-  // Per-IP hourly check
-  const hour = perHourMap.get(ip);
-  if (!hour || now > hour.resetTime) {
-    perHourMap.set(ip, { count: 1, resetTime: now + 3_600_000 });
-  } else if (hour.count >= RPH_LIMIT) {
-    return '429-hour';
-  } else {
-    hour.count++;
-  }
-
-  return null;
-}
-
-function isGlobalDailyLimitReached(): boolean {
-  const now = Date.now();
-  if (now > globalDailyReset) {
-    globalDailyCount = 0;
-    globalDailyReset = now + ONE_DAY_MS;
-  }
-  if (globalDailyCount >= RPD_LIMIT) return true;
-  globalDailyCount++;
-  return false;
-}
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-
-  if (isGlobalDailyLimitReached()) {
+  const ip = getRateLimitIdentifier(req.headers);
+  const dailyLimit = await consumeRateLimit('chat-global-daily', 'all', RPD_LIMIT, 86_400);
+  if (!dailyLimit.allowed) {
     return NextResponse.json(
       { error: 'Daily message limit reached. Please come back tomorrow.' },
-      { status: 429 },
+      { status: 429, headers: { 'Retry-After': String(dailyLimit.retryAfterSeconds) } },
     );
   }
 
-  const limited = isRateLimited(ip);
-  if (limited === '429-minute') {
+  const minuteLimit = await consumeRateLimit('chat-global-minute', 'all', GLOBAL_RPM_LIMIT, 60);
+  if (!minuteLimit.allowed) {
     return NextResponse.json(
       { error: 'Slow down a little — please wait a moment before sending another message.' },
-      { status: 429 },
+      { status: 429, headers: { 'Retry-After': String(minuteLimit.retryAfterSeconds) } },
     );
   }
-  if (limited === '429-hour') {
+
+  const hourlyLimit = await consumeRateLimit('chat-ip-hour', ip, RPH_LIMIT, 3_600);
+  if (!hourlyLimit.allowed) {
     return NextResponse.json(
       { error: 'Hourly message limit reached. Please come back in an hour.' },
-      { status: 429 },
+      { status: 429, headers: { 'Retry-After': String(hourlyLimit.retryAfterSeconds) } },
     );
   }
 
@@ -108,33 +61,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No valid messages provided.' }, { status: 400 });
   }
 
-  // Keep only the latest messages to limit prompt size.
-  const validMessages = validationResult.data.messages.slice(-10).map((m) => ({
-    role: m.role === 'user' ? ('user' as const) : ('model' as const),
-    parts: [{ text: m.content.slice(0, 600) }],
+  const validMessages = validationResult.data.messages.slice(-10).map((message) => ({
+    role: message.role === 'user' ? ('user' as const) : ('model' as const),
+    parts: [{ text: message.content }],
   }));
 
-  if (validMessages.length === 0) {
-    return NextResponse.json({ error: 'No valid messages.' }, { status: 400 });
-  }
-
-  // Prepare history (last message is sent separately)
   const allButLast = validMessages.slice(0, -1);
-  const firstUserIndex = allButLast.findIndex((m) => m.role === 'user');
+  const firstUserIndex = allButLast.findIndex((message) => message.role === 'user');
   const history = firstUserIndex === -1 ? [] : allButLast.slice(firstUserIndex);
   const lastUserText = validMessages[validMessages.length - 1].parts[0].text;
 
-  // Groq history uses 'assistant' role instead of 'model'
   const groqMessages = [
     { role: 'system' as const, content: MY_CONTEXT },
-    ...history.map((m) => ({
-      role: m.role === 'user' ? ('user' as const) : ('assistant' as const),
-      content: m.parts[0].text,
+    ...history.map((message) => ({
+      role: message.role === 'user' ? ('user' as const) : ('assistant' as const),
+      content: message.parts[0].text,
     })),
     { role: 'user' as const, content: lastUserText },
   ];
 
   async function tryGroq(): Promise<string> {
+    if (!groq) throw new Error('Groq provider is not configured');
+
     const completion = await groq.chat.completions.create({
       model: 'openai/gpt-oss-20b',
       messages: groqMessages,
@@ -145,6 +93,8 @@ export async function POST(req: NextRequest) {
   }
 
   async function tryGemini(): Promise<string> {
+    if (!gemini) throw new Error('Gemini provider is not configured');
+
     const chat = gemini.chats.create({
       model: 'gemini-3.5-flash-lite',
       config: { systemInstruction: MY_CONTEXT, maxOutputTokens: 400, temperature: 0.5 },
@@ -157,11 +107,11 @@ export async function POST(req: NextRequest) {
   try {
     let responseText: string;
 
-    if (process.env.GEMINI_API_KEY) {
+    if (gemini) {
       // Gemini is primary — use it first, then fall back to Groq if it fails
       const now = Date.now();
       if (now < geminiDegradedUntil) {
-        if (!process.env.GROQ_API_KEY) {
+        if (!groq) {
           throw new Error('Both providers unavailable');
         }
         try {
@@ -180,7 +130,7 @@ export async function POST(req: NextRequest) {
           const httpStatus = e?.status ?? e?.httpErrorCode;
           if (httpStatus === 503) geminiDegradedUntil = Date.now() + 5 * 60_000;
 
-          if (process.env.GROQ_API_KEY) {
+          if (groq) {
             try {
               responseText = await tryGroq();
             } catch (groqErr: unknown) {
@@ -196,7 +146,7 @@ export async function POST(req: NextRequest) {
           }
         }
       }
-    } else if (process.env.GROQ_API_KEY) {
+    } else if (groq) {
       // No Gemini key — use Groq only
       try {
         responseText = await tryGroq();
