@@ -1,19 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
+import CommaSeparatedInput from '@/components/ui/CommaSeparatedInput';
 import MultipleImageUpload from '@/components/ui/MultipleImageUpload';
 import { Save, User } from 'lucide-react';
-import { CVData, SkillCategory } from './types';
-import SkillsGroup from './SkillsGroup';
+import { CVData } from './types';
 
 interface PersonalInfoSectionProps {
   cvData: CVData;
   saving: boolean;
   onUpdateField: (field: keyof CVData['cv'], value: string | string[]) => void;
   onUpdateCvData: (data: CVData) => void;
-  onAddSkill: (category: SkillCategory) => void;
-  onRemoveSkill: (category: SkillCategory, index: number) => void;
-  onUpdateSkill: (category: SkillCategory, index: number, value: string) => void;
   onSave: () => void;
 }
 
@@ -22,9 +19,6 @@ export default function PersonalInfoSection({
   saving,
   onUpdateField,
   onUpdateCvData,
-  onAddSkill,
-  onRemoveSkill,
-  onUpdateSkill,
   onSave,
 }: PersonalInfoSectionProps) {
   const parseAvatarUrls = (avatarUrl: string): string[] => {
@@ -151,33 +145,26 @@ export default function PersonalInfoSection({
         </div>
 
         {/* Skills */}
-        <div className="space-y-6">
-          <SkillsGroup
+        <div className="space-y-4">
+          <CommaSeparatedInput
             label="Technologies"
-            category="skills_frontend"
-            skills={cvData.cv.skills_frontend || []}
-            onAdd={onAddSkill}
-            onRemove={onRemoveSkill}
-            onUpdate={onUpdateSkill}
+            value={cvData.cv.skills_frontend || []}
+            onChange={(values) => onUpdateField('skills_frontend', values)}
+            placeholder="JavaScript, TypeScript, React, Next.js, HTML, CSS"
           />
 
-          <SkillsGroup
+          <CommaSeparatedInput
             label="Tools"
-            category="skills_tools"
-            skills={cvData.cv.skills_tools || []}
-            onAdd={onAddSkill}
-            onRemove={onRemoveSkill}
-            onUpdate={onUpdateSkill}
-            placeholder="Tool name"
+            value={cvData.cv.skills_tools || []}
+            onChange={(values) => onUpdateField('skills_tools', values)}
+            placeholder="Git, Docker, Jira, Figma, VS Code"
           />
 
-          <SkillsGroup
+          <CommaSeparatedInput
             label="Methodologies/Practices"
-            category="skills_backend"
-            skills={cvData.cv.skills_backend || []}
-            onAdd={onAddSkill}
-            onRemove={onRemoveSkill}
-            onUpdate={onUpdateSkill}
+            value={cvData.cv.skills_backend || []}
+            onChange={(values) => onUpdateField('skills_backend', values)}
+            placeholder="Agile, Scrum, CI/CD, TDD, Code Review"
           />
         </div>
 

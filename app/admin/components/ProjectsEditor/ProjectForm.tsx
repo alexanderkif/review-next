@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
+import CommaSeparatedInput from '@/components/ui/CommaSeparatedInput';
 import MultipleImageUpload from '@/components/ui/MultipleImageUpload';
-import Tooltip from '@/components/ui/Tooltip';
-import { Save, X, Plus, Trash2 } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import { Project } from './types';
 
 interface ProjectFormProps {
@@ -11,9 +11,6 @@ interface ProjectFormProps {
   onUpdate: (field: string, value: unknown) => void;
   onSave: () => void;
   onCancel: () => void;
-  onAddTechnology: () => void;
-  onRemoveTechnology: (index: number) => void;
-  onUpdateTechnology: (index: number, value: string) => void;
   onUpdateImages: (imageIds: string[]) => void;
 }
 
@@ -22,9 +19,6 @@ export default function ProjectForm({
   onUpdate,
   onSave,
   onCancel,
-  onAddTechnology,
-  onRemoveTechnology,
-  onUpdateTechnology,
   onUpdateImages,
 }: ProjectFormProps) {
   return (
@@ -140,43 +134,12 @@ export default function ProjectForm({
         </div>
 
         {/* Technologies */}
-        <div>
-          <div className="mb-3 flex items-center justify-between">
-            <div className="text-sm font-medium text-slate-700">Technologies</div>
-            <Tooltip content="Add technology" position="top" variant="clay">
-              <Button
-                size="sm"
-                onClick={onAddTechnology}
-                className="group min-h-[32px] min-w-[32px]"
-                aria-label="Add technology"
-              >
-                <Plus size={16} className="icon-success" />
-              </Button>
-            </Tooltip>
-          </div>
-          <div className="space-y-2">
-            {project.technologies.map((tech, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  label="Technology"
-                  value={tech || ''}
-                  onChange={(e) => onUpdateTechnology(index, e.target.value)}
-                  placeholder="Technology name"
-                />
-                <Tooltip content="Remove technology" position="top" variant="clay">
-                  <Button
-                    size="sm"
-                    onClick={() => onRemoveTechnology(index)}
-                    className="group min-h-[36px] min-w-[36px] p-2 transition-all hover:bg-red-50"
-                    aria-label="Remove technology"
-                  >
-                    <Trash2 size={16} className="icon-danger" />
-                  </Button>
-                </Tooltip>
-              </div>
-            ))}
-          </div>
-        </div>
+        <CommaSeparatedInput
+          label="Technologies"
+          value={project.technologies || []}
+          onChange={(values) => onUpdate('technologies', values)}
+          placeholder="TypeScript, React, Next.js, PostgreSQL"
+        />
 
         {/* Project Images */}
         <div>

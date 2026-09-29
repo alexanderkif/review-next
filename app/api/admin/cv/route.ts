@@ -110,9 +110,9 @@ export async function PUT(request: NextRequest) {
     const github_url = parsed.github_url ?? null;
     const linkedin_url = parsed.linkedin_url ?? null;
     const about = parsed.about ?? null;
-    const skills_frontend = parsed.skills_frontend ? JSON.stringify(parsed.skills_frontend) : null;
-    const skills_tools = parsed.skills_tools ? JSON.stringify(parsed.skills_tools) : null;
-    const skills_backend = parsed.skills_backend ? JSON.stringify(parsed.skills_backend) : null;
+    const skills_frontend = parsed.skills_frontend ?? null;
+    const skills_tools = parsed.skills_tools ?? null;
+    const skills_backend = parsed.skills_backend ?? null;
 
     // Находим активное CV
     const currentCV = await sql`

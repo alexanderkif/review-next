@@ -162,24 +162,6 @@ export default function ProjectsEditor() {
     });
   };
 
-  const addTechnology = () => {
-    if (!editingProject) return;
-    updateProject('technologies', [...editingProject.technologies, '']);
-  };
-
-  const removeTechnology = (index: number) => {
-    if (!editingProject) return;
-    const newTech = editingProject.technologies.filter((_, i) => i !== index);
-    updateProject('technologies', newTech);
-  };
-
-  const updateTechnology = (index: number, value: string) => {
-    if (!editingProject) return;
-    const newTech = [...editingProject.technologies];
-    newTech[index] = value;
-    updateProject('technologies', newTech);
-  };
-
   const updateProjectImages = (imageIds: string[]) => {
     if (!editingProject) return;
     updateProject('image_urls', imageIds);
@@ -223,9 +205,6 @@ export default function ProjectsEditor() {
           onUpdate={updateProject}
           onSave={handleSaveProject}
           onCancel={() => setShowForm(false)}
-          onAddTechnology={addTechnology}
-          onRemoveTechnology={removeTechnology}
-          onUpdateTechnology={updateTechnology}
           onUpdateImages={updateProjectImages}
         />
       )}

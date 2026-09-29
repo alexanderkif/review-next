@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { User, Briefcase, GraduationCap, Languages } from 'lucide-react';
 import { logger } from '@/lib/logger';
 import { useToast } from '@/components/ui/ToastContainer';
-import { CVData, SkillCategory } from './types';
+import { CVData } from './types';
 import PersonalInfoSection from './PersonalInfoSection';
 import ExperienceSection from './ExperienceSection';
 import EducationSection from './EducationSection';
@@ -79,32 +79,6 @@ export default function CVEditor() {
         [field]: value,
       },
     });
-  };
-
-  const updateSkills = (category: SkillCategory, skills: string[]) => {
-    updatePersonalField(category, skills);
-  };
-
-  const addSkill = (category: SkillCategory) => {
-    if (!cvData) return;
-    const currentSkills = cvData.cv[category] || [];
-    updateSkills(category, [...currentSkills, '']);
-  };
-
-  const removeSkill = (category: SkillCategory, index: number) => {
-    if (!cvData) return;
-    const currentSkills = cvData.cv[category] || [];
-    updateSkills(
-      category,
-      currentSkills.filter((_, i) => i !== index),
-    );
-  };
-
-  const updateSkill = (category: SkillCategory, index: number, value: string) => {
-    if (!cvData) return;
-    const currentSkills = [...(cvData.cv[category] || [])];
-    currentSkills[index] = value;
-    updateSkills(category, currentSkills);
   };
 
   // Experience functions
@@ -311,9 +285,6 @@ export default function CVEditor() {
           saving={saving}
           onUpdateField={updatePersonalField}
           onUpdateCvData={setCvData}
-          onAddSkill={addSkill}
-          onRemoveSkill={removeSkill}
-          onUpdateSkill={updateSkill}
           onSave={handleSavePersonalInfo}
         />
       )}

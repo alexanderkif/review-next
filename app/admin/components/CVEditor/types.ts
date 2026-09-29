@@ -45,5 +45,3 @@ export interface Language {
   level: string;
   sort_order: number;
 }
-
-export type SkillCategory = 'skills_frontend' | 'skills_tools' | 'skills_backend';
