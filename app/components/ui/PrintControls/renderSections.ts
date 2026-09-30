@@ -5,6 +5,7 @@ import {
   checkNewPage,
   wrapText,
   drawTextWithGreenBullets,
+  drawLinkText,
   renderSectionHeader,
   sanitizeText,
 } from './pdfHelpers';
@@ -250,57 +251,88 @@ export const renderEducation = (
       const match = urlRegex.exec(edu.description);
 
       if (match) {
-        // Has URL - render prefix text and URL on same line
+        // Render the prefix and the URL, keeping a separating space and wrapping
+        // both the prefix and the (possibly long) URL within the content width.
         const url = sanitizeText(match[0]);
-        const prefix = sanitizeText(edu.description.substring(0, match.index));
+        const prefix = sanitizeText(edu.description.substring(0, match.index)).replace(/\s+$/, '');
+        const spaceWidth = helveticaFont.widthOfTextAtSize(' ', 10);
+        const urlWidth = helveticaFont.widthOfTextAtSize(url, 10);
 
-        const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
-        currentPage = result.newPage;
-        currentY = result.newY;
-        annotations = result.newAnnotations;
+        const prefixLines = prefix ? wrapText(prefix, contentWidth, 10, helveticaFont) : [];
+        const lastPrefixLine = prefixLines[prefixLines.length - 1] ?? '';
+        const lastPrefixWidth = helveticaFont.widthOfTextAtSize(lastPrefixLine, 10);
+        const urlFitsAfterPrefix =
+          urlWidth <= contentWidth - (lastPrefixLine ? lastPrefixWidth + spaceWidth : 0);
 
-        let lineX = MARGIN;
+        // Prefix lines drawn on their own (all of them, unless the URL continues
+        // on the last one).
+        const standalonePrefixLines = urlFitsAfterPrefix ? prefixLines.slice(0, -1) : prefixLines;
+        for (const line of standalonePrefixLines) {
+          const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
+          currentPage = result.newPage;
+          currentY = result.newY;
+          annotations = result.newAnnotations;
 
-        // Draw prefix (e.g., "WES: ")
-        if (prefix) {
-          currentPage.drawText(prefix, {
-            x: lineX,
+          currentPage.drawText(line, {
+            x: MARGIN,
             y: currentY,
             size: 10,
             font: helveticaFont,
             color: COLORS.GRAY,
           });
-          lineX += helveticaFont.widthOfTextAtSize(prefix, 10);
+          currentY -= LINE_HEIGHT + 2;
         }
 
-        // Draw URL in green
-        const urlWidth = helveticaFont.widthOfTextAtSize(url, 10);
-        currentPage.drawText(url, {
-          x: lineX,
-          y: currentY,
-          size: 10,
-          font: helveticaFont,
-          color: COLORS.GREEN,
-        });
+        if (urlFitsAfterPrefix) {
+          // The URL continues the last prefix line, separated by a single space.
+          const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
+          currentPage = result.newPage;
+          currentY = result.newY;
+          annotations = result.newAnnotations;
 
-        // Add link annotation
-        const linkAnnotation = currentPage.doc.context.register(
-          currentPage.doc.context.obj({
-            Type: 'Annot',
-            Subtype: 'Link',
-            Rect: [lineX, currentY - 2, lineX + urlWidth, currentY + 9],
-            Border: [0, 0, 0],
-            C: [0, 0, 0],
-            A: currentPage.doc.context.obj({
-              Type: 'Action',
-              S: 'URI',
-              URI: currentPage.doc.context.obj(url),
-            }),
-          }),
-        );
-        annotations.push(linkAnnotation);
+          let lineX = MARGIN;
+          if (lastPrefixLine) {
+            const prefixSegment = `${lastPrefixLine} `;
+            currentPage.drawText(prefixSegment, {
+              x: lineX,
+              y: currentY,
+              size: 10,
+              font: helveticaFont,
+              color: COLORS.GRAY,
+            });
+            lineX += helveticaFont.widthOfTextAtSize(prefixSegment, 10);
+          }
 
-        currentY -= LINE_HEIGHT + 2;
+          drawLinkText(currentPage, url, lineX, currentY, 10, helveticaFont, url, annotations);
+          currentY -= LINE_HEIGHT + 2;
+        } else {
+          // The URL starts on its own line, broken across lines if it doesn't fit.
+          const urlLines = wrapText(url, contentWidth, 10, helveticaFont);
+          for (const urlLine of urlLines) {
+            const result = checkNewPage(
+              currentY,
+              LINE_HEIGHT + 2,
+              currentPage,
+              annotations,
+              pdfDoc,
+            );
+            currentPage = result.newPage;
+            currentY = result.newY;
+            annotations = result.newAnnotations;
+
+            drawLinkText(
+              currentPage,
+              urlLine,
+              MARGIN,
+              currentY,
+              10,
+              helveticaFont,
+              url,
+              annotations,
+            );
+            currentY -= LINE_HEIGHT + 2;
+          }
+        }
       } else {
         // No URL - render normally
         const descLines = wrapText(edu.description, contentWidth, 10, helveticaFont);

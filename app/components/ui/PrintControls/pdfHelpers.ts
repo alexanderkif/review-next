@@ -88,6 +88,33 @@ export const checkNewPage = (
   return { newPage: page, newY: y, newAnnotations: pageAnnotations };
 };
 
+/**
+ * Splits a single unbreakable token (e.g. a long URL) into pieces that each fit
+ * within `maxWidth`, so it can be wrapped instead of overflowing the page.
+ */
+export const breakLongWord = (
+  word: string,
+  maxWidth: number,
+  fontSize: number,
+  font: PDFFont,
+): string[] => {
+  const chunks: string[] = [];
+  let current = '';
+
+  for (const char of word) {
+    const test = current + char;
+    if (current && font.widthOfTextAtSize(test, fontSize) > maxWidth) {
+      chunks.push(current);
+      current = char;
+    } else {
+      current = test;
+    }
+  }
+
+  if (current) chunks.push(current);
+  return chunks;
+};
+
 export const wrapText = (
   text: string,
   maxWidth: number,
@@ -98,19 +125,73 @@ export const wrapText = (
   const lines: string[] = [];
   let currentLine = '';
 
+  const flush = () => {
+    if (currentLine) lines.push(currentLine);
+    currentLine = '';
+  };
+
   for (const word of words) {
+    // Break words that are wider than a whole line (e.g. URLs) instead of
+    // letting them overflow the page.
+    if (font.widthOfTextAtSize(word, fontSize) > maxWidth) {
+      flush();
+      const chunks = breakLongWord(word, maxWidth, fontSize, font);
+      for (let i = 0; i < chunks.length - 1; i++) lines.push(chunks[i]);
+      currentLine = chunks[chunks.length - 1] ?? '';
+      continue;
+    }
+
     const testLine = currentLine ? `${currentLine} ${word}` : word;
     const width = font.widthOfTextAtSize(testLine, fontSize);
 
     if (width > maxWidth && currentLine) {
-      lines.push(currentLine);
+      flush();
       currentLine = word;
     } else {
       currentLine = testLine;
     }
   }
-  if (currentLine) lines.push(currentLine);
+  flush();
   return lines;
+};
+
+/**
+ * Draws a green link segment and registers a link annotation covering it.
+ */
+export const drawLinkText = (
+  page: PDFPage,
+  text: string,
+  x: number,
+  y: number,
+  fontSize: number,
+  font: PDFFont,
+  href: string,
+  annotations: PDFRef[],
+): void => {
+  page.drawText(text, {
+    x,
+    y,
+    size: fontSize,
+    font,
+    color: PDF_CONFIG.COLORS.GREEN,
+  });
+
+  const width = font.widthOfTextAtSize(text, fontSize);
+  const linkAnnotation = page.doc.context.register(
+    page.doc.context.obj({
+      Type: 'Annot',
+      Subtype: 'Link',
+      Rect: [x, y - 2, x + width, y + 9],
+      Border: [0, 0, 0],
+      C: [0, 0, 0],
+      A: page.doc.context.obj({
+        Type: 'Action',
+        S: 'URI',
+        URI: page.doc.context.obj(href),
+      }),
+    }),
+  );
+  annotations.push(linkAnnotation);
 };
 
 export const drawTextWithGreenBullets = (
