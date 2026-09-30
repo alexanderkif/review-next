@@ -16,7 +16,6 @@ import PrintControls from '@/components/ui/PrintControls';
 import Tooltip from '@/components/ui/Tooltip';
 import LazyAvatar from '@/components/ui/LazyAvatar';
 import { getCVData } from '@/lib/cv-service';
-import Bullet from '@/components/ui/Bullet';
 import type { Metadata } from 'next';
 
 export const revalidate = 1800; // Cache for 30 minutes (reduced for faster recovery)
@@ -250,22 +249,10 @@ export default async function Home() {
                       const trimmedLine = line.trim();
                       if (!trimmedLine) return null;
 
-                      // If line starts with • or -, format as list item
-                      if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
-                        return (
-                          <div key={index} className="flex items-start gap-3">
-                            <Bullet className="mt-1" />
-                            <span className="text-sm leading-relaxed text-slate-700">
-                              {trimmedLine.replace(/^[•\-]\s*/, '')}
-                            </span>
-                          </div>
-                        );
-                      }
-
-                      // Regular paragraph
+                      // Strip a leading bullet/dash marker; bullets are rendered as plain paragraphs.
                       return (
                         <p key={index} className="mb-3">
-                          {trimmedLine}
+                          {trimmedLine.replace(/^[•\-]\s*/, '')}
                         </p>
                       );
                     })
@@ -286,17 +273,14 @@ export default async function Home() {
             </CardHeader>
             <CardContent className="space-y-6">
               {cvData.experience.map((exp) => (
-                <div key={exp.id} className="mb-6 flex items-start gap-4">
-                  <Bullet className="mt-1" size="md" />
-                  <div>
-                    <h4 className="font-semibold text-slate-800">{exp.title}</h4>
-                    <p className="mb-1 text-sm text-slate-600">{exp.company}</p>
-                    <p className="mb-2 flex items-center gap-1 text-xs text-slate-500">
-                      <Calendar size={12} aria-hidden="true" />
-                      {exp.period}
-                    </p>
-                    <p className="text-sm text-slate-700">{exp.description}</p>
-                  </div>
+                <div key={exp.id}>
+                  <h4 className="text-base font-semibold text-slate-800">{exp.title}</h4>
+                  <p className="mb-1 text-sm text-slate-600">{exp.company}</p>
+                  <p className="mb-2 flex items-center gap-1 text-xs text-slate-500">
+                    <Calendar size={12} aria-hidden="true" />
+                    {exp.period}
+                  </p>
+                  <p className="text-sm text-slate-700">{exp.description}</p>
                 </div>
               ))}
             </CardContent>
@@ -313,10 +297,10 @@ export default async function Home() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {cvData.education.map((edu) => (
                     <div key={edu.id}>
-                      <h4 className="font-semibold text-slate-800">{edu.degree}</h4>
+                      <h4 className="text-base font-semibold text-slate-800">{edu.degree}</h4>
                       <p className="text-sm text-slate-600">{edu.institution}</p>
                       <p className="flex items-center gap-1 text-xs text-slate-500">
                         <Calendar size={12} aria-hidden="true" />
