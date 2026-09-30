@@ -6,6 +6,7 @@ import {
   wrapText,
   drawTextWithGreenBullets,
   renderSectionHeader,
+  sanitizeText,
 } from './pdfHelpers';
 
 export const renderHighlights = (
@@ -34,31 +35,35 @@ export const renderHighlights = (
 
   currentY = renderSectionHeader(currentPage, 'HIGHLIGHTS', currentY, helveticaBold);
 
-  // Parse and render highlights
-  const highlights = cvData.about.split('\n').filter((line: string) => {
-    const trimmed = line.trim();
-    return trimmed && (trimmed.startsWith('•') || trimmed.startsWith('-'));
-  });
+  // Parse and render highlights. Lines prefixed with "•" or "-" are rendered as
+  // bullet list items, every other line is rendered as a paragraph. This mirrors
+  // how the site renders `about`, so no valid content is silently dropped.
+  const highlights = cvData.about
+    .split('\n')
+    .map((line: string) => line.trim())
+    .filter((line: string) => line.length > 0);
 
   for (const highlight of highlights) {
-    const result = checkNewPage(currentY, 30, currentPage, annotations, pdfDoc);
+    const isBullet = highlight.startsWith('•') || highlight.startsWith('-');
+    const text = isBullet ? highlight.replace(/^[•\-]\s*/, '') : highlight;
+    const indent = isBullet ? 10 : 0;
+    const lines = wrapText(text, contentWidth - indent, 10, helveticaFont);
+
+    const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
     currentPage = result.newPage;
     currentY = result.newY;
     annotations = result.newAnnotations;
 
-    const text = highlight.replace(/^[•\-]\s*/, '');
-    const lines = wrapText(text, contentWidth - 15, 10, helveticaFont);
-
     for (let i = 0; i < lines.length; i++) {
       if (i > 0) {
-        const result = checkNewPage(currentY, LINE_HEIGHT, currentPage, annotations, pdfDoc);
-        currentPage = result.newPage;
-        currentY = result.newY;
-        annotations = result.newAnnotations;
+        const nextPage = checkNewPage(currentY, LINE_HEIGHT, currentPage, annotations, pdfDoc);
+        currentPage = nextPage.newPage;
+        currentY = nextPage.newY;
+        annotations = nextPage.newAnnotations;
       }
 
-      // Draw bullet only for first line
-      if (i === 0) {
+      // Draw bullet only for the first line of a bullet list item
+      if (isBullet && i === 0) {
         currentPage.drawCircle({
           x: MARGIN + 3,
           y: currentY + 10 * 0.3,
@@ -68,7 +73,7 @@ export const renderHighlights = (
       }
 
       currentPage.drawText(lines[i], {
-        x: MARGIN + 10,
+        x: MARGIN + indent,
         y: currentY,
         size: 10,
         font: helveticaFont,
@@ -76,7 +81,9 @@ export const renderHighlights = (
       });
       currentY -= LINE_HEIGHT;
     }
-    currentY -= 3;
+
+    // Extra spacing between paragraphs, tighter between bullet items.
+    currentY -= isBullet ? 3 : 6;
   }
 
   return { newPage: currentPage, newY: currentY, newAnnotations: annotations };
@@ -117,7 +124,7 @@ export const renderWorkExperience = (
     annotations = result.newAnnotations;
 
     // Job title
-    currentPage.drawText(exp.title, {
+    currentPage.drawText(sanitizeText(exp.title), {
       x: MARGIN,
       y: currentY,
       size: 10,
@@ -206,7 +213,7 @@ export const renderEducation = (
     currentY = result.newY;
     annotations = result.newAnnotations;
 
-    currentPage.drawText(edu.degree, {
+    currentPage.drawText(sanitizeText(edu.degree), {
       x: MARGIN,
       y: currentY,
       size: 10,
@@ -244,8 +251,8 @@ export const renderEducation = (
 
       if (match) {
         // Has URL - render prefix text and URL on same line
-        const url = match[0];
-        const prefix = edu.description.substring(0, match.index);
+        const url = sanitizeText(match[0]);
+        const prefix = sanitizeText(edu.description.substring(0, match.index));
 
         const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
         currentPage = result.newPage;
@@ -476,7 +483,7 @@ export const renderTechnicalSkills = (
     const maxLineWidth = PAGE_WIDTH - 2 * MARGIN;
 
     for (let i = 0; i < skills.length; i++) {
-      const skill = skills[i];
+      const skill = sanitizeText(skills[i]);
       const skillWidth = helveticaFont.widthOfTextAtSize(skill, 10);
       const needsBullet = i > 0;
       const bulletSpace = needsBullet ? spaceWidth * 2 + bulletWidth + spaceWidth * 2 : 0;
@@ -597,7 +604,7 @@ export const renderFeaturedProjects = (
       }
     }
 
-    currentPage.drawText(project.title, {
+    currentPage.drawText(sanitizeText(project.title), {
       x: columnX,
       y: projectY,
       size: 10,

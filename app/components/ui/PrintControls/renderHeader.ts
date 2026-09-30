@@ -1,5 +1,6 @@
 import { PDFPage, PDFFont, PDFRef } from 'pdf-lib';
 import { PDF_CONFIG } from './constants';
+import { sanitizeText } from './pdfHelpers';
 import { CVData } from './types';
 
 export const renderHeader = (
@@ -13,7 +14,7 @@ export const renderHeader = (
   const { MARGIN, COLORS, FONT_SIZE } = PDF_CONFIG;
 
   // Name
-  const name = cvData.personalInfo?.name || 'Name';
+  const name = sanitizeText(cvData.personalInfo?.name || 'Name');
   page.drawText(name, {
     x: MARGIN,
     y: currentY,
@@ -24,7 +25,7 @@ export const renderHeader = (
   currentY -= 25;
 
   // Title
-  const title = cvData.personalInfo?.title || 'Title';
+  const title = sanitizeText(cvData.personalInfo?.title || 'Title');
   page.drawText(title, {
     x: MARGIN,
     y: currentY,
@@ -51,7 +52,7 @@ export const renderContactInfo = (
 
   // Email
   if (cvData.personalInfo?.email) {
-    const emailText = cvData.personalInfo.email;
+    const emailText = sanitizeText(cvData.personalInfo.email);
     const emailWidth = helveticaFont.widthOfTextAtSize(emailText, 10);
 
     if (contactX + emailWidth > PAGE_WIDTH - MARGIN) {
@@ -103,7 +104,7 @@ export const renderContactInfo = (
 
   // Phone
   if (cvData.personalInfo?.phone) {
-    const phone = cvData.personalInfo.phone;
+    const phone = sanitizeText(cvData.personalInfo.phone);
     const isPhoneLink = phone.match(/^https?:\/\//);
     const phoneWidth = helveticaFont.widthOfTextAtSize(phone, 10);
 
@@ -158,14 +159,15 @@ export const renderContactInfo = (
 
   // Location
   if (cvData.personalInfo?.location) {
-    const locationWidth = helveticaFont.widthOfTextAtSize(cvData.personalInfo.location, 10);
+    const location = sanitizeText(cvData.personalInfo.location);
+    const locationWidth = helveticaFont.widthOfTextAtSize(location, 10);
 
     if (contactX + locationWidth > PAGE_WIDTH - MARGIN) {
       currentY -= 12;
       contactX = MARGIN;
     }
 
-    page.drawText(cvData.personalInfo.location, {
+    page.drawText(location, {
       x: contactX,
       y: currentY,
       size: 10,
@@ -179,7 +181,7 @@ export const renderContactInfo = (
 
   // Website link
   if (cvData.personalInfo?.website) {
-    const websiteText = cvData.personalInfo.website;
+    const websiteText = sanitizeText(cvData.personalInfo.website);
     const websiteWidth = helveticaFont.widthOfTextAtSize(websiteText, 10);
 
     if (contactX + websiteWidth > PAGE_WIDTH - MARGIN) {
@@ -231,7 +233,7 @@ export const renderContactInfo = (
 
   // GitHub link
   if (cvData.personalInfo?.github) {
-    const githubText = cvData.personalInfo.github;
+    const githubText = sanitizeText(cvData.personalInfo.github);
     const githubWidth = helveticaFont.widthOfTextAtSize(githubText, 10);
 
     if (contactX + githubWidth > PAGE_WIDTH - MARGIN) {
@@ -271,7 +273,7 @@ export const renderContactInfo = (
 
   // LinkedIn link
   if (cvData.personalInfo?.linkedin) {
-    const linkedinText = cvData.personalInfo.linkedin;
+    const linkedinText = sanitizeText(cvData.personalInfo.linkedin);
     const linkedinWidth = helveticaFont.widthOfTextAtSize(linkedinText, 10);
 
     if (contactX + linkedinWidth > PAGE_WIDTH - MARGIN) {
