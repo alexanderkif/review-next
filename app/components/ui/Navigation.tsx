@@ -104,10 +104,10 @@ const Navigation = ({
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center">
           {/* Col 1: Logo — flex-1 so it takes equal space as auth, preventing center shift */}
-          <div className="hidden flex-1 items-center sm:flex">
+          <div className="hidden min-w-0 flex-1 items-center sm:flex">
             <Link
               href={isProjectsPage ? '/projects' : '/'}
-              className="flex items-center space-x-2 rounded-lg transition-all focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+              className="flex min-w-0 items-center space-x-2 rounded-lg transition-all focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
               aria-label={isProjectsPage ? 'Projects' : 'Home'}
             >
               <div className="overflow-hidden">
@@ -121,7 +121,7 @@ const Navigation = ({
                 />
               </div>
               <span
-                className={`hidden text-xl font-bold transition-colors lg:inline ${
+                className={`hidden max-w-[12rem] min-w-0 truncate text-base font-semibold transition-colors lg:inline-block ${
                   isClayPage ? 'text-slate-800' : 'text-white'
                 }`}
               >

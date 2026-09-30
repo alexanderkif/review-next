@@ -23,7 +23,7 @@ const NotFoundPage = () => {
 
         {/* Main message */}
         <div className="animate-fade-in mb-8 rounded-2xl border border-white/20 bg-white/10 p-8 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-md">
-          <h1 className="mb-4 text-2xl font-bold text-white md:text-3xl">Page Not Found</h1>
+          <h1 className="mb-4 text-2xl font-bold text-white">Page Not Found</h1>
           <p className="mb-6 text-lg leading-relaxed text-white/80">
             It seems you&apos;ve landed on a page that doesn&apos;t exist. The link might have been
             entered incorrectly or the page has been moved.

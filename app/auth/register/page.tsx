@@ -164,12 +164,12 @@ function RegisterForm() {
               <div className="mx-auto mb-4 flex h-16 w-16 animate-bounce items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-blue-600">
                 <CheckCircle className="text-white" size={24} />
               </div>
-              <h2 className="text-2xl font-semibold text-white">Check your email!</h2>
+              <h2 className="text-2xl font-bold text-white">Check your email!</h2>
             </CardHeader>
 
             <CardContent className="space-y-6 text-center">
               <div className="space-y-3">
-                <p className="text-white/90">We sent a confirmation email to:</p>
+                <p className="text-sm text-white/90">We sent a confirmation email to:</p>
                 <div className="rounded-lg border border-white/20 bg-white/10 p-3">
                   <Mail className="mr-2 inline-block" size={16} />
                   <span className="font-medium text-white">{userEmail}</span>
@@ -246,8 +246,8 @@ function RegisterForm() {
             <div className="animate-float mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-blue-600">
               <User className="text-white" size={24} />
             </div>
-            <h2 className="text-2xl font-semibold text-white">Registration</h2>
-            <p className="mt-2 text-white/90">Create an account to comment on projects</p>
+            <h2 className="text-2xl font-bold text-white">Registration</h2>
+            <p className="mt-2 text-sm text-white/90">Create an account to comment on projects</p>
           </CardHeader>
 
           <CardContent className="space-y-4">

@@ -53,7 +53,9 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-blue-600">
                 <Settings className="text-white" size={18} />
               </div>
-              <h1 className="hidden text-xl font-semibold text-slate-800 md:block">Admin Panel</h1>
+              <h1 className="hidden text-base font-semibold text-slate-800 md:block">
+                Admin Panel
+              </h1>
             </div>
 
             <div className="flex items-center gap-4">
@@ -113,7 +115,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Card className="flex flex-col">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
+                    <CardTitle className="flex items-center gap-2">
                       <FileText className="text-blue-600" size={20} />
                       Resume
                     </CardTitle>
@@ -131,7 +133,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
 
                 <Card className="flex flex-col">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
+                    <CardTitle className="flex items-center gap-2">
                       <FolderOpen className="text-green-600" size={20} />
                       Projects
                     </CardTitle>
@@ -149,7 +151,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
 
                 <Card className="flex flex-col">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
+                    <CardTitle className="flex items-center gap-2">
                       <Settings className="text-purple-600" size={20} />
                       Settings
                     </CardTitle>

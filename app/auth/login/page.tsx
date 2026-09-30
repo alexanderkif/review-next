@@ -103,7 +103,7 @@ function LoginForm() {
             <div className="animate-float mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-blue-600 text-2xl font-bold text-white shadow-lg">
               А
             </div>
-            <h2 className="text-2xl font-semibold text-white">Welcome</h2>
+            <h2 className="text-2xl font-bold text-white">Welcome</h2>
             <p className="text-sm text-white/90">Log into your account to leave comments</p>
           </CardHeader>
 

@@ -113,7 +113,7 @@ export default async function Home() {
       <div className="mx-auto max-w-4xl">
         {/* Header with print controls */}
         <div className="no-print mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-slate-800">Resume</h1>
+          <h1 className="text-2xl font-bold text-slate-800">Resume</h1>
           <PrintControls />
         </div>
 
@@ -135,10 +135,10 @@ export default async function Home() {
 
               {/* Main information */}
               <div className="flex-1 text-center md:text-left">
-                <h2 className="mb-2 text-4xl font-bold text-slate-800">
+                <h2 className="mb-2 text-3xl font-bold text-slate-800">
                   {cvData.personalInfo.name}
                 </h2>
-                <p className="mb-4 text-xl font-medium text-slate-600">
+                <p className="mb-4 text-lg font-medium text-slate-600">
                   {cvData.personalInfo.title}
                 </p>
 
@@ -233,16 +233,16 @@ export default async function Home() {
           </CardContent>
         </Card>
 
-        {/* HIGHLIGHTS */}
+        {/* Highlights */}
         <Card className="animate-fade-in mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award size={20} className="text-emerald-600" />
-              HIGHLIGHTS
+              Highlights
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="leading-relaxed text-slate-700">
+            <div className="text-sm text-slate-700">
               {cvData.about
                 ? cvData.about
                     .split('\n')
@@ -354,7 +354,7 @@ export default async function Home() {
             <Card className="animate-fade-in">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Settings size={22} className="text-emerald-600" />
+                  <Settings size={20} className="text-emerald-600" />
                   Technical Skills
                 </CardTitle>
               </CardHeader>

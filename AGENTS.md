@@ -13,6 +13,7 @@ The primary agent for general coding, refactoring, and feature implementation.
     - Follow the theme-aware styling (Claymorphism & Glassmorphism).
     - Validate untrusted API bodies, query parameters, and route parameters with centralized Zod schemas before side effects.
     - Follow [docs/validation.md](docs/validation.md) for schema and validation patterns.
+    - Follow [docs/typography.md](docs/typography.md) for the shared `rem`-based type scale.
 
 ### 🎨 UI/UX & Accessibility Agent
 Specialized in creating accessible, high-quality user interfaces.

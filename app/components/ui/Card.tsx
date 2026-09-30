@@ -39,5 +39,5 @@ interface CardTitleProps {
 }
 
 export const CardTitle = ({ children, className }: CardTitleProps) => (
-  <h3 className={cn('text-xl font-semibold text-slate-800', className)}>{children}</h3>
+  <h3 className={cn('text-lg font-semibold text-slate-800', className)}>{children}</h3>
 );

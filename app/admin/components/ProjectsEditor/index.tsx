@@ -181,7 +181,7 @@ export default function ProjectsEditor() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">Project Management</h2>
-          <p className="text-slate-600">Total projects: {projects.length}</p>
+          <p className="text-sm text-slate-600">Total projects: {projects.length}</p>
         </div>
         <Button onClick={handleCreateProject} className="flex items-center gap-2">
           <Plus size={16} />

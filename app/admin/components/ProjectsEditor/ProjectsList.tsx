@@ -29,7 +29,7 @@ export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsLis
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="mb-2 flex items-center gap-2">
-                  <CardTitle className="text-lg">{project.title}</CardTitle>
+                  <CardTitle>{project.title}</CardTitle>
                   {project.featured && (
                     <Star size={16} className="fill-yellow-500 text-yellow-500" />
                   )}

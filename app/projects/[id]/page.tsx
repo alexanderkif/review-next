@@ -154,7 +154,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <div className="mb-2 flex flex-wrap items-center gap-3">
-                  <h2 className="text-3xl font-semibold text-white">{project.title}</h2>
+                  <h2 className="text-2xl font-bold text-white">{project.title}</h2>
                   {project.featured && (
                     <Star size={20} className="fill-yellow-400 text-yellow-400" />
                   )}
@@ -223,7 +223,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             {/* Технологии */}
             <Card className="animate-fade-in text-white">
               <CardHeader>
-                <CardTitle className="text-lg text-white">Technologies</CardTitle>
+                <CardTitle className="text-white">Technologies</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -242,7 +242,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             {/* Статистика */}
             <Card className="animate-fade-in text-white">
               <CardHeader>
-                <CardTitle className="text-lg text-white">Statistics</CardTitle>
+                <CardTitle className="text-white">Statistics</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">

@@ -124,7 +124,7 @@ function AdminLoginForm() {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-blue-600">
               <Shield className="text-white" size={24} />
             </div>
-            <CardTitle className="text-2xl text-slate-800">Admin Panel</CardTitle>
+            <CardTitle className="text-2xl font-bold text-slate-800">Admin Panel</CardTitle>
             <p className="mt-2 text-sm text-slate-600">
               Enter credentials to access the admin panel
             </p>
