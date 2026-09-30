@@ -66,6 +66,7 @@ export interface Project {
   image_urls?: string[];
   year: number;
   featured: boolean;
+  hidden: boolean;
   status: 'completed' | 'in-progress' | 'archived';
   likes_count: number;
   comments_count: number;
@@ -83,6 +84,7 @@ export interface ProjectCreateRequest {
   image_urls?: string[];
   year: number;
   featured: boolean;
+  hidden: boolean;
   status: string;
 }
 

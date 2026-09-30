@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Github,
   ExternalLink,
+  EyeOff,
 } from 'lucide-react';
 import { Project, getStatusLabel } from './types';
 
@@ -31,6 +32,12 @@ export default function ProjectsList({ projects, onEdit, onDelete }: ProjectsLis
                   <CardTitle className="text-lg">{project.title}</CardTitle>
                   {project.featured && (
                     <Star size={16} className="fill-yellow-500 text-yellow-500" />
+                  )}
+                  {project.hidden && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                      <EyeOff size={12} aria-hidden="true" />
+                      Hidden
+                    </span>
                   )}
                 </div>
                 <p className="line-clamp-2 text-sm text-slate-600">{project.short_description}</p>

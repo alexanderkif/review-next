@@ -62,7 +62,7 @@ async function fetchCVData(): Promise<CVData | null> {
     // Get projects
     const projectsResult = await sql`
       SELECT * FROM projects
-      WHERE featured = true
+      WHERE featured = true AND hidden = false
       ORDER BY year DESC, created_at DESC
     `;
 

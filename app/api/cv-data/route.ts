@@ -39,11 +39,11 @@ export async function GET(): Promise<NextResponse<CVData | ApiError>> {
       ORDER BY sort_order ASC, id DESC
     `;
 
-    // Получаем проекты (все featured проекты)
+    // Получаем проекты (все featured проекты, кроме скрытых)
     const projects = await sql`
       SELECT id, title, short_description, github_url, demo_url, year, status
       FROM projects
-      WHERE featured = true
+      WHERE featured = true AND hidden = false
       ORDER BY year DESC, created_at DESC
     `;
 

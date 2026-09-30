@@ -78,6 +78,7 @@ export async function PUT(
       image_urls,
       year,
       featured,
+      hidden,
       status,
     } = data;
 
@@ -104,6 +105,7 @@ export async function PUT(
         image_urls = ${image_urls ?? []},
         year = ${year ?? new Date().getFullYear()},
         featured = ${featured ?? false},
+        hidden = ${hidden ?? false},
         status = ${status ?? 'completed'}
       WHERE id = ${projectId}
     `;

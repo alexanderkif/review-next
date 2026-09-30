@@ -56,6 +56,10 @@ A portfolio website with a public CV, project pages, an admin area, email verifi
 
 4. Open `http://localhost:3000`. To initialize the database and create the first administrator, open `http://localhost:3000/admin/login` and follow the setup form. The PostgreSQL database must be reachable first.
 
+## Database Migrations
+
+SQL migrations live in [`migrations/`](migrations/) and are applied manually to the configured `POSTGRES_URL`. They are written to be idempotent, so running them repeatedly (or against an up-to-date database) is safe.
+
 ## Commands
 
 | Command | Purpose |

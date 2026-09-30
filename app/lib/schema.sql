@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS projects (
   image_urls TEXT[],
   year INTEGER NOT NULL,
   featured BOOLEAN DEFAULT FALSE,
+  hidden BOOLEAN DEFAULT FALSE, -- hidden from the public projects list
   status VARCHAR(50) DEFAULT 'completed', -- 'in-progress', 'completed', 'archived'
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

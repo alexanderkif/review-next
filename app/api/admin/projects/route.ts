@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
       image_urls,
       year,
       featured,
+      hidden,
       status,
     } = validatedData.data;
 
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
         image_urls,
         year,
         featured,
+        hidden,
         status
       ) VALUES (
         ${title},
@@ -87,6 +89,7 @@ export async function POST(request: NextRequest) {
         ${image_urls ?? []},
         ${year},
         ${featured ?? false},
+        ${hidden ?? false},
         ${status ?? 'completed'}
       )
       RETURNING *

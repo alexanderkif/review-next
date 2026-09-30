@@ -48,6 +48,7 @@ export interface Project {
   image_urls: string[];
   year: number;
   featured: boolean;
+  hidden: boolean;
   status: 'in-progress' | 'completed' | 'archived';
   created_at: string;
   likes_count?: number;
@@ -91,6 +92,7 @@ export async function getProjects(userId?: string): Promise<Project[]> {
         LEFT JOIN project_likes pl ON p.id = pl.project_id
         LEFT JOIN project_comments pc ON p.id = pc.project_id
         LEFT JOIN project_likes upl ON p.id = upl.project_id AND upl.user_id = ${userId}
+        WHERE p.hidden = false
         GROUP BY p.id, upl.user_id
         ORDER BY p.featured DESC, p.year DESC, p.created_at DESC
       `;
@@ -103,6 +105,7 @@ export async function getProjects(userId?: string): Promise<Project[]> {
         FROM projects p
         LEFT JOIN project_likes pl ON p.id = pl.project_id
         LEFT JOIN project_comments pc ON p.id = pc.project_id
+        WHERE p.hidden = false
         GROUP BY p.id
         ORDER BY p.featured DESC, p.year DESC, p.created_at DESC
       `;

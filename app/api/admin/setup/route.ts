@@ -187,6 +187,7 @@ export async function POST(request: NextRequest) {
         image_urls TEXT[] DEFAULT '{}',
         year INTEGER,
         featured BOOLEAN DEFAULT false,
+        hidden BOOLEAN DEFAULT false,
         status VARCHAR(50) DEFAULT 'completed',
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()

@@ -115,22 +115,40 @@ export default function ProjectForm({
             </select>
           </div>
 
-          <div className="flex items-end">
-            <div className="w-full">
-              <div className="mb-2 text-sm font-medium text-slate-700">Featured</div>
-              <div className="flex items-center rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff]">
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={project.featured}
-                    onChange={(e) => onUpdate('featured', e.target.checked)}
-                    className="h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-                  />
-                  Mark as featured project
-                </label>
-              </div>
+          <fieldset className="min-w-0">
+            <legend className="mb-2 block text-sm font-medium text-slate-700">Visibility</legend>
+            <div className="space-y-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-[inset_2px_2px_2px_#d1d1d1,_inset_-2px_-2px_2px_#ffffff]">
+              <label className="flex cursor-pointer items-start gap-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={project.featured}
+                  onChange={(e) => onUpdate('featured', e.target.checked)}
+                  className="mt-0.5 h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                />
+                <span>
+                  <span className="font-medium">Mark as featured project</span>
+                  <span className="mt-0.5 block text-xs text-slate-500">
+                    Highlighted on the home page and CV.
+                  </span>
+                </span>
+              </label>
+
+              <label className="flex cursor-pointer items-start gap-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={project.hidden}
+                  onChange={(e) => onUpdate('hidden', e.target.checked)}
+                  className="mt-0.5 h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+                />
+                <span>
+                  <span className="font-medium">Hide project</span>
+                  <span className="mt-0.5 block text-xs text-slate-500">
+                    Hidden from the public Projects page and featured lists.
+                  </span>
+                </span>
+              </label>
             </div>
-          </div>
+          </fieldset>
         </div>
 
         {/* Technologies */}

@@ -9,6 +9,7 @@ export interface Project {
   image_urls?: string[];
   year: number;
   featured: boolean;
+  hidden: boolean;
   status: string;
   likes_count: number;
   comments_count: number;
@@ -39,6 +40,7 @@ export const createEmptyProject = (): Project => ({
   image_urls: [],
   year: new Date().getFullYear(),
   featured: false,
+  hidden: false,
   status: 'completed',
   likes_count: 0,
   comments_count: 0,

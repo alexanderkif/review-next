@@ -50,6 +50,7 @@ export const ProjectCreateSchema = z.object({
   image_urls: z.array(z.string()).optional(),
   year: z.number().min(2000).max(2030),
   featured: z.boolean().default(false),
+  hidden: z.boolean().default(false),
   status: z.enum(['completed', 'in-progress', 'archived']).default('completed'),
 });
 
