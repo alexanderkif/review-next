@@ -1,6 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
+import { revalidateCVData } from '@/lib/cv-service';
 import { validate } from '@/types/schemas';
 import { ProjectCreateSchema } from '@/types/schemas';
 import type { Project, ApiError } from '@/types/api';
@@ -94,6 +95,9 @@ export async function POST(request: NextRequest) {
       )
       RETURNING *
     `;
+
+    // Featured (non-hidden) projects are part of the cached CV data.
+    await revalidateCVData();
 
     return NextResponse.json(result[0] as unknown as Project);
   } catch (error) {

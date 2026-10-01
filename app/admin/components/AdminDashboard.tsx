@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
-import { User, FileText, FolderOpen, Settings, LogOut, Home, Edit3, Eye } from 'lucide-react';
+import { User, FileText, FolderOpen, Settings, LogOut, Home, Edit3, Eye, Bot } from 'lucide-react';
 import { logger } from '@/lib/logger';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import CVEditor from './CVEditor';
 import ProjectsEditor from './ProjectsEditor';
 import AdminSettings from './AdminSettings';
+import AIAvatarEditor from './AIAvatarEditor';
 
 interface AdminUser {
   id: string;
@@ -40,6 +41,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
     { id: 'overview', label: 'Overview', icon: Home },
     { id: 'cv', label: 'Resume', icon: FileText },
     { id: 'projects', label: 'Projects', icon: FolderOpen },
+    { id: 'ai', label: 'AI Avatar', icon: Bot },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -152,6 +154,24 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
                 <Card className="flex flex-col">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
+                      <Bot className="text-cyan-600" size={20} />
+                      AI Avatar
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col">
+                    <p className="mb-4 flex-1 text-sm text-slate-600">
+                      Chatbot persona, extra context and model selection
+                    </p>
+                    <Button onClick={() => setActiveTab('ai')} className="mt-auto w-full">
+                      <Bot size={16} className="mr-2" />
+                      Configure
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
                       <Settings className="text-purple-600" size={20} />
                       Settings
                     </CardTitle>
@@ -181,6 +201,8 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
           )}
 
           {activeTab === 'projects' && <ProjectsEditor />}
+
+          {activeTab === 'ai' && <AIAvatarEditor />}
 
           {activeTab === 'settings' && user && <AdminSettings user={user} />}
         </div>

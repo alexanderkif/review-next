@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/admin-auth';
+import { revalidateCVData } from '@/lib/cv-service';
 import { NumericIdParamsSchema, ProjectUpdateSchema, validate } from '@/types/schemas';
 import type { Project, ApiError } from '@/types/api';
 
@@ -124,6 +125,9 @@ export async function PUT(
       }
     }
 
+    // Featured (non-hidden) projects are part of the cached CV data.
+    await revalidateCVData();
+
     return NextResponse.json({ message: 'Project updated successfully' });
   } catch (error) {
     console.error('Error updating project:', error);
@@ -175,6 +179,9 @@ export async function DELETE(
         console.warn('Failed to cleanup project images:', cleanupError);
       }
     }
+
+    // Featured (non-hidden) projects are part of the cached CV data.
+    await revalidateCVData();
 
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {

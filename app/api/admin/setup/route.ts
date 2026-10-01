@@ -246,6 +246,23 @@ export async function POST(request: NextRequest) {
       ON images(created_at DESC)
     `;
 
+    // AI avatar configuration (persona, extra chat context, model names).
+    // API keys stay in environment variables.
+    await sql`
+      CREATE TABLE IF NOT EXISTS ai_settings (
+        id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+        chat_instructions TEXT NOT NULL DEFAULT '',
+        chat_extra TEXT NOT NULL DEFAULT '',
+        groq_model VARCHAR(120) NOT NULL DEFAULT 'openai/gpt-oss-20b',
+        gemini_model VARCHAR(120) NOT NULL DEFAULT 'gemini-3.5-flash-lite',
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `;
+
+    await sql`
+      INSERT INTO ai_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING
+    `;
+
     // Serialize first-admin creation so concurrent public setup requests cannot both succeed.
     const adminCreated = await sql.begin(async (transaction) => {
       await transaction`SELECT pg_advisory_xact_lock(2026092801::bigint)`;

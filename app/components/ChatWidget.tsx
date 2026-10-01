@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Send, Loader2, MessageCircle } from 'lucide-react';
+import { X, Send, Loader2, MessageCircle, AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 interface Message {
   role: 'user' | 'model';
   content: string;
+  /** Marks a system/error bubble (rendered with a warning icon). */
+  error?: boolean;
 }
 
 interface CVInfo {
@@ -264,17 +266,29 @@ export default function ChatWidget() {
         body: JSON.stringify({ messages: updated }),
       });
       const data: { reply?: string; error?: string } = await res.json();
+
+      const reply = typeof data.reply === 'string' && data.reply.trim() ? data.reply : null;
+      const isError = reply === null;
+
       setMessages((prev) => [
         ...prev,
         {
           role: 'model',
-          content: data.reply ?? data.error ?? 'Something went wrong. Please try again.',
+          content:
+            reply ??
+            data.error ??
+            'Oops, something went wrong on my side. Please try again in a moment.',
+          error: isError,
         },
       ]);
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: 'model', content: 'Network error. Please check your connection.' },
+        {
+          role: 'model',
+          content: "I couldn't reach the server. Please check your connection and try again.",
+          error: true,
+        },
       ]);
     } finally {
       setIsLoading(false);
@@ -369,28 +383,47 @@ export default function ChatWidget() {
 
           {/* Messages */}
           <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3" style={{ minHeight: 0 }}>
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+            {messages.map((msg, i) => {
+              const isError = msg.role === 'model' && msg.error === true;
+              return (
                 <div
-                  className={`max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap ${
-                    msg.role === 'user'
-                      ? `rounded-br-sm ${t.userBubble}`
-                      : `rounded-bl-sm ${t.botBubble}`
-                  }`}
-                  style={msg.role === 'user' ? t.userBubbleStyle : t.botBubbleStyle}
+                  key={i}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  {renderWithLinks(
-                    msg.content,
-                    msg.role === 'user'
-                      ? 'text-white/90 hover:text-white'
-                      : 'text-emerald-700 hover:text-emerald-800',
+                  {isError ? (
+                    <div
+                      role="alert"
+                      className="flex max-w-[82%] items-start gap-2 rounded-2xl rounded-bl-sm border border-amber-300/70 bg-amber-50/95 px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap text-amber-900 shadow-sm"
+                    >
+                      <AlertTriangle
+                        size={15}
+                        className="mt-0.5 shrink-0 text-amber-600"
+                        aria-hidden="true"
+                      />
+                      <span>
+                        {renderWithLinks(msg.content, 'text-amber-700 hover:text-amber-800')}
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      className={`max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap ${
+                        msg.role === 'user'
+                          ? `rounded-br-sm ${t.userBubble}`
+                          : `rounded-bl-sm ${t.botBubble}`
+                      }`}
+                      style={msg.role === 'user' ? t.userBubbleStyle : t.botBubbleStyle}
+                    >
+                      {renderWithLinks(
+                        msg.content,
+                        msg.role === 'user'
+                          ? 'text-white/90 hover:text-white'
+                          : 'text-emerald-700 hover:text-emerald-800',
+                      )}
+                    </div>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {isLoading && (
               <div className="flex justify-start">
@@ -432,7 +465,7 @@ export default function ChatWidget() {
               </button>
             </div>
             <p className={`mt-1.5 text-center text-[10px] ${t.footer_note}`}>
-              Powered by Gemini · Only answers about Aleksandr
+              AI assistant · Only answers about Aleksandr
             </p>
           </div>
         </div>

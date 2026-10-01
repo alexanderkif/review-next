@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import Groq from 'groq-sdk';
-import { MY_CONTEXT } from '@/lib/chat-context';
+import { getAiSettings } from '@/lib/ai-settings';
+import { buildChatSystemPrompt } from '@/lib/chat-prompt';
 import { ChatRequestSchema } from '@/types/schemas';
 import { consumeRateLimit, getRateLimitIdentifier } from '@/lib/rate-limit';
 
@@ -71,8 +72,35 @@ export async function POST(req: NextRequest) {
   const history = firstUserIndex === -1 ? [] : allButLast.slice(firstUserIndex);
   const lastUserText = validMessages[validMessages.length - 1].parts[0].text;
 
+  // Model names live in the database (ai_settings). A provider is considered available
+  // only when both its API key and its model name are configured.
+  const settings = await getAiSettings();
+  const groqModel = settings.groq_model;
+  const geminiModel = settings.gemini_model;
+
+  const geminiAvailable = gemini !== null && geminiModel !== '';
+  const groqAvailable = groq !== null && groqModel !== '';
+
+  if (!geminiAvailable && !groqAvailable) {
+    console.error(
+      '[chat/route] No AI model configured (empty ai_settings or providers not configured).',
+    );
+    return NextResponse.json(
+      {
+        error:
+          'Sorry — my AI assistant stepped away for a moment. Please try again a little later.',
+      },
+      { status: 503 },
+    );
+  }
+
+  // The system prompt (safety floor + persona + DB facts + extra context) is assembled
+  // entirely on the server. The client only ever sends the conversation messages and
+  // never sees this content.
+  const systemPrompt = await buildChatSystemPrompt(settings);
+
   const groqMessages = [
-    { role: 'system' as const, content: MY_CONTEXT },
+    { role: 'system' as const, content: systemPrompt },
     ...history.map((message) => ({
       role: message.role === 'user' ? ('user' as const) : ('assistant' as const),
       content: message.parts[0].text,
@@ -84,7 +112,7 @@ export async function POST(req: NextRequest) {
     if (!groq) throw new Error('Groq provider is not configured');
 
     const completion = await groq.chat.completions.create({
-      model: 'openai/gpt-oss-20b',
+      model: groqModel,
       messages: groqMessages,
       max_tokens: 400,
       temperature: 0.5,
@@ -96,8 +124,8 @@ export async function POST(req: NextRequest) {
     if (!gemini) throw new Error('Gemini provider is not configured');
 
     const chat = gemini.chats.create({
-      model: 'gemini-3.5-flash-lite',
-      config: { systemInstruction: MY_CONTEXT, maxOutputTokens: 400, temperature: 0.5 },
+      model: geminiModel,
+      config: { systemInstruction: systemPrompt, maxOutputTokens: 400, temperature: 0.5 },
       history,
     });
     const response = await chat.sendMessage({ message: lastUserText });
@@ -107,11 +135,11 @@ export async function POST(req: NextRequest) {
   try {
     let responseText: string;
 
-    if (gemini) {
+    if (geminiAvailable) {
       // Gemini is primary — use it first, then fall back to Groq if it fails
       const now = Date.now();
       if (now < geminiDegradedUntil) {
-        if (!groq) {
+        if (!groqAvailable) {
           throw new Error('Both providers unavailable');
         }
         try {
@@ -130,7 +158,7 @@ export async function POST(req: NextRequest) {
           const httpStatus = e?.status ?? e?.httpErrorCode;
           if (httpStatus === 503) geminiDegradedUntil = Date.now() + 5 * 60_000;
 
-          if (groq) {
+          if (groqAvailable) {
             try {
               responseText = await tryGroq();
             } catch (groqErr: unknown) {
@@ -146,7 +174,7 @@ export async function POST(req: NextRequest) {
           }
         }
       }
-    } else if (groq) {
+    } else if (groqAvailable) {
       // No Gemini key — use Groq only
       try {
         responseText = await tryGroq();
@@ -166,18 +194,18 @@ export async function POST(req: NextRequest) {
     console.error('[chat/route] error:', httpStatus, error?.message);
     if (httpStatus === 429) {
       return NextResponse.json(
-        { error: 'AI rate limit reached. Please try again in a moment.' },
+        { error: "You're sending messages a bit too fast 🙂 Please wait a few seconds." },
         { status: 429 },
       );
     }
     if (httpStatus === 503) {
       return NextResponse.json(
-        { error: 'AI is temporarily overloaded. Please try again in a few seconds.' },
+        { error: 'The AI is a little overloaded right now. Please try again in a few seconds.' },
         { status: 503 },
       );
     }
     return NextResponse.json(
-      { error: 'Failed to get a response. Please try again.' },
+      { error: 'Oops, something went wrong on my side. Please try again in a moment.' },
       { status: 500 },
     );
   }

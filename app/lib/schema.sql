@@ -121,3 +121,17 @@ CREATE TABLE IF NOT EXISTS api_rate_limits (
 );
 
 CREATE INDEX IF NOT EXISTS idx_api_rate_limits_reset_at ON api_rate_limits(reset_at);
+
+
+-- AI avatar configuration: persona, extra chat context and model names.
+-- API keys stay in environment variables.
+CREATE TABLE IF NOT EXISTS ai_settings (
+  id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  chat_instructions TEXT NOT NULL DEFAULT '', -- editable persona / tone / rules
+  chat_extra TEXT NOT NULL DEFAULT '', -- extra chat-only info not present in the resume
+  groq_model VARCHAR(120) NOT NULL DEFAULT 'openai/gpt-oss-20b',
+  gemini_model VARCHAR(120) NOT NULL DEFAULT 'gemini-3.5-flash-lite',
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+INSERT INTO ai_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;

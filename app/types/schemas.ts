@@ -207,6 +207,17 @@ export const AdminCVLanguagesRequestSchema = z.object({
   ),
 });
 
+// ==================== AI Settings Schemas ====================
+
+export const AiSettingsUpdateSchema = z.object({
+  chat_instructions: z.string().max(20000, 'Instructions are too long'),
+  chat_extra: z.string().max(20000, 'Extra context is too long'),
+  groq_model: z.string().trim().min(1, 'Groq model is required').max(120),
+  gemini_model: z.string().trim().min(1, 'Gemini model is required').max(120),
+});
+
+export type AiSettingsUpdateData = z.infer<typeof AiSettingsUpdateSchema>;
+
 // ==================== Image Schemas ====================
 
 export const ImageUploadSchema = z
