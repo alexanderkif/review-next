@@ -43,6 +43,12 @@ interface Theme {
   footer_note: string;
 }
 
+/**
+ * Max height for the chat input. `text-sm` is 20px line-height and `py-2`
+ * adds 8px top/bottom, so 3 lines + padding + 2px border = 78px exactly.
+ */
+const INPUT_MAX_HEIGHT = 78;
+
 const HEADER_GRADIENT: React.CSSProperties = {
   background: 'linear-gradient(135deg, #059669 0%, #2563eb 100%)',
 };
@@ -223,6 +229,17 @@ export default function ChatWidget() {
   useEffect(() => {
     if (isAnimated) setTimeout(() => inputRef.current?.focus(), 280);
   }, [isAnimated]);
+
+  // Auto-grow the input up to INPUT_MAX_HEIGHT, then scroll internally.
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    // Reset first so the textarea can shrink when text is deleted/sent.
+    el.style.height = 'auto';
+    const borderY = el.offsetHeight - el.clientHeight;
+    const next = Math.min(el.scrollHeight + borderY, INPUT_MAX_HEIGHT);
+    el.style.height = `${next}px`;
+  }, [input, isOpen]);
 
   // Cleanup timer on unmount
   useEffect(
@@ -452,7 +469,7 @@ export default function ChatWidget() {
                 rows={1}
                 disabled={isLoading}
                 className={`flex-1 resize-none rounded-xl border px-3 py-2 text-sm focus:ring-1 focus:outline-none disabled:opacity-50 ${t.textarea}`}
-                style={{ maxHeight: '80px' }}
+                style={{ maxHeight: INPUT_MAX_HEIGHT }}
               />
               <button
                 onClick={sendMessage}
