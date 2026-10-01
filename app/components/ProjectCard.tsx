@@ -69,7 +69,13 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       <CardHeader className="flex-shrink-0 pt-6">
         <div className="flex items-start justify-between">
           <CardTitle className="text-white">{project.title}</CardTitle>
-          {project.featured && <Star size={16} className="fill-yellow-400 text-yellow-400" />}
+          {project.featured && (
+            <Star
+              size={16}
+              className="shrink-0 fill-yellow-400 text-yellow-400"
+              aria-hidden="true"
+            />
+          )}
         </div>
       </CardHeader>
 
