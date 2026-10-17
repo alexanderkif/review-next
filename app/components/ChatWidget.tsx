@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, Loader2, MessageCircle, AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import MarkdownText from '@/components/ui/MarkdownText';
 
 interface Message {
   role: 'user' | 'model';
@@ -423,18 +424,17 @@ export default function ChatWidget() {
                     </div>
                   ) : (
                     <div
-                      className={`max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap ${
+                      className={`max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-relaxed break-words ${
                         msg.role === 'user'
-                          ? `rounded-br-sm ${t.userBubble}`
+                          ? `rounded-br-sm whitespace-pre-wrap ${t.userBubble}`
                           : `rounded-bl-sm ${t.botBubble}`
                       }`}
                       style={msg.role === 'user' ? t.userBubbleStyle : t.botBubbleStyle}
                     >
-                      {renderWithLinks(
-                        msg.content,
-                        msg.role === 'user'
-                          ? 'text-white/90 hover:text-white'
-                          : 'text-emerald-700 hover:text-emerald-800',
+                      {msg.role === 'user' ? (
+                        renderWithLinks(msg.content, 'text-white/90 hover:text-white')
+                      ) : (
+                        <MarkdownText content={msg.content} />
                       )}
                     </div>
                   )}

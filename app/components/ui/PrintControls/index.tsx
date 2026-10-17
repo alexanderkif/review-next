@@ -15,20 +15,11 @@ const PrintControls = ({ className = '' }: PrintControlsProps) => {
   const generatePDF = async () => {
     setIsGenerating(true);
     try {
-      // Fetch CV data and projects
-      const [cvResponse, projectsResponse] = await Promise.all([
-        fetch('/api/cv-data'),
-        fetch('/api/admin/projects'),
-      ]);
+      // The public endpoint already returns featured, non-hidden projects.
+      const cvResponse = await fetch('/api/cv-data');
 
       if (!cvResponse.ok) throw new Error('Failed to fetch CV data');
       const cvData: CVData = await cvResponse.json();
-
-      // Add projects to CV data if available
-      if (projectsResponse.ok) {
-        const projects = await projectsResponse.json();
-        cvData.projects = projects;
-      }
 
       // Create PDF document
       const pdfDoc = await PDFDocument.create();
@@ -36,9 +27,18 @@ const PrintControls = ({ className = '' }: PrintControlsProps) => {
       // Embed fonts
       const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      const helveticaOblique = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
+      const helveticaBoldOblique = await pdfDoc.embedFont(StandardFonts.HelveticaBoldOblique);
 
       // Generate PDF content
-      await generateCompletePDF(pdfDoc, cvData, helveticaFont, helveticaBold);
+      await generateCompletePDF(
+        pdfDoc,
+        cvData,
+        helveticaFont,
+        helveticaBold,
+        helveticaOblique,
+        helveticaBoldOblique,
+      );
 
       // Save and download
       const pdfBytes = await pdfDoc.save();

@@ -136,7 +136,7 @@ export default function PersonalInfoSection({
         {/* Highlights */}
         <div>
           <Textarea
-            label="HIGHLIGHTS"
+            label="Highlights"
             rows={8}
             value={cvData.cv.about || ''}
             onChange={(e) => onUpdateField('about', e.target.value)}
@@ -166,6 +166,21 @@ export default function PersonalInfoSection({
             onChange={(values) => onUpdateField('skills_backend', values)}
             placeholder="Agile, Scrum, CI/CD, TDD, Code Review"
           />
+        </div>
+
+        {/* Certifications */}
+        <div>
+          <Textarea
+            label="Certifications"
+            rows={6}
+            value={cvData.cv.certifications || ''}
+            onChange={(e) => onUpdateField('certifications', e.target.value)}
+            placeholder="One certification per line. Markdown is supported:&#10;&#10;- **AWS Certified Developer** — [verify credential](https://www.credly.com/badges/...)&#10;- *Scrum Master* (PSM I)&#10;&#10;Use a blank line to start a new paragraph."
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Supports **bold**, *italic*, [links](https://example.com), and line breaks. Use a blank
+            line to start a new paragraph.
+          </p>
         </div>
 
         <div className="flex justify-end pt-4">

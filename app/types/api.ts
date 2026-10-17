@@ -136,6 +136,7 @@ export interface Skills {
 export interface CVData {
   personalInfo?: PersonalInfo & { avatar?: string[] };
   about?: string;
+  certifications?: string;
   skills?: Skills;
   experience?: Array<{
     title: string;
@@ -161,12 +162,15 @@ export interface CVData {
     github_url?: string;
     demo_url?: string;
     status: string;
+    featured?: boolean;
+    hidden?: boolean;
   }>;
 }
 
 export interface CVUpdateRequest {
   personalInfo?: PersonalInfo;
   about?: string;
+  certifications?: string;
   skills?: Skills;
 }
 

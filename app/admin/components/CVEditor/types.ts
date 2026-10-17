@@ -11,6 +11,7 @@ export interface CVData {
     github_url: string;
     linkedin_url: string;
     about: string;
+    certifications: string;
     skills_frontend: string[];
     skills_tools: string[];
     skills_backend: string[];

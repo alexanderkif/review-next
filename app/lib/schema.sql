@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS cv_data (
   github_url VARCHAR(500),
   linkedin_url VARCHAR(500),
   about TEXT NOT NULL,
+  certifications TEXT,
   skills_frontend TEXT[],
   skills_tools TEXT[],
   skills_backend TEXT[],
@@ -135,3 +136,22 @@ CREATE TABLE IF NOT EXISTS ai_settings (
 );
 
 INSERT INTO ai_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+
+-- Lazy-loaded images (avatars, project galleries, user avatars) stored as data URIs.
+CREATE TABLE IF NOT EXISTS images (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  entity_type VARCHAR(50) NOT NULL,
+  entity_id VARCHAR(50) NOT NULL,
+  image_data TEXT NOT NULL,
+  mime_type VARCHAR(100) NOT NULL,
+  size_bytes INTEGER NOT NULL,
+  width INTEGER,
+  height INTEGER,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  CONSTRAINT images_entity_type_check CHECK (entity_type IN ('avatar', 'project', 'user'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_images_entity ON images(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_images_created_at ON images(created_at DESC);

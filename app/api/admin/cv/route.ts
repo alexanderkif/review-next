@@ -110,6 +110,7 @@ export async function PUT(request: NextRequest) {
     const github_url = parsed.github_url ?? null;
     const linkedin_url = parsed.linkedin_url ?? null;
     const about = parsed.about ?? null;
+    const certifications = parsed.certifications ?? null;
     const skills_frontend = parsed.skills_frontend ?? null;
     const skills_tools = parsed.skills_tools ?? null;
     const skills_backend = parsed.skills_backend ?? null;
@@ -171,6 +172,7 @@ export async function PUT(request: NextRequest) {
         github_url = ${github_url},
         linkedin_url = ${linkedin_url},
         about = ${about},
+        certifications = ${certifications},
         skills_frontend = ${skills_frontend},
         skills_tools = ${skills_tools},
         skills_backend = ${skills_backend},

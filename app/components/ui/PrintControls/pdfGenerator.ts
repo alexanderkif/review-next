@@ -8,16 +8,26 @@ import {
   renderEducation,
   renderLanguages,
   renderTechnicalSkills,
+  renderCertifications,
   renderFeaturedProjects,
 } from './renderSections';
+import type { MarkdownFonts } from './markdownPdf';
 
 export const generateCompletePDF = async (
   pdfDoc: PDFDocument,
   cvData: CVData,
   helveticaFont: PDFFont,
   helveticaBold: PDFFont,
+  helveticaOblique: PDFFont,
+  helveticaBoldOblique: PDFFont,
 ): Promise<void> => {
   const { PAGE_WIDTH, PAGE_HEIGHT, MARGIN } = PDF_CONFIG;
+  const markdownFonts: MarkdownFonts = {
+    regular: helveticaFont,
+    bold: helveticaBold,
+    italic: helveticaOblique,
+    boldItalic: helveticaBoldOblique,
+  };
 
   // Create first page
   let page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
@@ -38,9 +48,9 @@ export const generateCompletePDF = async (
     pdfDoc,
     cvData,
     helveticaBold,
-    helveticaFont,
     y,
     pageAnnotations,
+    markdownFonts,
   );
   page = highlightsResult.newPage;
   y = highlightsResult.newY;
@@ -55,12 +65,13 @@ export const generateCompletePDF = async (
     helveticaFont,
     y,
     pageAnnotations,
+    markdownFonts,
   );
   page = experienceResult.newPage;
   y = experienceResult.newY;
   pageAnnotations = experienceResult.newAnnotations;
 
-  // Render technical skills (new page)
+  // Render technical skills (flows directly after work experience)
   const skillsResult = renderTechnicalSkills(
     page,
     pdfDoc,
@@ -73,6 +84,20 @@ export const generateCompletePDF = async (
   page = skillsResult.newPage;
   y = skillsResult.newY;
   pageAnnotations = skillsResult.newAnnotations;
+
+  // Render certifications
+  const certificationsResult = renderCertifications(
+    page,
+    pdfDoc,
+    cvData,
+    helveticaBold,
+    y,
+    pageAnnotations,
+    markdownFonts,
+  );
+  page = certificationsResult.newPage;
+  y = certificationsResult.newY;
+  pageAnnotations = certificationsResult.newAnnotations;
 
   // Render education
   const educationResult = renderEducation(

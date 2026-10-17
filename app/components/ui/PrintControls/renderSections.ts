@@ -1,6 +1,8 @@
 import { PDFDocument, PDFFont, PDFPage, PDFRef } from 'pdf-lib';
 import { CVData } from './types';
 import { PDF_CONFIG, getContentWidth } from './constants';
+import { parseMarkdown } from '@/lib/markdown';
+import { renderMarkdown, type MarkdownFonts } from './markdownPdf';
 import {
   checkNewPage,
   wrapText,
@@ -15,11 +17,11 @@ export const renderHighlights = (
   pdfDoc: PDFDocument,
   cvData: CVData,
   helveticaBold: PDFFont,
-  helveticaFont: PDFFont,
   y: number,
   pageAnnotations: PDFRef[],
+  markdownFonts: MarkdownFonts,
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
-  if (!cvData.about) {
+  if (!cvData.about?.trim()) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
   }
 
@@ -36,58 +38,23 @@ export const renderHighlights = (
 
   currentY = renderSectionHeader(currentPage, 'HIGHLIGHTS', currentY, helveticaBold);
 
-  // Parse and render highlights. Lines prefixed with "•" or "-" are rendered as
-  // bullet list items, every other line is rendered as a paragraph. This mirrors
-  // how the site renders `about`, so no valid content is silently dropped.
-  const highlights = cvData.about
-    .split('\n')
-    .map((line: string) => line.trim())
-    .filter((line: string) => line.length > 0);
-
-  for (const highlight of highlights) {
-    const isBullet = highlight.startsWith('•') || highlight.startsWith('-');
-    const text = isBullet ? highlight.replace(/^[•\-]\s*/, '') : highlight;
-    const indent = isBullet ? 10 : 0;
-    const lines = wrapText(text, contentWidth - indent, 10, helveticaFont);
-
-    const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
-    currentPage = result.newPage;
-    currentY = result.newY;
-    annotations = result.newAnnotations;
-
-    for (let i = 0; i < lines.length; i++) {
-      if (i > 0) {
-        const nextPage = checkNewPage(currentY, LINE_HEIGHT, currentPage, annotations, pdfDoc);
-        currentPage = nextPage.newPage;
-        currentY = nextPage.newY;
-        annotations = nextPage.newAnnotations;
-      }
-
-      // Draw bullet only for the first line of a bullet list item
-      if (isBullet && i === 0) {
-        currentPage.drawCircle({
-          x: MARGIN + 3,
-          y: currentY + 10 * 0.3,
-          size: 2,
-          color: COLORS.GREEN,
-        });
-      }
-
-      currentPage.drawText(lines[i], {
-        x: MARGIN + indent,
-        y: currentY,
-        size: 10,
-        font: helveticaFont,
-        color: COLORS.GRAY,
-      });
-      currentY -= LINE_HEIGHT;
-    }
-
-    // Extra spacing between paragraphs, tighter between bullet items.
-    currentY -= isBullet ? 3 : 6;
-  }
-
-  return { newPage: currentPage, newY: currentY, newAnnotations: annotations };
+  return renderMarkdown(
+    currentPage,
+    pdfDoc,
+    parseMarkdown(cvData.about),
+    {
+      x: MARGIN,
+      y: currentY,
+      maxWidth: contentWidth,
+      fontSize: 10,
+      lineHeight: LINE_HEIGHT,
+      color: COLORS.GRAY,
+      fonts: markdownFonts,
+      bulletIndent: 10,
+      paragraphSpacing: 6,
+    },
+    annotations,
+  );
 };
 
 export const renderWorkExperience = (
@@ -98,6 +65,7 @@ export const renderWorkExperience = (
   helveticaFont: PDFFont,
   y: number,
   pageAnnotations: PDFRef[],
+  markdownFonts: MarkdownFonts,
 ): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
   if (!cvData.experience?.length) {
     return { newPage: page, newY: y, newAnnotations: pageAnnotations };
@@ -160,22 +128,25 @@ export const renderWorkExperience = (
     currentY -= 16;
 
     // Description
-    const descLines = wrapText(exp.description, contentWidth, 10, helveticaFont);
-    for (const line of descLines) {
-      const result = checkNewPage(currentY, LINE_HEIGHT + 2, currentPage, annotations, pdfDoc);
-      currentPage = result.newPage;
-      currentY = result.newY;
-      annotations = result.newAnnotations;
-
-      currentPage.drawText(line, {
+    const description = renderMarkdown(
+      currentPage,
+      pdfDoc,
+      parseMarkdown(exp.description),
+      {
         x: MARGIN,
         y: currentY,
-        size: 10,
-        font: helveticaFont,
+        maxWidth: contentWidth,
+        fontSize: 10,
+        lineHeight: LINE_HEIGHT + 2,
         color: COLORS.GRAY,
-      });
-      currentY -= LINE_HEIGHT + 2;
-    }
+        fonts: markdownFonts,
+        paragraphSpacing: 6,
+      },
+      annotations,
+    );
+    currentPage = description.newPage;
+    currentY = description.newY;
+    annotations = description.newAnnotations;
     currentY -= 8;
   }
 
@@ -476,20 +447,12 @@ export const renderTechnicalSkills = (
   let currentPage = page;
   let currentY = y;
   let annotations = [...pageAnnotations];
-  const { MARGIN, PAGE_WIDTH, PAGE_HEIGHT, COLORS, LINE_HEIGHT } = PDF_CONFIG;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const contentWidth = getContentWidth();
+  const { MARGIN, PAGE_WIDTH, COLORS, LINE_HEIGHT } = PDF_CONFIG;
 
-  // Force new page for Technical Skills
-  if (annotations.length > 0) {
-    currentPage.node.set(
-      currentPage.doc.context.obj('Annots'),
-      currentPage.doc.context.obj(annotations),
-    );
-    annotations = [];
-  }
-  currentPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
-  currentY = PAGE_HEIGHT - MARGIN;
+  const sectionResult = checkNewPage(currentY, 40, currentPage, annotations, pdfDoc);
+  currentPage = sectionResult.newPage;
+  currentY = sectionResult.newY - 10;
+  annotations = sectionResult.newAnnotations;
 
   currentY = renderSectionHeader(currentPage, 'TECHNICAL SKILLS', currentY, helveticaBold);
 
@@ -574,6 +537,51 @@ export const renderTechnicalSkills = (
   return { newPage: currentPage, newY: currentY, newAnnotations: annotations };
 };
 
+export const renderCertifications = (
+  page: PDFPage,
+  pdfDoc: PDFDocument,
+  cvData: CVData,
+  helveticaBold: PDFFont,
+  y: number,
+  pageAnnotations: PDFRef[],
+  markdownFonts: MarkdownFonts,
+): { newPage: PDFPage; newY: number; newAnnotations: PDFRef[] } => {
+  if (!cvData.certifications?.trim()) {
+    return { newPage: page, newY: y, newAnnotations: pageAnnotations };
+  }
+
+  let currentPage = page;
+  let currentY = y;
+  let annotations = [...pageAnnotations];
+  const { MARGIN, COLORS, LINE_HEIGHT } = PDF_CONFIG;
+  const contentWidth = getContentWidth();
+
+  const result = checkNewPage(currentY, 40, currentPage, annotations, pdfDoc);
+  currentPage = result.newPage;
+  currentY = result.newY - 10;
+  annotations = result.newAnnotations;
+
+  currentY = renderSectionHeader(currentPage, 'CERTIFICATIONS', currentY, helveticaBold);
+
+  return renderMarkdown(
+    currentPage,
+    pdfDoc,
+    parseMarkdown(cvData.certifications),
+    {
+      x: MARGIN,
+      y: currentY,
+      maxWidth: contentWidth,
+      fontSize: 10,
+      lineHeight: LINE_HEIGHT,
+      color: COLORS.GRAY,
+      fonts: markdownFonts,
+      bulletIndent: 10,
+      paragraphSpacing: 6,
+    },
+    annotations,
+  );
+};
+
 export const renderFeaturedProjects = (
   page: PDFPage,
   pdfDoc: PDFDocument,
@@ -636,7 +644,7 @@ export const renderFeaturedProjects = (
       }
     }
 
-    currentPage.drawText(sanitizeText(project.title), {
+    currentPage.drawText(sanitizeText(project.title).trim(), {
       x: columnX,
       y: projectY,
       size: 10,

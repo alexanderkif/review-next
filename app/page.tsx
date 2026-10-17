@@ -10,8 +10,10 @@
   BookOpen,
   Briefcase,
   Settings,
+  BadgeCheck,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import MarkdownText from '@/components/ui/MarkdownText';
 import PrintControls from '@/components/ui/PrintControls';
 import Tooltip from '@/components/ui/Tooltip';
 import LazyAvatar from '@/components/ui/LazyAvatar';
@@ -241,24 +243,7 @@ export default async function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-sm text-slate-700">
-              {cvData.about
-                ? cvData.about
-                    .split('\n')
-                    .map((line, index) => {
-                      const trimmedLine = line.trim();
-                      if (!trimmedLine) return null;
-
-                      // Strip a leading bullet/dash marker; bullets are rendered as plain paragraphs.
-                      return (
-                        <p key={index} className="mb-3">
-                          {trimmedLine.replace(/^[•\-]\s*/, '')}
-                        </p>
-                      );
-                    })
-                    .filter(Boolean)
-                : null}
-            </div>
+            <MarkdownText content={cvData.about} className="text-sm text-slate-700" />
           </CardContent>
         </Card>
 
@@ -280,7 +265,7 @@ export default async function Home() {
                     <Calendar size={12} aria-hidden="true" />
                     {exp.period}
                   </p>
-                  <p className="text-sm text-slate-700">{exp.description}</p>
+                  <MarkdownText content={exp.description} className="text-sm text-slate-700" />
                 </div>
               ))}
             </CardContent>
@@ -411,6 +396,24 @@ export default async function Home() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Certifications */}
+            {cvData.certifications?.trim() && (
+              <Card className="animate-fade-in">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BadgeCheck size={20} className="text-emerald-600" />
+                    Certifications
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MarkdownText
+                    content={cvData.certifications}
+                    className="text-sm text-slate-700"
+                  />
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

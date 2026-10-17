@@ -30,6 +30,7 @@ export interface CVData {
     avatar?: string[];
   };
   about?: string;
+  certifications?: string;
   experience?: Array<{
     title: string;
     company: string;

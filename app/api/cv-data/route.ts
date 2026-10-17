@@ -76,6 +76,7 @@ export async function GET(): Promise<NextResponse<CVData | ApiError>> {
         })(),
       },
       about: cv.about,
+      certifications: cv.certifications || '',
       skills: {
         frontend: cv.skills_frontend || [],
         tools: cv.skills_tools || [],
@@ -105,6 +106,9 @@ export async function GET(): Promise<NextResponse<CVData | ApiError>> {
         github_url: proj.github_url,
         demo_url: proj.demo_url,
         status: proj.status,
+        // The query above already restricts results to featured, non-hidden projects.
+        featured: true,
+        hidden: false,
       })),
     });
   } catch (error) {

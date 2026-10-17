@@ -12,6 +12,7 @@ export interface CVData {
     linkedin?: string;
   };
   about: string;
+  certifications: string;
   experience: Array<{
     id: string;
     title: string;

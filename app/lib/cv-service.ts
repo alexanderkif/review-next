@@ -98,6 +98,7 @@ async function fetchCVData(): Promise<CVData | null> {
         linkedin: cv.linkedin_url || '',
       },
       about: cv.about,
+      certifications: cv.certifications || '',
       experience: experienceResult.map((exp) => ({
         id: exp.id.toString(),
         title: exp.title,

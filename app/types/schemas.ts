@@ -102,6 +102,7 @@ export const PersonalInfoSchema = z.object({
   website: z.string().url().optional().or(z.literal('')).nullable(),
   github: z.string().optional(),
   linkedin: z.string().optional(),
+  certifications: z.string().optional().nullable(),
 });
 
 export type PersonalInfoData = z.infer<typeof PersonalInfoSchema>;
@@ -138,6 +139,7 @@ export type LanguageData = z.infer<typeof LanguageSchema>;
 export const CVUpdateSchema = z.object({
   personalInfo: PersonalInfoSchema.optional(),
   about: z.string().optional(),
+  certifications: z.string().optional(),
   skills: z
     .object({
       frontend: z.array(z.string()).optional(),
@@ -170,6 +172,7 @@ export const AdminCVUpdateSchema = z.object({
   github_url: AdminCVTextSchema,
   linkedin_url: AdminCVTextSchema,
   about: AdminCVTextSchema,
+  certifications: AdminCVTextSchema,
   skills_frontend: z.array(z.string()).nullable().optional(),
   skills_tools: z.array(z.string()).nullable().optional(),
   skills_backend: z.array(z.string()).nullable().optional(),
