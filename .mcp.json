@@ -1,0 +1,49 @@
+{
+	"mcpServers": {
+		"context7": {
+			"type": "local",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@upstash/context7-mcp"
+			],
+			"tools": [
+				"*"
+			]
+		},
+		"docfork": {
+			"type": "local",
+			"command": "npx",
+			"args": [
+				"-y",
+				"docfork@latest"
+			],
+			"tools": [
+				"*"
+			]
+		},
+		"next-devtools": {
+			"type": "local",
+			"command": "npx",
+			"args": [
+				"-y",
+				"next-devtools-mcp@latest"
+			],
+			"tools": [
+				"*"
+			]
+		},
+		"postgres": {
+			"type": "local",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@modelcontextprotocol/server-postgres",
+				"${POSTGRES_URL}"
+			],
+			"tools": [
+				"*"
+			]
+		}
+	}
+}
