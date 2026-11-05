@@ -102,11 +102,9 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
   try {
     project = await getProjectById(projectId, userId);
 
-    if (!project) {
-      notFound();
+    if (project) {
+      comments = await getProjectComments(projectId);
     }
-
-    comments = await getProjectComments(projectId);
   } catch (error) {
     console.error('Failed to fetch project:', error);
     hasError = true;
@@ -126,7 +124,6 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     );
   }
 
-  // This should not happen as we check in try-catch, but adding for TypeScript
   if (!project) {
     notFound();
   }

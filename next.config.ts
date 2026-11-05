@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  env: process.env.E2E_NO_DATABASE === '1' ? { E2E_NO_DATABASE: '1' } : {},
+  distDir: process.env.E2E_NO_DATABASE === '1' ? '.next-e2e' : '.next',
   reactCompiler: true,
   // Allow external images from OAuth providers
   images: {

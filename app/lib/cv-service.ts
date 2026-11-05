@@ -1,5 +1,5 @@
 ﻿import 'server-only';
-import { sql } from '@/lib/db';
+import { isE2ENoDatabaseMode, sql } from '@/lib/db';
 import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
 import { CVData } from './types/cv';
@@ -172,7 +172,13 @@ const _getCVDataCached = unstable_cache(fetchCVData, ['cv-data'], {
   revalidate: 1800, // 30 minutes (reduced from 1 hour for faster recovery)
   tags: ['cv'],
 });
-export const getCVData = cache(_getCVDataCached);
+export const getCVData = cache(async () => {
+  if (isE2ENoDatabaseMode()) {
+    return null;
+  }
+
+  return _getCVDataCached();
+});
 
 // Function to invalidate CV cache (for admin panel)
 export async function revalidateCVData() {

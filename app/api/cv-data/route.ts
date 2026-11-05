@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { isE2ENoDatabaseMode, sql } from '@/lib/db';
 import type { CVData, ApiError } from '../../types/api';
 
 export async function GET(): Promise<NextResponse<CVData | ApiError>> {
+  if (isE2ENoDatabaseMode()) {
+    return NextResponse.json({ error: 'CV data not found' }, { status: 404 });
+  }
+
   try {
     // Получаем данные CV
     const cvData = await sql`

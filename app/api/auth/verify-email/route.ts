@@ -3,18 +3,31 @@ import { sql } from '@/lib/db';
 import { sendWelcomeEmail } from '@/lib/email-service';
 import { VerificationTokenQuerySchema } from '@/types/schemas';
 
-async function getVerificationUser(request: NextRequest) {
+type VerificationUser = {
+  id: number;
+  name: string;
+  email: string;
+  email_verification_expires: Date | string | null;
+  email_verified: boolean | null;
+};
+
+type VerificationLookupResult =
+  | { type: 'error'; response: NextResponse }
+  | { type: 'success'; token: string; user: VerificationUser };
+
+async function getVerificationUser(request: NextRequest): Promise<VerificationLookupResult> {
   const { searchParams } = new URL(request.url);
   const validationResult = VerificationTokenQuerySchema.safeParse({
     token: searchParams.get('token'),
   });
   if (!validationResult.success) {
     return {
+      type: 'error',
       response: NextResponse.json({ error: 'Invalid verification token' }, { status: 400 }),
     };
   }
 
-  const users = await sql`
+  const users = await sql<VerificationUser[]>`
     SELECT id, name, email, email_verification_expires, email_verified
     FROM users
     WHERE email_verification_token = ${validationResult.data.token}
@@ -22,13 +35,15 @@ async function getVerificationUser(request: NextRequest) {
 
   if (users.length === 0) {
     return {
+      type: 'error',
       response: NextResponse.json({ error: 'Invalid verification token' }, { status: 400 }),
     };
   }
 
   const user = users[0];
-  if (new Date() > new Date(user.email_verification_expires)) {
+  if (!user.email_verification_expires || new Date() > new Date(user.email_verification_expires)) {
     return {
+      type: 'error',
       response: NextResponse.json(
         { error: 'Verification token has expired. Request a new verification email.' },
         { status: 400 },
@@ -36,13 +51,13 @@ async function getVerificationUser(request: NextRequest) {
     };
   }
 
-  return { token: validationResult.data.token, user };
+  return { type: 'success', token: validationResult.data.token, user };
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const result = await getVerificationUser(request);
-    if ('response' in result) {
+    if (result.type === 'error') {
       return result.response;
     }
 
@@ -66,10 +81,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const result = await getVerificationUser(request);
-    if ('response' in result) {
+    if (result.type === 'error') {
       return result.response;
     }
 

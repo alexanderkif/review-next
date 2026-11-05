@@ -8,6 +8,23 @@ declare global {
   var _pgSql: postgres.Sql | undefined;
 }
 
+export function isE2ENoDatabaseMode(): boolean {
+  if (process.env.E2E_NO_DATABASE === '1') {
+    return true;
+  }
+
+  try {
+    const databaseUrl = new URL(process.env.POSTGRES_URL ?? '');
+    return (
+      databaseUrl.hostname === '127.0.0.1' &&
+      databaseUrl.port === '1' &&
+      databaseUrl.pathname === '/e2e_disabled'
+    );
+  } catch {
+    return false;
+  }
+}
+
 function createSqlClient(): postgres.Sql {
   const connectionString = process.env.POSTGRES_URL;
   if (!connectionString) {
@@ -76,6 +93,10 @@ export interface ProjectComment {
 
 // Функции для работы с проектами
 export async function getProjects(userId?: string): Promise<Project[]> {
+  if (isE2ENoDatabaseMode()) {
+    return [];
+  }
+
   await connection();
   try {
     // Getting projects from database
@@ -142,6 +163,10 @@ export async function getProjects(userId?: string): Promise<Project[]> {
 }
 
 export async function getProjectById(id: number, userId?: string): Promise<Project | null> {
+  if (isE2ENoDatabaseMode()) {
+    return null;
+  }
+
   await connection();
   try {
     let data;
@@ -193,6 +218,10 @@ export async function getProjectById(id: number, userId?: string): Promise<Proje
 }
 
 export async function getProjectComments(projectId: number): Promise<ProjectComment[]> {
+  if (isE2ENoDatabaseMode()) {
+    return [];
+  }
+
   await connection();
   try {
     const data = await sql`
