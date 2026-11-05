@@ -9,7 +9,7 @@ import { CheckCircle, XCircle, Mail, ArrowLeft, RefreshCw } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 interface VerificationState {
-  status: 'loading' | 'success' | 'error' | 'already-verified';
+  status: 'loading' | 'pending' | 'success' | 'error' | 'already-verified';
   message: string;
   user?: {
     id: number;
@@ -26,7 +26,7 @@ function VerifyEmailContent() {
     message: 'Checking verification token...',
   });
 
-  const verifyEmail = async (token: string) => {
+  const checkVerification = async (token: string) => {
     try {
       const response = await fetch(`/api/auth/verify-email?token=${token}`, {
         method: 'GET',
@@ -40,6 +40,55 @@ function VerifyEmailContent() {
             status: 'already-verified',
             message: data.message,
             user: data.user,
+          });
+        } else {
+          setState({
+            status: 'pending',
+            message: data.message,
+          });
+        }
+      } else {
+        setState({
+          status: 'error',
+          message: data.error || 'Email verification error',
+        });
+      }
+    } catch (error) {
+      logger.error('Verification check error:', error);
+      setState({
+        status: 'error',
+        message: 'An error occurred while checking this link. Please try later.',
+      });
+    }
+  };
+
+  const verifyEmail = async () => {
+    const token = searchParams.get('token');
+    if (!token) {
+      setState({
+        status: 'error',
+        message: 'Verification token not found in link',
+      });
+      return;
+    }
+
+    setState({
+      status: 'loading',
+      message: 'Verifying your email...',
+    });
+
+    try {
+      const response = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (data.alreadyVerified) {
+          setState({
+            status: 'already-verified',
+            message: data.message,
           });
         } else {
           setState({
@@ -76,8 +125,7 @@ function VerifyEmailContent() {
       return;
     }
 
-    // Send verification request
-    setTimeout(() => verifyEmail(token), 0);
+    setTimeout(() => checkVerification(token), 0);
   }, [searchParams]);
 
   const renderContent = () => {
@@ -87,6 +135,18 @@ function VerifyEmailContent() {
           <div className="py-8 text-center">
             <RefreshCw className="mx-auto mb-4 animate-spin text-blue-500" size={48} />
             <p className="text-slate-600">{state.message}</p>
+          </div>
+        );
+
+      case 'pending':
+        return (
+          <div className="py-8 text-center">
+            <Mail className="mx-auto mb-4 text-blue-500" size={64} />
+            <h2 className="mb-4 text-2xl font-bold text-slate-800">Confirm your email</h2>
+            <p className="mb-6 text-slate-700">{state.message}</p>
+            <Button className="btn-primary w-full" onClick={verifyEmail}>
+              Verify Email
+            </Button>
           </div>
         );
 

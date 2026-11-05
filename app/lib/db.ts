@@ -157,7 +157,7 @@ export async function getProjectById(id: number, userId?: string): Promise<Proje
         LEFT JOIN project_likes pl ON p.id = pl.project_id
         LEFT JOIN project_comments pc ON p.id = pc.project_id
         LEFT JOIN project_likes upl ON p.id = upl.project_id AND upl.user_id = ${userId}
-        WHERE p.id = ${id}
+        WHERE p.id = ${id} AND p.hidden = false
         GROUP BY p.id, upl.user_id
       `;
     } else {
@@ -170,7 +170,7 @@ export async function getProjectById(id: number, userId?: string): Promise<Proje
         FROM projects p
         LEFT JOIN project_likes pl ON p.id = pl.project_id
         LEFT JOIN project_comments pc ON p.id = pc.project_id
-        WHERE p.id = ${id}
+        WHERE p.id = ${id} AND p.hidden = false
         GROUP BY p.id
       `;
     }

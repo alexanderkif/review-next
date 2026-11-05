@@ -73,17 +73,16 @@ export const authConfig = {
       return true;
     },
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      // Always allow relative URLs
-      if (url.startsWith('/')) {
-        return `${baseUrl}${url}`;
+      try {
+        const base = new URL(baseUrl);
+        const destination = new URL(url, base);
+        if (destination.origin === base.origin && !destination.username && !destination.password) {
+          return destination.toString();
+        }
+      } catch {
+        // Invalid callback URLs fall back to the application origin.
       }
 
-      // Allow URLs on the same domain
-      if (url.startsWith(baseUrl)) {
-        return url;
-      }
-
-      // Default fallback
       return baseUrl;
     },
   },

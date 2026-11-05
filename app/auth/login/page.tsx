@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { logger } from '@/lib/logger';
+import { getSafeCallbackPath } from '@/lib/safe-callback-path';
 import OAuthButtons from '@/components/ui/OAuthButtons';
 
 function LoginForm() {
@@ -16,7 +17,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message');
   const error = searchParams.get('error');
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = getSafeCallbackPath(searchParams.get('callbackUrl'));
 
   // Debug logging
   // LoginForm initialized with callbackUrl

@@ -61,6 +61,19 @@ export function generateVerificationToken(): string {
   return crypto.randomBytes(32).toString('hex');
 }
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    };
+    return entities[character];
+  });
+}
+
 // Send verification email
 export async function sendVerificationEmail(
   email: string,
@@ -83,6 +96,7 @@ export async function sendVerificationEmail(
     const transporter = createTransporter(config);
 
     const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`;
+    const escapedName = escapeHtml(name);
 
     const mailOptions = {
       from: config.from,
@@ -110,7 +124,7 @@ export async function sendVerificationEmail(
               <h1>🎉 Welcome!</h1>
             </div>
             <div class="content">
-              <h2>Hello, ${name}!</h2>
+              <h2>Hello, ${escapedName}!</h2>
               <p>Thank you for registering on our portfolio site. To complete your registration, please verify your email address.</p>
               
               <p>Click the button below to verify:</p>
@@ -167,6 +181,7 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<boo
 
   try {
     const transporter = createTransporter(config);
+    const escapedName = escapeHtml(name);
 
     const mailOptions = {
       from: config.from,
@@ -195,7 +210,7 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<boo
               <h1>🎉 Email Verified!</h1>
             </div>
             <div class="content">
-              <h2>Great, ${name}!</h2>
+              <h2>Great, ${escapedName}!</h2>
               <p>Your email address has been successfully verified. Now you can use all the features of our site:</p>
               
               <div class="features">

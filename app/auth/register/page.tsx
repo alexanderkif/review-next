@@ -8,12 +8,13 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { User, Mail, ArrowLeft, Eye, EyeOff, CheckCircle, RefreshCw } from 'lucide-react';
 import { logger } from '@/lib/logger';
+import { getSafeCallbackPath } from '@/lib/safe-callback-path';
 import OAuthButtons from '@/components/ui/OAuthButtons';
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = getSafeCallbackPath(searchParams.get('callbackUrl'));
   const [formData, setFormData] = useState({
     name: '',
     email: '',
