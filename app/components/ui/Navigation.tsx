@@ -153,7 +153,7 @@ const Navigation = ({
             </li>
 
             <li>
-              {isProjectsPage ? (
+              {pathname === '/projects' ? (
                 <span
                   className={getLinkStyles(true)}
                   style={{ WebkitFontSmoothing: 'antialiased' }}

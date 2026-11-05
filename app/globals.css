@@ -11,6 +11,11 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+a[href],
+button:not(:disabled) {
+  cursor: pointer;
+}
+
 /* Fix autofill styles for inputs */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

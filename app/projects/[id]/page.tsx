@@ -200,9 +200,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
         )}
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Main content */}
-          <div className="space-y-8 lg:col-span-2">
-            {/* Описание */}
+          <div className="contents lg:col-span-2 lg:row-span-2 lg:block lg:space-y-8">
             <Card className="animate-fade-in text-white">
               <CardHeader>
                 <CardTitle className="text-white">Project Description</CardTitle>
@@ -214,14 +212,13 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               </CardContent>
             </Card>
 
-            {/* Comments */}
-            <LazyProjectComments projectId={project.id} comments={comments} />
+            <div className="order-3">
+              <LazyProjectComments projectId={project.id} comments={comments} />
+            </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Технологии */}
-            <Card className="animate-fade-in text-white">
+          <div className="contents lg:col-start-3 lg:row-start-1 lg:block lg:space-y-6">
+            <Card className="animate-fade-in order-2 text-white">
               <CardHeader>
                 <CardTitle className="text-white">Technologies</CardTitle>
               </CardHeader>
@@ -239,8 +236,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               </CardContent>
             </Card>
 
-            {/* Статистика */}
-            <Card className="animate-fade-in text-white">
+            <Card className="animate-fade-in order-4 text-white">
               <CardHeader>
                 <CardTitle className="text-white">Statistics</CardTitle>
               </CardHeader>
@@ -264,6 +260,16 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <Link
+            href="/projects"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded px-1 py-2 text-white/70 transition-colors hover:text-white focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            Back to Projects
+          </Link>
         </div>
       </div>
     </div>

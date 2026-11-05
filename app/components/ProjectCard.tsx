@@ -27,48 +27,45 @@ interface ProjectCardProps {
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
   return (
     <Card
-      className="animate-fade-in relative flex h-full flex-col overflow-hidden text-white"
+      className="animate-fade-in relative isolate flex h-full flex-col overflow-hidden text-white"
       style={{ animationDelay: `${Math.min(index * 0.1, 0.4)}s`, contain: 'layout style paint' }}
     >
       {/* Первое изображение проекта */}
       {project.image_urls && project.image_urls.length > 0 ? (
-        <Link
-          href={`/projects/${project.id}`}
-          className="block rounded-xl focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-        >
-          <div className="relative h-48 overflow-hidden rounded-xl bg-white/10">
-            <LazyImage
-              src={project.image_urls[0]}
-              alt={project.title}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-              priority={index < 4}
-              fetchPriority={index < 4 ? 'high' : 'low'}
-              fallback={
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-600 to-blue-600 text-4xl font-bold text-white">
-                  {project.title[0]?.toUpperCase() || 'P'}
-                </div>
-              }
-            />
-          </div>
-        </Link>
+        <div className="relative h-48 overflow-hidden rounded-xl bg-white/10">
+          <LazyImage
+            src={project.image_urls[0]}
+            alt={project.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+            priority={index < 4}
+            fetchPriority={index < 4 ? 'high' : 'low'}
+            fallback={
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-600 to-blue-600 text-4xl font-bold text-white">
+                {project.title[0]?.toUpperCase() || 'P'}
+              </div>
+            }
+          />
+        </div>
       ) : (
         /* Fallback для проектов без изображений */
-        <Link
-          href={`/projects/${project.id}`}
-          className="block rounded-xl focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:outline-none"
-        >
-          <div className="relative flex h-48 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-400 to-purple-600 transition-opacity">
-            <div className="text-center text-white">
-              <div className="text-2xl font-bold">{project.title}</div>
-            </div>
+        <div className="relative flex h-48 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-400 to-purple-600 transition-opacity">
+          <div className="text-center text-white">
+            <div className="text-2xl font-bold">{project.title}</div>
           </div>
-        </Link>
+        </div>
       )}
 
       <CardHeader className="flex-shrink-0 pt-6">
         <div className="flex items-start justify-between">
-          <CardTitle className="text-white">{project.title}</CardTitle>
+          <CardTitle className="text-white">
+            <Link
+              href={`/projects/${project.id}`}
+              className="after:absolute after:inset-0 after:z-[1] after:rounded-xl after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-emerald-600 focus-visible:after:ring-offset-2"
+            >
+              {project.title}
+            </Link>
+          </CardTitle>
           {project.featured && (
             <Star
               size={16}
@@ -115,7 +112,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         </div>
 
         {/* Действия - прибиты к низу */}
-        <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4">
+        <div className="relative z-10 mt-auto flex items-center justify-between border-t border-white/10 pt-4">
           <div className="flex gap-3">
             {project.github_url && (
               <Tooltip content="View on GitHub" position="top">
