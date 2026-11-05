@@ -18,11 +18,7 @@ export default function CVEditor() {
   const [cvData, setCvData] = useState<CVData | null>(null);
   const [activeSection, setActiveSection] = useState('personal');
 
-  useEffect(() => {
-    fetchCVData();
-  }, []);
-
-  const fetchCVData = async () => {
+  const fetchCVData = async (): Promise<CVData | null> => {
     try {
       const response = await fetch('/api/admin/cv');
       if (response.ok) {
@@ -33,16 +29,42 @@ export default function CVEditor() {
           education: data.education || [],
           languages: data.languages || [],
         };
-        setCvData(normalizedData);
+        return normalizedData;
       } else {
         logger.error('Failed to fetch CV data');
       }
     } catch (error) {
       logger.error('Error fetching CV data:', error);
-    } finally {
-      setLoading(false);
     }
+
+    return null;
   };
+
+  const refreshCVData = async () => {
+    const data = await fetchCVData();
+    if (data) {
+      setCvData(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadCVData = async () => {
+      const data = await fetchCVData();
+      if (!cancelled && data) {
+        setCvData(data);
+      }
+      if (!cancelled) {
+        setLoading(false);
+      }
+    };
+
+    void loadCVData();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleSavePersonalInfo = async () => {
     if (!cvData) return;
@@ -120,7 +142,7 @@ export default function CVEditor() {
       });
       if (response.ok) {
         showToast('Work experience saved successfully!', 'success');
-        fetchCVData();
+        void refreshCVData();
       } else {
         showToast('Error saving work experience', 'error');
       }
@@ -170,7 +192,7 @@ export default function CVEditor() {
       });
       if (response.ok) {
         showToast('Education saved successfully!', 'success');
-        fetchCVData();
+        void refreshCVData();
       } else {
         showToast('Error saving education', 'error');
       }
@@ -218,7 +240,7 @@ export default function CVEditor() {
       });
       if (response.ok) {
         showToast('Languages saved successfully!', 'success');
-        fetchCVData();
+        void refreshCVData();
       } else {
         showToast('Error saving languages', 'error');
       }

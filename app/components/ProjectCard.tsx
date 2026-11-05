@@ -27,7 +27,7 @@ interface ProjectCardProps {
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
   return (
     <Card
-      className="animate-fade-in relative isolate flex h-full flex-col overflow-hidden text-white"
+      className="project-card animate-fade-in relative isolate flex h-full flex-col overflow-hidden text-white"
       style={{ animationDelay: `${Math.min(index * 0.1, 0.4)}s`, contain: 'layout style paint' }}
     >
       {/* Первое изображение проекта */}

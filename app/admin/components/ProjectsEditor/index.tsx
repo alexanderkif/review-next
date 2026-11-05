@@ -18,23 +18,45 @@ export default function ProjectsEditor() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
+  const fetchProjects = async (): Promise<Project[] | null> => {
     try {
       const response = await fetch('/api/admin/projects');
       if (response.ok) {
         const projectsData = await response.json();
-        setProjects(projectsData);
+        return projectsData;
       }
     } catch (error) {
       logger.error('Error fetching projects:', error);
-    } finally {
-      setLoading(false);
     }
+
+    return null;
   };
+
+  const refreshProjects = async () => {
+    const projectsData = await fetchProjects();
+    if (projectsData) {
+      setProjects(projectsData);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadProjects = async () => {
+      const projectsData = await fetchProjects();
+      if (!cancelled && projectsData) {
+        setProjects(projectsData);
+      }
+      if (!cancelled) {
+        setLoading(false);
+      }
+    };
+
+    void loadProjects();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleCreateProject = () => {
     setEditingProject(createEmptyProject());
@@ -113,7 +135,7 @@ export default function ProjectsEditor() {
           }
         }
 
-        await fetchProjects();
+        await refreshProjects();
         setShowForm(false);
         setEditingProject(null);
         showToast('Project saved successfully!', 'success');
@@ -143,7 +165,7 @@ export default function ProjectsEditor() {
       });
 
       if (response.ok) {
-        await fetchProjects();
+        await refreshProjects();
         showToast('Project deleted successfully!', 'success');
       } else {
         showToast('Error deleting project', 'error');

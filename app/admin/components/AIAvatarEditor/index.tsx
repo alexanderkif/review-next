@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
@@ -28,31 +28,42 @@ export default function AIAvatarEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const loadSettings = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/ai-settings');
-      if (response.ok) {
-        const data = await response.json();
-        setSettings({
-          chat_instructions: data.chat_instructions || '',
-          chat_extra: data.chat_extra || '',
-          groq_model: data.groq_model || '',
-          gemini_model: data.gemini_model || '',
-        });
-      } else {
-        showToast('Failed to load AI settings', 'error');
-      }
-    } catch (error) {
-      logger.error('Error loading AI settings:', error);
-      showToast('Failed to load AI settings', 'error');
-    } finally {
-      setLoading(false);
-    }
-  }, [showToast]);
-
   useEffect(() => {
-    loadSettings();
-  }, [loadSettings]);
+    let cancelled = false;
+
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/admin/ai-settings');
+        if (response.ok) {
+          const data = await response.json();
+          if (!cancelled) {
+            setSettings({
+              chat_instructions: data.chat_instructions || '',
+              chat_extra: data.chat_extra || '',
+              groq_model: data.groq_model || '',
+              gemini_model: data.gemini_model || '',
+            });
+          }
+        } else if (!cancelled) {
+          showToast('Failed to load AI settings', 'error');
+        }
+      } catch (error) {
+        logger.error('Error loading AI settings:', error);
+        if (!cancelled) {
+          showToast('Failed to load AI settings', 'error');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadSettings();
+    return () => {
+      cancelled = true;
+    };
+  }, [showToast]);
 
   const updateField = (field: keyof AiSettings, value: string) => {
     setSettings((previous) => ({ ...previous, [field]: value }));

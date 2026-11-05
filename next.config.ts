@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  reactCompiler: true,
   // Allow external images from OAuth providers
   images: {
     remotePatterns: [
